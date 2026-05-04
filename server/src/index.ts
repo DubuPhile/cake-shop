@@ -6,9 +6,11 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { prisma } from "../lib/prisma";
 
-/* ROUTES IMPORTS*/
+/* ROUTES IMPORTS */
+import LoginRoutes from "./routes/LoginRoutes";
+import RefreshRoutes from "./routes/RefreshRoutes";
 
-/*CONFIGURATION*/
+/* CONFIGURATION */
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -18,6 +20,10 @@ app.use(morgan("common"));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+
+/* ROUTES */
+app.use("/login", LoginRoutes);
+app.use("/refresh", RefreshRoutes);
 
 const port = process.env.PORT || 3001;
 async function main() {
