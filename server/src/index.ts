@@ -4,11 +4,12 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import { prisma } from "../lib/prisma";
 
 /* ROUTES IMPORTS */
 import LoginRoutes from "./routes/LoginRoutes";
 import RefreshRoutes from "./routes/RefreshRoutes";
+import LogoutRoutes from "./routes/LogoutRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -24,20 +25,11 @@ app.use(cors());
 /* ROUTES */
 app.use("/login", LoginRoutes);
 app.use("/refresh", RefreshRoutes);
+app.use("/logout", LogoutRoutes);
+app.use("/admin", AdminRoutes);
 
 const port = process.env.PORT || 3001;
-async function main() {
-  app.listen(port, () => {
-    console.log(`Server running on PORT ${port}`);
-  });
-}
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+app.listen(port, () => {
+  console.log(`Server running on PORT ${port}`);
+});
