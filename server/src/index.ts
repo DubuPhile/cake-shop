@@ -10,6 +10,8 @@ import LoginRoutes from "./routes/LoginRoutes";
 import RefreshRoutes from "./routes/RefreshRoutes";
 import LogoutRoutes from "./routes/LogoutRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
+import corsOptions from "./config/corsOption";
+import verifyOTPRoutes from "./routes/verifyOTPRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -20,13 +22,14 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 /* ROUTES */
 app.use("/login", LoginRoutes);
 app.use("/refresh", RefreshRoutes);
 app.use("/logout", LogoutRoutes);
 app.use("/admin", AdminRoutes);
+app.use("/verifyOtp", verifyOTPRoutes);
 
 const port = process.env.PORT || 3001;
 
