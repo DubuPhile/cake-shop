@@ -1,12 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-
-interface AuthUser {
-  roles: string;
-}
-
-interface AuthRequest extends Request {
-  user?: AuthUser;
-}
+import { Response, NextFunction } from "express";
+import { AuthRequest } from "./verifyJWT";
 
 export const verifyRoles =
   (...allowedRoles: string[]) =>
