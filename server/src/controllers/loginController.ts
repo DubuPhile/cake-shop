@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { OTPRequest, sendOTP } from "./OTPController";
 
 type loginUser = {
   user: string;
@@ -29,6 +30,16 @@ export const registerUser = async (
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(pwd, salt);
+
+    // const verifyEmail = {
+    //   name: username,
+    //   password: hashedPassword,
+    //   email,
+    //   purpose: "VERIFY_EMAIL",
+    // } as OTPRequest;
+    // const sendOtp = await sendOTP(verifyEmail);
+    //  console.log(sendOtp.otp);
+
     const newUser = await prisma.users.create({
       data: {
         name: username,
@@ -36,8 +47,10 @@ export const registerUser = async (
         email: email,
       },
     });
+
     res.status(201).send({ message: "Register Successfully", success: true });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Error to register this user" });
   }
 };
