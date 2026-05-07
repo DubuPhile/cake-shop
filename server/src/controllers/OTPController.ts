@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
 
-type OtpPurpose = "VERIFY_EMAIL" | "RESET_PASSWORD" | "LOGIN";
+type OtpPurpose =
+  | "VERIFY_EMAIL"
+  | "RESET_PASSWORD"
+  | "LOGIN"
+  | "CHANGE_PASSWORD";
 
 export interface OTPRequest extends Request {
   email: string;
@@ -22,7 +26,7 @@ export const sendOTP = async (generateOTP: OTPRequest) => {
     });
 
     if (name && password && purpose === "VERIFY_EMAIL") {
-      await prisma.otp.create({
+      const createdOtp = await prisma.otp.create({
         data: {
           name,
           password,
@@ -31,21 +35,31 @@ export const sendOTP = async (generateOTP: OTPRequest) => {
           expiresAt,
           purpose,
         },
+        select: {
+          id: true,
+          email: true,
+          purpose: true,
+        },
       });
 
-      return { otp, purpose };
+      return { otp, createdOtp };
     }
 
-    await prisma.otp.create({
+    const createdOtp = await prisma.otp.create({
       data: {
         email,
         code: hashedOtp,
         expiresAt,
         purpose,
       },
+      select: {
+        id: true,
+        email: true,
+        purpose: true,
+      },
     });
 
-    return { otp, purpose };
+    return { otp, createdOtp };
   } catch (err) {
     console.log(err);
     throw new Error("Failed to send OTP");
@@ -55,10 +69,7 @@ export const sendOTP = async (generateOTP: OTPRequest) => {
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
     const { otpCode, email, purpose } = req.body;
-    if (otpCode.length !== 6 || typeof otpCode !== "string") {
-      res.status(400).json({ message: "invalid Code" });
-      return;
-    }
+
     const foundOtp = await prisma.otp.findFirst({
       where: {
         email,
@@ -89,7 +100,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // 3. compare OTP
     const isValid = await bcrypt.compare(otpCode, foundOtp.code);
 
-    if (!isValid) {
+    if (!isValid && otpCode.length !== 6 && typeof otpCode !== "string") {
       // increase attempts
       await prisma.otp.update({
         where: { id: foundOtp.id },
@@ -105,10 +116,13 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    await prisma.otp.update({
+    const verified = await prisma.otp.update({
       where: { id: foundOtp.id },
       data: {
         isUsed: true,
+      },
+      select: {
+        id: true,
       },
     });
 
@@ -131,7 +145,9 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.status(200).json({ message: "Verify Successfully", success: true });
+    res
+      .status(200)
+      .json({ message: "Verify Successfully", success: true, data: verified });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "OTP Server Error", success: false });
