@@ -4,14 +4,15 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
+import corsOptions from "./config/corsOption";
 
 /* ROUTES IMPORTS */
 import LoginRoutes from "./routes/LoginRoutes";
 import RefreshRoutes from "./routes/RefreshRoutes";
 import LogoutRoutes from "./routes/LogoutRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
-import corsOptions from "./config/corsOption";
 import verifyOTPRoutes from "./routes/verifyOTPRoutes";
+import userRoutes from "./routes/userRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/refresh", RefreshRoutes);
 app.use("/logout", LogoutRoutes);
 app.use("/admin", AdminRoutes);
 app.use("/verifyOtp", verifyOTPRoutes);
+app.use("/user", userRoutes);
 
 const port = process.env.PORT || 3001;
 
