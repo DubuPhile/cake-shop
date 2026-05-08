@@ -7,12 +7,13 @@ import helmet from "helmet";
 import corsOptions from "./config/corsOption";
 
 /* ROUTES IMPORTS */
+import registerRoutes from "./routes/registerRoutes";
 import LoginRoutes from "./routes/LoginRoutes";
 import RefreshRoutes from "./routes/RefreshRoutes";
 import LogoutRoutes from "./routes/LogoutRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
 import verifyOTPRoutes from "./routes/verifyOTPRoutes";
-import userRoutes from "./routes/userRoutes";
+import pwdRoutes from "./routes/pwdRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -26,12 +27,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors(corsOptions));
 
 /* ROUTES */
+app.use("/register", registerRoutes);
 app.use("/login", LoginRoutes);
 app.use("/refresh", RefreshRoutes);
 app.use("/logout", LogoutRoutes);
 app.use("/admin", AdminRoutes);
 app.use("/verifyOtp", verifyOTPRoutes);
-app.use("/user", userRoutes);
+app.use("/pwd", pwdRoutes);
 
 const port = process.env.PORT || 3001;
 
