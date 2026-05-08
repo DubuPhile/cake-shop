@@ -37,6 +37,21 @@ CREATE TABLE "Otp" (
     CONSTRAINT "Otp_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "TrustedDevice" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "deviceToken" TEXT NOT NULL,
+    "deviceName" TEXT,
+    "ipAddress" VARCHAR(45),
+    "userAgent" TEXT,
+    "verifiedAt" TIMESTAMP(3) NOT NULL,
+    "lastUsedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "TrustedDevice_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
 
@@ -45,3 +60,12 @@ CREATE INDEX "Otp_email_idx" ON "Otp"("email");
 
 -- CreateIndex
 CREATE INDEX "Otp_expiresAt_idx" ON "Otp"("expiresAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TrustedDevice_deviceToken_key" ON "TrustedDevice"("deviceToken");
+
+-- CreateIndex
+CREATE INDEX "TrustedDevice_userId_idx" ON "TrustedDevice"("userId");
+
+-- AddForeignKey
+ALTER TABLE "TrustedDevice" ADD CONSTRAINT "TrustedDevice_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
