@@ -8,7 +8,7 @@ export const validate =
     if (!result.success) {
       return res.status(400).json({
         success: false,
-        errors: result.error,
+        errors: result.error.flatten().fieldErrors,
       });
     }
 
