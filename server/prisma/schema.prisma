@@ -25,7 +25,7 @@ enum OtpPurpose {
 }
 
 model Users {
-  userId          String    @id @default(cuid())
+  userId          String    @id @default(uuid())
   name            String
   password        String
   email           String    @unique
@@ -37,10 +37,11 @@ model Users {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  trustedDevices TrustedDevice[]
 }
 
 model Otp {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   email     String
   name      String?
   password  String?
@@ -53,4 +54,20 @@ model Otp {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+model TrustedDevice {
+  id           String   @id @default(uuid())
+  userId       String
+  deviceToken  String   @unique
+  deviceName   String?
+  ipAddress    String?  @db.VarChar(45)
+  userAgent    String?
+  verifiedAt   DateTime
+  lastUsedAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user Users @relation(fields: [userId], references: [userId])
+
+  @@index([userId])
 }
