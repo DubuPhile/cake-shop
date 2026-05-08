@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 type OtpPurpose =
   | "VERIFY_EMAIL"
@@ -70,6 +72,14 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
     const { otpCode, email, purpose } = req.body;
 
+    if (otpCode.length !== 6 || typeof otpCode !== "string") {
+      res.status(400).json({
+        message: "Invalid OTP Format",
+        success: false,
+      });
+      return;
+    }
+
     const foundOtp = await prisma.otp.findFirst({
       where: {
         email,
@@ -100,7 +110,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // 3. compare OTP
     const isValid = await bcrypt.compare(otpCode, foundOtp.code);
 
-    if (!isValid && otpCode.length !== 6 && typeof otpCode !== "string") {
+    if (!isValid) {
       // increase attempts
       await prisma.otp.update({
         where: { id: foundOtp.id },
@@ -142,6 +152,84 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       res
         .status(201)
         .json({ message: "Create user Successfully", success: true });
+      return;
+    }
+    // Verify Login
+    if (purpose === "LOGIN") {
+      const foundUser = await prisma.users.findFirst({
+        where: {
+          email: foundOtp.email,
+        },
+      });
+      if (!foundUser) {
+        res.status(404).json({ message: "User not Found" });
+        return;
+      }
+
+      const deviceToken = crypto.randomBytes(32).toString("hex");
+      const hashed = crypto
+        .createHash("sha256")
+        .update(deviceToken)
+        .digest("hex");
+
+      await prisma.trustedDevice.create({
+        data: {
+          userId: foundUser.userId,
+          deviceToken: hashed,
+          ipAddress: req.ip ?? null,
+          userAgent: req.headers["user-agent"] ?? null,
+          verifiedAt: new Date(),
+        },
+      });
+
+      res.cookie("device_id", deviceToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+      });
+
+      const roles = foundUser.roles ?? [];
+
+      const accessToken = jwt.sign(
+        {
+          UserInfo: {
+            _id: foundUser.userId,
+            user: foundUser.name,
+            isAdmin: foundUser.isAdmin,
+            roles,
+          },
+        },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: "15m" },
+      );
+
+      const refreshToken = jwt.sign(
+        { user: foundUser.name },
+        process.env.REFRESH_TOKEN_SECRET as string,
+        { expiresIn: "1h" },
+      );
+
+      await prisma.users.update({
+        where: { userId: foundUser.userId },
+        data: {
+          refreshToken,
+        },
+      });
+
+      res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+
+      await prisma.otp.delete({
+        where: { id: foundOtp.id, isUsed: true, purpose },
+      });
+
+      res.status(200).json({ accessToken });
       return;
     }
 
