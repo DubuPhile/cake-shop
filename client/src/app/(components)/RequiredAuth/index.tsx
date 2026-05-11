@@ -12,10 +12,10 @@ type Props = {
 export default function RequiredAuth({ children, allowedRoles }: Props) {
   const router = useRouter();
 
-  const { user, token, roles } = useAppSelector((state) => state.auth);
+  const { user, accessToken, roles } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!token) {
+    if (!accessToken) {
       router.replace("/login");
       return;
     }
@@ -27,9 +27,9 @@ export default function RequiredAuth({ children, allowedRoles }: Props) {
     ) {
       router.replace("/unauthorized");
     }
-  }, [token, user, allowedRoles, router]);
+  }, [accessToken, user, allowedRoles, router]);
 
-  if (!token) return null;
+  if (!accessToken) return null;
 
   return <>{children}</>;
 }
