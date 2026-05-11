@@ -2,8 +2,9 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsDarkMode, setIsSidebarCollapsed } from "@/redux/state/global";
-import { Bell, Menu, Moon, Settings, Sun } from "lucide-react";
+import { Bell, Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
+import UserDropdown from "../DropdownUser";
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
@@ -19,6 +20,8 @@ export default function Navbar() {
   const toggleDarkMode = () => {
     dispatch(setIsDarkMode(!isDarkMode));
   };
+
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <nav className="flex justify-between items-center w-full mb-7">
@@ -66,8 +69,13 @@ export default function Navbar() {
           </div>
           <hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
           <div className="flex items-center gap-3 cursor-pointer">
-            <div className="w-9 h-9">Image</div>
-            <span className="font-semibold">Charlie</span>
+            {/* <div className="w-9 h-9">Image</div>
+            <span className="font-semibold">Charlie</span> */}
+            {user ? (
+              <UserDropdown user={user} />
+            ) : (
+              <Link href={"/login"}>Log-in /Sign-Up</Link>
+            )}
           </div>
         </div>
       </div>
