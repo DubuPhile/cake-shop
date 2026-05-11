@@ -148,7 +148,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
