@@ -1,3 +1,3 @@
-const AllowedOrigin: string[] = ["http://localhost:5173"];
+const AllowedOrigin: string[] = ["http://localhost:3000"];
 
 export default AllowedOrigin;
