@@ -33,7 +33,6 @@ export const registerUser = async (
       purpose,
     } as OTPRequest;
     const sendOtp = await sendOTP(verifyEmail);
-    console.log(sendOtp.otp);
 
     // const newUser = await prisma.users.create({
     //   data: {
