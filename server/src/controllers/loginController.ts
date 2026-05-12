@@ -110,7 +110,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       } as OTPRequest;
 
       const generateOtp = await sendOTP(verifyOTP);
-      console.log(generateOtp.otp);
 
       res
         .status(200)
