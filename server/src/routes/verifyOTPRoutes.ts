@@ -1,10 +1,11 @@
 import express from "express";
-import { verifyOTP } from "../controllers/OTPController";
+import { resendOTP, verifyOTP } from "../controllers/OTPController";
 import { validate } from "../middleware/validate";
-import { verifyOtpSchema } from "../validator/auth.validator";
+import { resendOtp, verifyOtpSchema } from "../validator/auth.validator";
 
 const router = express.Router();
 
 router.post("/", validate(verifyOtpSchema), verifyOTP);
+router.post("/resend", validate(resendOtp), resendOTP);
 
 export default router;
