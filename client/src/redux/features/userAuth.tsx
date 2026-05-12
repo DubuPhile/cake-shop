@@ -5,14 +5,6 @@ export interface credentials {
   pwd: string;
 }
 
-type Purpose = "VERIFY_EMAIL" | "RESET_PASSWORD" | "LOGIN" | "CHANGE_PASSWORD";
-
-export interface verifyOTP {
-  purpose: Purpose;
-  otpCode: string;
-  email: string;
-}
-
 export const authApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -20,13 +12,6 @@ export const authApiSlice = api.injectEndpoints({
         url: "/login",
         method: "POST",
         body: { ...credentials },
-      }),
-    }),
-    verifyOTP: builder.mutation({
-      query: (verify: verifyOTP) => ({
-        url: "/verifyOtp",
-        method: "POST",
-        body: { ...verify },
       }),
     }),
     register: builder.mutation({
@@ -54,7 +39,6 @@ export const authApiSlice = api.injectEndpoints({
 });
 
 export const {
-  useVerifyOTPMutation,
   useLoginMutation,
   useLogoutMutation,
   useRefreshMutation,
