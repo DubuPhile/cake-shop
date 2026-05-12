@@ -46,6 +46,16 @@ export const verifyOtpSchema = z.object({
 export const verifyEmail = z.object({
   email: z.email("Invalid email format"),
 });
+
+export const resendOtp = z.object({
+  email: z.email("Invalid email format"),
+  purpose: z.enum([
+    "VERIFY_EMAIL",
+    "RESET_PASSWORD",
+    "LOGIN",
+    "CHANGE_PASSWORD",
+  ]),
+});
 export const VerifyResetPwd = z.object({
   email: z.email("Invalid email format"),
   newPwd: z
