@@ -99,7 +99,7 @@ export const sendOTPChangePwd = async (
     } as OTPRequest;
 
     const OTPSent = await sendOTP(verifyEmail);
-    console.log(OTPSent.otp);
+
     res.status(200).json({
       message: "send OTP for Change Password",
       data: OTPSent.createdOtp,
@@ -137,7 +137,6 @@ export const sendOTPResetPwd = async (
     } as OTPRequest;
 
     const OTPSent = await sendOTP(verifyEmail);
-    console.log(OTPSent.otp);
 
     res.status(200).json({
       message: "send OTP for Reset Password",
