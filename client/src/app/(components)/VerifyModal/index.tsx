@@ -1,7 +1,11 @@
 "use client";
 
 import { MyTokenPayload, VerifyOTP } from "@/app/( auth )/login/page";
-import { useVerifyOTPMutation } from "@/redux/features/userAuth";
+import {
+  resendOTP,
+  useResendOTPMutation,
+  useVerifyOTPMutation,
+} from "@/redux/features/OTPAuth";
 import { setCredentials } from "@/redux/state/auth";
 import { useAppDispatch } from "@/redux/store";
 import { jwtDecode } from "jwt-decode";
@@ -15,9 +19,13 @@ interface OTPModalProps {
 }
 
 export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
+  const [show, setShow] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   const [verify] = useVerifyOTPMutation();
+  const [resend] = useResendOTPMutation();
+
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [error, setError] = useState<string>("");
@@ -42,8 +50,16 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
       setError("");
       setTimeLeft(60);
       inputsRef.current[0]?.focus();
+      setShow(true);
     }
   }, [isOpen]);
+
+  const handleClose = () => {
+    setShow(false);
+    setTimeout(() => {
+      onClose();
+    }, 500);
+  };
 
   const handleChange = (value: string, idx: number) => {
     if (!/^\d?$/.test(value)) return;
@@ -61,45 +77,69 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
     }
   };
 
-  const handleVerify = async () => {
-    const otpValue = otp.join("");
-
-    if (otpValue.length < 6) {
-      setError("Please enter all 6 digits");
-      return;
+  const handleResend = async () => {
+    try {
+      const resendEmail = {
+        email: verifyData.email,
+        purpose: verifyData.purpose,
+      } as resendOTP;
+      await resend(resendEmail).unwrap();
+    } catch (err) {
+      console.log(err);
+      setError("Error Resend OTP");
     }
+  };
 
-    const success = await verify({
-      purpose: verifyData.purpose,
-      otpCode: otpValue,
-      email: verifyData.email,
-    }).unwrap();
+  const handleVerify = async () => {
+    try {
+      const otpValue = otp.join("");
 
-    const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
-    const dispat = dispatch(
-      setCredentials({
-        accessToken: success.accessToken,
-        user: decoded?.UserInfo.user,
-        roles: decoded?.UserInfo.roles,
-      }),
-    );
-    console.log(dispat);
-    router.push("/");
+      if (otpValue.length < 6) {
+        setError("Please enter all 6 digits");
+        return;
+      }
 
-    console.log(success);
+      const success = await verify({
+        purpose: verifyData.purpose,
+        otpCode: otpValue,
+        email: verifyData.email,
+      }).unwrap();
 
-    if (!success) setError("Invalid OTP");
+      const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
+      await dispatch(
+        setCredentials({
+          accessToken: success.accessToken,
+          user: decoded?.UserInfo.user,
+          roles: decoded?.UserInfo.roles,
+        }),
+      );
+      router.push("/");
+    } catch (err) {
+      console.log(err);
+      setError("Invalid OTP");
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-500 ${show ? "opacity-100" : "opacity-0"}`}
+    >
+      <div
+        className={`w-full max-w-md rounded-2xl bg-white shadow-xl transition-all duration-500 ${
+          show
+            ? "scale-100 translate-y-0 opacity-100"
+            : "scale-95 translate-y-4 opacity-0"
+        }`}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-4">
+        <div className="flex items-center rounded-t-2xl justify-between bg-gray-200 p-4">
           <h2 className="text-lg font-semibold">Enter OTP</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-black">
+          <button
+            onClick={handleClose}
+            className="text-gray-500 hover:text-black hover:cursor-pointer"
+          >
             ✕
           </button>
         </div>
@@ -136,7 +176,7 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col gap-2 border-t p-4">
+        <div className="flex flex-col gap-2 p-4">
           {timeLeft <= 0 && (
             <button
               onClick={() => {
@@ -144,11 +184,9 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
                 setError("");
                 setTimeLeft(60);
                 inputsRef.current[0]?.focus();
-
-                // resend OTP API
-                // sendOTP({ type: "CHANGE_PASSWORD" }).unwrap();
+                handleResend(); // resend OTP API
               }}
-              className="text-sm font-medium text-blue-600 hover:underline"
+              className="text-sm font-medium text-blue-600 hover:underline hover:cursor-pointer"
             >
               Resend OTP
             </button>
@@ -156,15 +194,15 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
 
           <div className="flex justify-end gap-2">
             <button
-              onClick={onClose}
-              className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={handleClose}
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-100 hover:cursor-pointer"
             >
               Cancel
             </button>
 
             <button
               onClick={handleVerify}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:cursor-pointer hover:bg-blue-700"
             >
               Verify
             </button>
