@@ -43,8 +43,8 @@ export const sendOTP = async (generateOTP: OTPRequest) => {
           purpose: true,
         },
       });
-
-      return { otp, createdOtp };
+      console.log(otp); // for test
+      return { createdOtp };
     }
 
     const createdOtp = await prisma.otp.create({
@@ -60,14 +60,60 @@ export const sendOTP = async (generateOTP: OTPRequest) => {
         purpose: true,
       },
     });
-
-    return { otp, createdOtp };
+    console.log(otp); //for Test
+    return { createdOtp };
   } catch (err) {
     console.log(err);
     throw new Error("Failed to send OTP");
   }
 };
 
+export const resendOTP = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, purpose, name, password } = req.body;
+
+    const foundOTP = await prisma.otp.findFirst({
+      where: { email: email, purpose: purpose },
+      select: { email: true, purpose: true, name: true, password: true },
+    });
+
+    if (!foundOTP) {
+      res.status(404).json({ message: "OTP no match found" });
+      return;
+    }
+
+    if (name && password && purpose === "VERIFY_EMAIL") {
+      const verifyEmail = {
+        email: foundOTP.email,
+        name: foundOTP.name,
+        password: foundOTP.password,
+        purpose: foundOTP.purpose,
+      } as OTPRequest;
+
+      const OTPData = await sendOTP(verifyEmail);
+
+      res
+        .status(200)
+        .json({ message: "Resend OTP success!", success: true, data: OTPData });
+      return;
+    }
+
+    const verifyEmail = {
+      email: foundOTP.email,
+      purpose: foundOTP.purpose,
+    } as OTPRequest;
+
+    const OTPData = await sendOTP(verifyEmail);
+
+    res
+      .status(200)
+      .json({ message: "Resend OTP success!", success: true, data: OTPData });
+  } catch (err) {
+    res.status(500).json({ message: "Error ResetOTP", success: false });
+  }
+};
+
+/* VERIFY OTP */
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
     const { otpCode, email, purpose } = req.body;
