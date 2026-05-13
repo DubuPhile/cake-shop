@@ -103,6 +103,7 @@ export const sendOTPChangePwd = async (
     res.status(200).json({
       message: "send OTP for Change Password",
       data: OTPSent.createdOtp,
+      success: true,
     });
   } catch (err) {
     console.log(err);
@@ -141,6 +142,7 @@ export const sendOTPResetPwd = async (
     res.status(200).json({
       message: "send OTP for Reset Password",
       data: OTPSent.createdOtp,
+      success: true,
     });
   } catch (err) {
     console.log(err);
