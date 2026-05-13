@@ -17,7 +17,6 @@ export default function AuthInitializer() {
         const result = await refresh().unwrap();
 
         const decoded = await jwtDecode<MyTokenPayload>(result.accessToken);
-        console.log(decoded);
         dispatch(
           setCredentials({
             accessToken: result.accessToken,
