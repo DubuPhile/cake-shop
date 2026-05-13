@@ -1,29 +1,29 @@
 "use client";
 
-import { MyTokenPayload, VerifyOTP } from "@/app/( auth )/login/page";
-import {
-  resendOTP,
-  useResendOTPMutation,
-  useVerifyOTPMutation,
-} from "@/redux/features/OTPAuth";
-import { setCredentials } from "@/redux/state/auth";
-import { useAppDispatch } from "@/redux/store";
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/navigation";
+import { resendOTP, useResendOTPMutation } from "@/redux/features/OTPAuth";
+
 import { useEffect, useRef, useState } from "react";
 
 interface OTPModalProps {
   isOpen: boolean;
   onClose: () => void;
   verifyData: VerifyOTP | undefined;
+  verifyOtp: any;
 }
 
-export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
-  const [show, setShow] = useState(false);
-  const router = useRouter();
-  const dispatch = useAppDispatch();
+export interface VerifyOTP {
+  email: string;
+  id: string;
+  purpose: "VERIFY_EMAIL" | "RESET_PASSWORD" | "LOGIN" | "CHANGE_PASSWORD";
+}
 
-  const [verify] = useVerifyOTPMutation();
+export const OTPModal = ({
+  isOpen,
+  onClose,
+  verifyData,
+  verifyOtp,
+}: OTPModalProps) => {
+  const [show, setShow] = useState(false);
   const [resend] = useResendOTPMutation();
 
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -98,25 +98,10 @@ export const OTPModal = ({ isOpen, onClose, verifyData }: OTPModalProps) => {
         setError("Please enter all 6 digits");
         return;
       }
-
-      const success = await verify({
-        purpose: verifyData.purpose,
-        otpCode: otpValue,
-        email: verifyData.email,
-      }).unwrap();
-
-      const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
-      await dispatch(
-        setCredentials({
-          accessToken: success.accessToken,
-          user: decoded?.UserInfo.user,
-          roles: decoded?.UserInfo.roles,
-        }),
-      );
-      router.push("/");
-    } catch (err) {
+      await verifyOtp(otpValue);
+    } catch (err: any) {
       console.log(err);
-      setError("Invalid OTP");
+      setError(`${err?.data.message || "Invalid"}`);
     }
   };
 
