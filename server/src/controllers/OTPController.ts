@@ -17,7 +17,17 @@ export interface OTPRequest extends Request {
   purpose: OtpPurpose;
 }
 
-export const sendOTP = async (generateOTP: OTPRequest) => {
+type createdOtp = {
+  email: string;
+  purpose: OtpPurpose;
+  id: string;
+};
+
+export interface Otp {
+  createdOtp: createdOtp;
+}
+
+export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
   try {
     const { email, purpose, name, password } = generateOTP;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -279,9 +289,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res
-      .status(200)
-      .json({ message: "Verify Successfully", success: true, data: verified });
+    res.status(200).json({ message: "Verify Successfully", success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "OTP Server Error", success: false });
