@@ -1,24 +1,38 @@
+import { VerifyOTP } from "@/app/(components)/VerifyModal";
 import { api } from "../state/api";
+import { OTPVerification } from "./OTPAuth";
 
 export interface credentials {
   user: string;
   pwd: string;
 }
 
+export interface registerData {
+  email: string;
+  username: string;
+  pwd: string;
+}
+
+export interface serverResponse {
+  message?: string;
+  data?: VerifyOTP;
+  accessToken?: string;
+}
+
 export const authApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (credentials: credentials) => ({
+    login: builder.mutation<serverResponse, credentials>({
+      query: (credentials) => ({
         url: "/login",
         method: "POST",
         body: { ...credentials },
       }),
     }),
-    register: builder.mutation({
+    register: builder.mutation<OTPVerification, registerData>({
       query: (data) => ({
-        url: "/user/register",
+        url: "/register",
         method: "POST",
-        body: data,
+        body: { ...data },
       }),
     }),
     logout: builder.mutation<{ success: boolean }, void>({
