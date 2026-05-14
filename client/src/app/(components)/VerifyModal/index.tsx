@@ -139,6 +139,7 @@ export const OTPModal = ({
             {otp.map((digit, idx) => (
               <input
                 key={idx}
+                id={idx.toString()}
                 type="text"
                 maxLength={1}
                 value={digit}
