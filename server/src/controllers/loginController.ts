@@ -24,8 +24,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         OR: [{ name: user }, { email: user }],
       },
     });
+
     if (!foundUser) {
-      res.status(401);
+      res.status(401).json({ message: "User not found." });
       return;
     }
     // Check lock
