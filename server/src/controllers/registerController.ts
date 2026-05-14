@@ -34,6 +34,8 @@ export const registerUser = async (
     } as OTPRequest;
     const sendOtp = await sendOTP(verifyEmail);
 
+    const OtpData = sendOtp.createdOtp;
+
     // const newUser = await prisma.users.create({
     //   data: {
     //     name: username,
@@ -45,7 +47,7 @@ export const registerUser = async (
     res.status(201).send({
       message: "Register Successfully",
       success: true,
-      data: { sendOtp },
+      data: OtpData,
     });
   } catch (err) {
     console.log(err);
