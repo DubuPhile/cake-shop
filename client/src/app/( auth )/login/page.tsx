@@ -58,7 +58,7 @@ export default function login() {
         setVerify(userData?.data);
         return;
       }
-
+      if (!userData.accessToken) throw new Error("accessToken not found");
       const decoded = jwtDecode<MyTokenPayload>(userData.accessToken);
 
       dispatch(
@@ -73,6 +73,7 @@ export default function login() {
       setPwd("");
       router.push("/");
     } catch (err: any) {
+      setPwd("");
       console.log(err);
       setErrMsg(`${err?.data?.message || "Login Failed"}`);
     }
@@ -87,6 +88,7 @@ export default function login() {
       email: verify?.email,
     }).unwrap();
 
+    if (!success.accessToken) throw new Error("accessToken not found");
     const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
     await dispatch(
       setCredentials({
