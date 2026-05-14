@@ -1,4 +1,6 @@
 import { api } from "../state/api";
+import { OTPVerification } from "./OTPAuth";
+import { serverResponse } from "./userAuth";
 
 export interface ResetPwd {
   email: string;
@@ -7,14 +9,14 @@ export interface ResetPwd {
 
 export const PasswordAuthSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    resetPwdOtp: builder.mutation({
+    resetPwdOtp: builder.mutation<OTPVerification, string>({
       query: (email: string) => ({
         url: "/pwd/resetPwdOtp",
         method: "POST",
         body: { email },
       }),
     }),
-    resetPwd: builder.mutation({
+    resetPwd: builder.mutation<serverResponse, ResetPwd>({
       query: (resetPwd) => ({
         url: "/pwd/resetPwd",
         method: "POST",
