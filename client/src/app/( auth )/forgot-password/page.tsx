@@ -33,6 +33,10 @@ export default function ForgotPassword() {
   const [verifyEmail, setVerifyEmail] = useState<VerifyOTP | undefined>();
 
   useEffect(() => {
+    setErrorMsg("");
+  }, [email, newPwd, confirmPwd]);
+
+  useEffect(() => {
     if (confirmPwd === "") {
       setErrorMatch("");
       return;
@@ -77,8 +81,6 @@ export default function ForgotPassword() {
   const verifyOtp = async (otp: number) => {
     if (!verifyEmail) return;
 
-    console.log(verifyEmail);
-
     const success = await verify({
       purpose: verifyEmail.purpose,
       otpCode: otp,
@@ -98,7 +100,9 @@ export default function ForgotPassword() {
               <h3>Loading...</h3>
             ) : (
               <>
-                <h1 className="my-10 text-2xl font-bold">Forgot Password</h1>
+                <h1 className="mt-10 mb-8 text-2xl font-bold">
+                  Forgot Password
+                </h1>
                 {errorMsg && (
                   <p
                     ref={errorRef}
@@ -112,7 +116,7 @@ export default function ForgotPassword() {
                     className="w-full flex flex-col items-center gap-3 mb-10"
                     onSubmit={handleSubmit}
                   >
-                    <p className="px-8 text-center text-gray-500">
+                    <p className="px-8 text-center text-sm text-gray-500 mb-3">
                       Forgot your password? Please enter your email address. You
                       will receive a verification code via email.{" "}
                     </p>
@@ -154,7 +158,7 @@ export default function ForgotPassword() {
                     className="w-full flex flex-col items-center gap-3 mb-10"
                     onSubmit={handleSubmitNewPwd}
                   >
-                    <p className="px-8 text-center text-gray-500">
+                    <p className="px-8 text-center text-sm text-gray-500 mb-3">
                       Set a new Password. It should be match and unique.
                     </p>
                     <div className="group relative flex flex-col gap w-70">
