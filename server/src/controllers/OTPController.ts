@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { OTPEmailStyle, sendEmail } from "../utils/sendEmail";
 
 type OtpPurpose =
   | "VERIFY_EMAIL"
@@ -53,6 +54,15 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
           purpose: true,
         },
       });
+      //SEND EMAIL
+      const emailOtp = await sendEmail({
+        to: createdOtp.email,
+        subject: "Verification OTP",
+        html: OTPEmailStyle(otp),
+      });
+
+      if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
+
       console.log(otp); // for test
       return { createdOtp };
     }
@@ -70,6 +80,15 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
         purpose: true,
       },
     });
+    //SEND EMAIL
+    const emailOtp = await sendEmail({
+      to: createdOtp.email,
+      subject: "Verification OTP",
+      html: OTPEmailStyle(otp),
+    });
+
+    if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
+
     console.log(otp); //for Test
     return { createdOtp };
   } catch (err) {
