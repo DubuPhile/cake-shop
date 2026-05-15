@@ -3,6 +3,7 @@
 import { resendOTP, useResendOTPMutation } from "@/redux/features/OTPAuth";
 
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 interface OTPModalProps {
   isOpen: boolean;
@@ -84,6 +85,8 @@ export const OTPModal = ({
         purpose: verifyData.purpose,
       } as resendOTP;
       await resend(resendEmail).unwrap();
+
+      toast.success("Resend OTP");
     } catch (err) {
       console.log(err);
       setError("Error Resend OTP");
