@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "../../../../public/default-avatar.png";
 import { useLogoutMutation } from "@/redux/features/userAuth";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCredentials } from "@/redux/state/auth";
 import toast from "react-hot-toast";
 
@@ -18,6 +18,8 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
 
   const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
+
+  const { roles } = useAppSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
@@ -37,8 +39,22 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
     }
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (openRef.current && !openRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   return (
-    <div className="relative inline-block w-full max-md:w-20">
+    <div className="relative inline-block w-full ">
       <button
         ref={openRef}
         onClick={() => setOpen((prev) => !prev)}
@@ -47,7 +63,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
         }`}
       >
         <Image
-          className="ml-1.25 hidden w-8.75 h-8.75 rounded-full border md:block"
+          className="ml-1.25 w-8.75 h-8.75 rounded-full border"
           src={avatar ?? Avatar}
           width={8.75}
           height={8.75}
@@ -67,6 +83,12 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
           {" "}
           <Link href="#">Profile</Link>
         </button>
+        {roles.toString() === "ADMIN" && (
+          <button className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]">
+            {" "}
+            <Link href="/dashboard">Dashboard</Link>
+          </button>
+        )}
 
         <button className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]">
           Settings
