@@ -11,6 +11,10 @@ type Ad = {
   image: string | StaticImageData;
 };
 
+export interface AdSection {
+  ads: Ad[];
+}
+
 const ads: Ad[] = [
   {
     id: 3,
@@ -20,7 +24,7 @@ const ads: Ad[] = [
   },
 ];
 
-export default function ProductAdSlider() {
+export default function AdSlider() {
   const [current, setCurrent] = useState(0);
 
   // Auto slide
@@ -47,7 +51,9 @@ export default function ProductAdSlider() {
             <Image
               src={ad.image}
               alt={ad.title}
-              className="absolute inset-0 w-full h-full object-cover"
+              fill
+              className="object-cover object-top"
+              loading="eager"
             />
 
             {/* Dark overlay */}
