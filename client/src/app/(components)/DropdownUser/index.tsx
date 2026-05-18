@@ -59,7 +59,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
         ref={openRef}
         onClick={() => setOpen((prev) => !prev)}
         className={`flex w-full p-2 gap-2 items-center justify-center cursor-pointer ${
-          open ? "rounded-t-[10px] bg-[#262626] text-white" : ""
+          open ? "rounded-t-[10px] bg-[hsl(359,100%,75%)] text-white" : ""
         }`}
       >
         <Image
@@ -69,34 +69,34 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
           height={8.75}
           alt="User avatar"
         />
-        <span>{user}</span>
+        <span className="hidden md:block">{user}</span>
       </button>
 
       <div
-        className={`absolute right-0 top-full z-1000 flex w-full flex-col items-end rounded-b-[10px] bg-[#262626] shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 ${
+        className={`absolute right-0 z-1000 w-full flex-col items-end rounded-b-[10px] bg-[hsl(359,100%,75%)] shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 w-auto${
           open
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-2.5 opacity-0"
+            ? " flex translate-y-0 opacity-100 "
+            : " hidden -translate-y-2.5 opacity-0"
         }`}
       >
-        <button className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]">
+        <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] hover:bg-[hsl(359,100%,65%)] ">
           {" "}
           <Link href="#">Profile</Link>
         </button>
         {roles.toString() === "ADMIN" && (
-          <button className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]">
+          <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
             {" "}
             <Link href="/dashboard">Dashboard</Link>
           </button>
         )}
 
-        <button className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]">
+        <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
           Settings
         </button>
 
         <button
           onClick={() => handleLogout()}
-          className="cursor-pointer flex w-full justify-end bg-transparent px-3.5 py-2.5 text-white hover:rounded-[10px] hover:bg-[hsl(0,0%,25%)]"
+          className="cursor-pointer flex w-20 sm:w-full text-xs md:text-base bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white rounded-b-[10px] hover:bg-[hsl(359,100%,65%)]"
         >
           Logout
         </button>
