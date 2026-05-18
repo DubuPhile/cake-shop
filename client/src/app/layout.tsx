@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Lobster } from "next/font/google";
 import "./globals.css";
 import Store from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
@@ -7,6 +7,13 @@ import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  preload: false,
+});
+
+const lobster = Lobster({
+  variable: "--font-lobster",
+  subsets: ["latin"],
+  weight: "400",
   preload: false,
 });
 
@@ -29,9 +36,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${lobster.variable} h-full antialiased flex flex-col items-center`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col items-center max-w-7xl">
         <Store>{children}</Store>
         <Toaster position="top-center" />
       </body>
