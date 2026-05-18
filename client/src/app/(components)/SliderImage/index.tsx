@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { useEffect, useState } from "react";
 
 export type Product = {
   id: number;
-  image: string;
+  image: StaticImageData;
   name: string;
   price: number;
 };
@@ -35,7 +35,7 @@ export default function ProductSlider({ products }: SliderProps) {
   };
 
   return (
-    <div className="relative w-[350px] overflow-hidden rounded-2xl shadow-lg mx-auto">
+    <div className="relative w-87.5 overflow-hidden rounded-2xl shadow-lg mx-auto">
       {/* Slider */}
       <div
         className="flex transition-transform duration-500 ease-in-out"
@@ -52,7 +52,7 @@ export default function ProductSlider({ products }: SliderProps) {
             <Image
               src={product.image}
               alt={product.name}
-              className="w-full h-[250px] object-cover"
+              className="w-full h-62.5 object-cover"
             />
 
             <div className="p-4">
@@ -71,14 +71,14 @@ export default function ProductSlider({ products }: SliderProps) {
       {/* Buttons */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-full"
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-full cursor-pointer"
       >
         ←
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-full"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-full cursor-pointer"
       >
         →
       </button>
