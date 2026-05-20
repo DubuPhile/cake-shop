@@ -1,5 +1,6 @@
 import RequiredAuth from "@/app/(components)/RequiredAuth";
 import { Metadata } from "next";
+import DashboardWrapper from "./DashboardWrapper";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -11,5 +12,11 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <RequiredAuth allowedRoles={["ADMIN"]}>{children}</RequiredAuth>;
+  return (
+    <RequiredAuth allowedRoles={["ADMIN"]}>
+      <main className="w-full">
+        <DashboardWrapper>{children}</DashboardWrapper>
+      </main>
+    </RequiredAuth>
+  );
 }
