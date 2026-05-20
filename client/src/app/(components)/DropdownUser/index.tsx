@@ -73,30 +73,31 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
       </button>
 
       <div
-        className={`absolute right-0 z-1000 w-full flex-col items-end rounded-b-[10px] bg-[hsl(359,100%,75%)] shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 w-auto${
+        className={`absolute right-0 z-1000 w-full flex flex-col items-end rounded-b-[10px] bg-[hsl(359,100%,75%)] shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 w-auto${
           open
-            ? " flex translate-y-0 opacity-100 "
-            : " hidden -translate-y-2.5 opacity-0"
+            ? " visible translate-y-0 opacity-100 "
+            : " invisible -translate-y-2.5 opacity-0"
         }`}
       >
-        <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] hover:bg-[hsl(359,100%,65%)] ">
+        <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] hover:bg-[hsl(359,100%,65%)] ">
           {" "}
           <Link href="#">Profile</Link>
         </button>
         {roles.toString() === "ADMIN" && (
-          <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
-            {" "}
-            <Link href="/dashboard">Dashboard</Link>
-          </button>
+          <Link href="/dashboard">
+            <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
+              Dashboard
+            </button>
+          </Link>
         )}
 
-        <button className="cursor-pointer flex text-xs md:text-base w-20 sm:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
+        <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
           Settings
         </button>
 
         <button
           onClick={() => handleLogout()}
-          className="cursor-pointer flex w-20 sm:w-full text-xs md:text-base bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white rounded-b-[10px] hover:bg-[hsl(359,100%,65%)]"
+          className="cursor-pointer flex w-20 md:w-full text-xs md:text-base bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white rounded-b-[10px] hover:bg-[hsl(359,100%,65%)]"
         >
           Logout
         </button>
