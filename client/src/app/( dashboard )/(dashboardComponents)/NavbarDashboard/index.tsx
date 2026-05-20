@@ -26,7 +26,7 @@ export default function Navbar() {
   return (
     <nav className="flex justify-between items-center w-full mb-7">
       {/* LEFT SIDE */}
-      <div className="flex justify-between items-center gap-5">
+      <div className="flex justify-between items-center gap-2 sm:gap-5">
         <button
           className="px-3 py-3 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-100 hover:dark:bg-blue-800"
           onClick={toggleSidebar}
@@ -37,11 +37,11 @@ export default function Navbar() {
           <input
             type="search"
             id="searchBar"
-            placeholder="Start type to search groups & products"
-            className="pl-10 pr-4 py-2 w-50 md:w-60 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-blue-500 focus:dark:border-blue-400 "
+            placeholder="Search Products"
+            className="pl-10 pr-4 py-2 w-50 md:w-60 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-500 rounded-lg focus:outline-none focus:border-blue-500 focus:dark:border-blue-400 "
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Bell className="text-gray-500 dark:text-gray-400" size={20} />
+            <Bell className="text-gray-500 dark:text-gray-50" size={20} />
           </div>
         </div>
       </div>
@@ -70,8 +70,6 @@ export default function Navbar() {
           <hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
         </div>
         <div className="flex items-center gap-3 cursor-pointer">
-          {/* <div className="w-9 h-9">Image</div>
-            <span className="font-semibold">Charlie</span> */}
           {user ? (
             <UserDropdown user={user} />
           ) : (
