@@ -6,6 +6,7 @@ type AuthState = {
   accessToken: string | null;
   roles: string[];
   hasLocalPassword: boolean;
+  isInitialized: boolean;
 };
 
 type SetCredentialsPayload = {
@@ -20,6 +21,7 @@ const initialState: AuthState = {
   accessToken: null,
   roles: [],
   hasLocalPassword: false,
+  isInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -42,11 +44,15 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.roles = [];
       state.hasLocalPassword = false;
+      state.isInitialized = true;
+    },
+    setInitialized: (state) => {
+      state.isInitialized = true;
     },
   },
 });
 
-export const { setCredentials, logOut } = authSlice.actions;
+export const { setCredentials, logOut, setInitialized } = authSlice.actions;
 export default authSlice.reducer;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;
@@ -54,3 +60,4 @@ export const selectCurrentToken = (state: RootState) => state.auth.accessToken;
 export const selectCurrentRoles = (state: RootState) => state.auth.roles;
 export const selectHasLocalPassword = (state: RootState) =>
   state.auth.hasLocalPassword;
+export const isInitialized = (state: RootState) => state.auth.isInitialized;
