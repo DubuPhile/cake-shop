@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Navbar from "../(dashboardComponents)/NavbarDashboard";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -6,5 +7,10 @@ export const metadata: Metadata = {
 };
 
 export default function Dashboard() {
-  return <div>Dashboard</div>;
+  return (
+    <div>
+      <Navbar />
+      <h2>Dashboard</h2>
+    </div>
+  );
 }
