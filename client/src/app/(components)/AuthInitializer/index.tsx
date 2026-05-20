@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRefreshMutation } from "@/redux/features/userAuth";
 import { useAppDispatch } from "@/redux/store";
-import { setCredentials } from "@/redux/state/auth";
+import { setCredentials, setInitialized } from "@/redux/state/auth";
 import { jwtDecode } from "jwt-decode";
 import { MyTokenPayload } from "@/app/( auth )/login/page";
 
@@ -27,6 +27,8 @@ export default function AuthInitializer() {
         );
       } catch (err) {
         console.log(err);
+      } finally {
+        dispatch(setInitialized());
       }
     };
 
