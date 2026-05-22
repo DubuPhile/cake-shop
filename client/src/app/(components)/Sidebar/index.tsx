@@ -63,7 +63,11 @@ export default function Sidebar() {
   const sidebarClassNames = `fixed flex flex-col ${isSideBarCollapsed ? "w-0 md:w-16" : "w-72 md:w-64"} bg-white dark:bg-gray-800 transition-all duration-300 overflow-hidden h-full shadow-md z-40`;
 
   return (
-    <main className={sidebarClassNames}>
+    <main
+      className={sidebarClassNames}
+      onMouseEnter={() => dispatch(setIsSidebarCollapsed(false))}
+      onMouseLeave={() => dispatch(setIsSidebarCollapsed(true))}
+    >
       {/* TOP LOGO */}
       <div
         className={`flex gap-3 justify-between md:justify-normal items-center pt-8 ${isSideBarCollapsed ? "px-3" : "px-8"}`}
