@@ -38,6 +38,7 @@ model Users {
   updatedAt       DateTime  @updatedAt
 
   trustedDevices TrustedDevice[]
+  reviews         Review[]
 }
 
 model Otp {
@@ -70,4 +71,31 @@ model TrustedDevice {
   user Users @relation(fields: [userId], references: [userId])
 
   @@index([userId])
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  price       Float
+
+  reviews     Review[]
+}
+
+model Review {
+  id          String   @id @default(cuid())
+
+  rating      Int
+  comment     String?
+
+  userId      String
+  productId   String
+
+  user         Users     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, productId])
 }
