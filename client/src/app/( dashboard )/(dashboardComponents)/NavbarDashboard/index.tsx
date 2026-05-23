@@ -28,7 +28,7 @@ export default function Navbar() {
       {/* LEFT SIDE */}
       <div className="flex justify-between items-center gap-2 sm:gap-5">
         <button
-          className="px-3 py-3 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-100 hover:dark:bg-blue-800"
+          className="md:hidden px-3 py-3 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-100 hover:dark:bg-blue-800"
           onClick={toggleSidebar}
         >
           <Menu className="w-4 h-4" />
