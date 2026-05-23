@@ -81,7 +81,7 @@ export default function Sidebar() {
           priority
         />
         <span
-          className={`${isSideBarCollapsed ? "hidden" : "block"} font-lobster text-transparent bg-linear-to-r from-[#510424] dark:from-[#fcf6f8] via-[#f6339a] to-[hsl(359,100%,75%)] text-md md:text-lg bg-clip-text`}
+          className={`${isSideBarCollapsed ? "hidden" : "block"} font-lobster text-transparent bg-linear-to-r from-[#510424] dark:from-[#fcf6f8] via-[#f6339a] to-[hsl(359,100%,75%)] text-md md:text-lg bg-clip-text whitespace-nowrap`}
         >
           Amiel Cake Shop
         </span>
@@ -115,7 +115,7 @@ export default function Sidebar() {
           isCollapsed={isSideBarCollapsed}
         />
         <SidebarLink
-          href="/users"
+          href="/dashboard/users"
           icon={User}
           label="Users"
           isCollapsed={isSideBarCollapsed}
