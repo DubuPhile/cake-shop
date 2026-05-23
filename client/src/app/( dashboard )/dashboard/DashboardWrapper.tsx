@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "@/app/( dashboard )/(dashboardComponents)/NavbarDashboard";
-import Sidebar from "@/app/(components)/Sidebar";
+import Sidebar from "@/app/( dashboard )/(dashboardComponents)/Sidebar";
 import { useAppSelector } from "@/redux/store";
 import { useEffect } from "react";
 
