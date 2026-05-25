@@ -4,9 +4,30 @@ import { useGetUsersQuery } from "@/redux/features/adminAuth";
 import Header from "@/app/( dashboard )/(dashboardComponents)/Header";
 import { DataGrid } from "@mui/x-data-grid";
 import { GridColDef } from "@mui/x-data-grid";
+import Image from "next/image";
+import Default from "../../../../../public/default-avatar.png";
 
 const columns: GridColDef[] = [
   { field: "userId", headerName: "ID", width: 90 },
+  {
+    field: "avatar",
+    headerName: "Avatar",
+    width: 60,
+    sortable: false,
+    renderCell: (params) => {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Image
+            src={params.row.avatar || Default}
+            alt={params.row.name}
+            width={40}
+            height={40}
+            className="rounded-full object-cover border"
+          />
+        </div>
+      );
+    },
+  },
   { field: "name", headerName: "User Name", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
 ];
