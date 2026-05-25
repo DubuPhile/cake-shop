@@ -34,6 +34,12 @@ export default function ForgotPassword() {
   const [verify, { isLoading: loadVerify }] = useVerifyOTPMutation();
   const [verifyEmail, setVerifyEmail] = useState<VerifyOTP | undefined>();
 
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
+
   useEffect(() => {
     setErrorMsg("");
   }, [email, newPwd, confirmPwd]);
@@ -105,7 +111,9 @@ export default function ForgotPassword() {
         {loadResetOtp || loadResetPwd || loadVerify ? (
           <Spinner />
         ) : (
-          <div className="w-100vw w-125 max-w-125 flex items-center justify-center">
+          <div
+            className={`w-100vw w-125 max-w-125 flex items-center justify-center transition-all duration-500 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
             <div className="w-100 flex flex-col items-center justify-center bg-gray-50 rounded-2xl drop-shadow-lg">
               <h1 className="mt-10 mb-8 text-2xl font-bold">Forgot Password</h1>
               {errorMsg && (
