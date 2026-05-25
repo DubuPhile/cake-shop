@@ -42,6 +42,12 @@ export default function login() {
   const [login, { isLoading: LoadLogin, isSuccess }] = useLoginMutation();
   const [verOtp, { isLoading: LoadVerify }] = useVerifyOTPMutation();
 
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
+
   useEffect(() => {
     setErrMsg("");
   }, [user, pwd]);
@@ -111,7 +117,9 @@ export default function login() {
         {LoadLogin || LoadVerify ? (
           <Spinner />
         ) : (
-          <div className="w-100vw w-125 max-w-125 flex items-center justify-center">
+          <div
+            className={`w-100vw w-125 max-w-125 flex items-center justify-center transition-all duration-500 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
             <div className="w-100 flex flex-col items-center justify-center bg-gray-50 rounded-2xl drop-shadow-lg">
               <h1 className="my-10 text-2xl font-bold">Log-in</h1>
               {errMsg && (
