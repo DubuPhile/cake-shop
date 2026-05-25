@@ -41,8 +41,10 @@ export default function Navbar() {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setDropdownOpen(false);
-      }
-      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
+      } else if (
+        mobileRef.current &&
+        !mobileRef.current.contains(e.target as Node)
+      ) {
         setMobileOpen(false);
       }
     };
