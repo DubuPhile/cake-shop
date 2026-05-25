@@ -36,16 +36,13 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (
+      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
+        setMobileOpen(false);
+      } else if (
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setDropdownOpen(false);
-      } else if (
-        mobileRef.current &&
-        !mobileRef.current.contains(e.target as Node)
-      ) {
-        setMobileOpen(false);
       }
     };
 
