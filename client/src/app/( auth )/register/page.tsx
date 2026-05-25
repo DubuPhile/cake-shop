@@ -26,6 +26,12 @@ export default function Register() {
   const [register, { isLoading: LoadRegister }] = useRegisterMutation();
   const [verify, { isLoading: LoadVerify }] = useVerifyOTPMutation();
 
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
+
   useEffect(() => {
     setErrorMsg("");
   }, [user, pwd]);
@@ -72,7 +78,9 @@ export default function Register() {
   return (
     <>
       <div className="flex items-center justify-center h-screen">
-        <div className="w-100vw w-125 max-w-125 flex items-center justify-center">
+        <div
+          className={`w-100vw w-125 max-w-125 flex items-center justify-center transition-all duration-500 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
           {LoadRegister || LoadVerify ? (
             <Spinner />
           ) : (
