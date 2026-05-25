@@ -17,12 +17,13 @@ import UserDropdown from "../DropdownUser";
 import Image from "next/image";
 import icon from "@/app/icon.png";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const mobileRef = useRef<HTMLDivElement | null>(null);
 
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
@@ -32,6 +33,26 @@ export default function Navbar() {
   };
 
   const { user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
+        setMobileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <nav className="flex flex-col">
@@ -123,7 +144,7 @@ export default function Navbar() {
           <div className="hidden items-center gap-8 lg:flex">
             <Link
               href="/"
-              className="font-medium text-gray-700 transition hover:text-pink-500"
+              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
             >
               Home
             </Link>
@@ -131,7 +152,7 @@ export default function Navbar() {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-1 font-medium text-gray-700 transition hover:text-pink-500"
+                className="flex items-center gap-1 font-medium text-gray-700 transition hover:scale-110 hover:text-pink-500"
               >
                 Cakes
                 <ChevronDown
@@ -157,7 +178,7 @@ export default function Navbar() {
                     ].map((cake) => (
                       <button
                         key={cake}
-                        className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:bg-pink-50 hover:text-pink-600"
+                        className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:scale-110 hover:bg-pink-50 hover:text-pink-600"
                       >
                         {cake}
                       </button>
@@ -169,28 +190,28 @@ export default function Navbar() {
 
             <Link
               href="/custom-cake"
-              className="font-medium text-gray-700 transition hover:text-pink-500"
+              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
             >
               Custom Cake
             </Link>
 
             <Link
               href="/gallery"
-              className="font-medium text-gray-700 transition hover:text-pink-500"
+              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
             >
               Gallery
             </Link>
 
             <Link
               href="/about"
-              className="font-medium text-gray-700 transition hover:text-pink-500"
+              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
             >
               About
             </Link>
           </div>
 
           <div className="hidden items-center gap-4 lg:flex">
-            <button className="rounded-full border border-pink-200 p-3 transition hover:bg-pink-50 cursor-pointer">
+            <button className="rounded-full border border-pink-200 p-3 transition hover:scale-110 hover:bg-pink-50 cursor-pointer">
               <ShoppingBag className="h-5 w-5 text-pink-600" />
             </button>
 
@@ -212,6 +233,7 @@ export default function Navbar() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
+              ref={mobileRef}
               className="overflow-hidden border-t border-pink-100 bg-[#FFF8F3] lg:hidden"
             >
               <div className="fixed flex flex-col right-0 gap-4 p-6 z-10 border-pink-100 bg-[#FFF8F3] drop-shadow-md">
