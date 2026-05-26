@@ -12,7 +12,24 @@ const safeUserSelect = {
 
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    const search = req.query.search?.toString();
     const users = await prisma.users.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search ?? "",
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search ?? "",
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
       select: safeUserSelect,
     });
     res.json(users);
