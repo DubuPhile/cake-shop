@@ -28,6 +28,8 @@ model Users {
   userId          String    @id @default(uuid())
   name            String
   password        String
+  avatar          String?
+  isBlocked       Boolean   @default(false)
   email           String    @unique
   isAdmin         Boolean   @default(false)
   roles           Role      @default(USER)
