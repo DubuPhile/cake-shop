@@ -76,12 +76,25 @@ model TrustedDevice {
 }
 
 model Product {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  price       Float
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  image       String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
-  reviews     Review[]
+  sizes       ProductSize[]
+  review      Review[]
+}
+
+model ProductSize {
+  id          String   @id @default(uuid())
+  size        String   // "Small", "Medium", "Large"
+  price       Float
+  stock       Int      @default(0)
+
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Review {
