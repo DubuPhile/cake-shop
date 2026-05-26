@@ -133,7 +133,7 @@ export default function login() {
               >
                 <div className="group flex flex-col gap w-70">
                   <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                     htmlFor="username"
                   >
                     Username/Email
@@ -151,14 +151,14 @@ export default function login() {
                 </div>
                 <div className="group relative flex flex-col gap w-70">
                   <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                     htmlFor="password"
                   >
                     Password
                   </label>
                   <div className="flex flex-row">
                     <input
-                      className="px-3 py-2 rounded-2xl border border-gray-300 w-70"
+                      className="px-3 py-2 rounded-2xl border border-gray-300 w-70 "
                       type={`${showPwd ? "text" : "password"}`}
                       id="password"
                       autoComplete="off"
