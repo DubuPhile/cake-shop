@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Avatar from "../../../../public/default-avatar.png";
 import { useLogoutMutation } from "@/redux/features/userAuth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCredentials } from "@/redux/state/auth";
 import toast from "react-hot-toast";
+import useOutsideClick from "@/hook/useOutsideClick";
 
 type UserDropdownProps = {
   user: string | null;
@@ -39,19 +40,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
     }
   };
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (openRef.current && !openRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+  useOutsideClick({ ref: openRef, callback: () => setOpen(false) });
 
   return (
     <div className="relative inline-block w-full ">
