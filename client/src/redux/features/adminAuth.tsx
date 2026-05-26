@@ -8,8 +8,11 @@ export interface User {
 
 export const AdminAuthSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], void>({
-      query: () => "/admin/get-user",
+    getUsers: builder.query<User[], string | void>({
+      query: (search) => ({
+        url: "/admin/get-user",
+        params: search ? { search } : {},
+      }),
       providesTags: ["Users"],
     }),
   }),
