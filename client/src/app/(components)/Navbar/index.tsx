@@ -17,7 +17,8 @@ import UserDropdown from "../DropdownUser";
 import Image from "next/image";
 import icon from "@/app/icon.png";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import useOutsideClick from "@/hook/useOutsideClick";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,24 +35,8 @@ export default function Navbar() {
 
   const { user } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
-        setMobileOpen(false);
-      } else if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+  useOutsideClick({ ref: mobileRef, callback: () => setMobileOpen(false) });
+  useOutsideClick({ ref: dropdownRef, callback: () => setDropdownOpen(false) });
 
   return (
     <nav className="flex flex-col">
@@ -151,7 +136,7 @@ export default function Navbar() {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-1 font-medium text-gray-700 transition hover:scale-110 hover:text-pink-500"
+                className="flex items-center gap-1 font-medium text-gray-700 transition hover:scale-110 hover:text-pink-500 cursor-pointer"
               >
                 Cakes
                 <ChevronDown
@@ -177,7 +162,7 @@ export default function Navbar() {
                     ].map((cake) => (
                       <button
                         key={cake}
-                        className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:scale-110 hover:bg-pink-50 hover:text-pink-600"
+                        className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:scale-110 hover:bg-pink-50 hover:text-pink-600 cursor-pointer"
                       >
                         {cake}
                       </button>
