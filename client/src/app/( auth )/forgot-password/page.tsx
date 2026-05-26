@@ -132,13 +132,13 @@ export default function ForgotPassword() {
                   </p>
                   <div className="group flex flex-col gap w-70">
                     <label
-                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${email ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${email ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                       htmlFor="email"
                     >
                       Email
                     </label>
                     <input
-                      className="group px-3 py-2 rounded-2xl border border-gray-300"
+                      className="group px-3 py-2 rounded-2xl border border-gray-300 cursor-text"
                       type="text"
                       id="email"
                       autoComplete="off"
@@ -150,7 +150,7 @@ export default function ForgotPassword() {
                   <div className="flex w-70 my-5 items-center justify-between">
                     <Link
                       href={"/login"}
-                      className="transition-all duration-300 hover:scale-110 hover:text-gray-700"
+                      className="transition-all duration-300 hover:scale-110 hover:text-gray-700 hover:bg-gray-200 rounded-3xl px-4 py-2"
                     >
                       Cancel
                     </Link>
@@ -173,7 +173,7 @@ export default function ForgotPassword() {
                   </p>
                   <div className="group relative flex flex-col gap w-70">
                     <label
-                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${newPwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${newPwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                       htmlFor="new-password"
                     >
                       New Password
@@ -199,7 +199,7 @@ export default function ForgotPassword() {
 
                   <div className="group relative flex flex-col gap w-70">
                     <label
-                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${confirmPwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                      className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${confirmPwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                       htmlFor="confirm-password"
                     >
                       Confirm Password
@@ -233,7 +233,7 @@ export default function ForgotPassword() {
                   <div className="flex w-70 my-5 items-center justify-between">
                     <button
                       type="button"
-                      className="transition-all duration-300 hover:scale-110 hover:text-gray-700"
+                      className="transition-all duration-300 hover:scale-110 hover:text-gray-700 hover:bg-gray-200 rounded-3xl px-4 py-2"
                       onClick={() => setIsVerify(false)}
                     >
                       Cancel
