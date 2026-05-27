@@ -78,6 +78,7 @@ model TrustedDevice {
 model Product {
   id          String         @id @default(uuid())
   name        String
+  category    String
   description String?
   image       String?
   createdAt   DateTime       @default(now())
