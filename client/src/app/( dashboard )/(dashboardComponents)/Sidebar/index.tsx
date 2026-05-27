@@ -109,7 +109,7 @@ export default function Sidebar() {
           isCollapsed={isSideBarCollapsed}
         />
         <SidebarLink
-          href="/products"
+          href="/dashboard/products"
           icon={Clipboard}
           label="Products"
           isCollapsed={isSideBarCollapsed}
