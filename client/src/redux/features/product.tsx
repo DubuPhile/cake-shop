@@ -16,7 +16,7 @@ export interface Products {
   sizes: ProductSize[];
 }
 
-export const AdminAuthSlice = api.injectEndpoints({
+export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query<Products[], string | void>({
       query: (search) => ({
@@ -29,4 +29,4 @@ export const AdminAuthSlice = api.injectEndpoints({
   }),
 });
 
-export const { useGetAllProductsQuery } = AdminAuthSlice;
+export const { useGetAllProductsQuery } = ProductSlice;
