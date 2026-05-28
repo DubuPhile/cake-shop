@@ -6,6 +6,16 @@ export interface ProductSize {
   price: number;
   stock: number;
 }
+type User = {
+  name: string;
+  avatar: string;
+};
+
+export interface ProductReview {
+  rating: number;
+  comment: string;
+  userId: User[];
+}
 
 export interface Products {
   id: string;
@@ -13,16 +23,25 @@ export interface Products {
   category: string;
   description: string;
   image: string;
+  rating: number;
   sizes: ProductSize[];
+  review: ProductReview[];
 }
+type ProductQueryParams = {
+  search?: string;
+  category?: string;
+};
 
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProducts: builder.query<Products[], string | void>({
-      query: (search) => ({
+    getAllProducts: builder.query<Products[], ProductQueryParams | void>({
+      query: (params) => ({
         url: "/product/getAll",
         method: "GET",
-        params: search ? { search } : {},
+        params: {
+          search: params?.search,
+          category: params?.category,
+        },
       }),
       providesTags: ["Products"],
     }),
