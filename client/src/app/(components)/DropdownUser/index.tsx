@@ -68,16 +68,14 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
             : " invisible -translate-y-2.5 opacity-0"
         }`}
       >
-        <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] hover:bg-[hsl(359,100%,65%)] ">
+        <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] md:rounded-tl-none hover:bg-[hsl(359,100%,65%)] ">
           {" "}
           <Link href="#">Profile</Link>
         </button>
         {roles.toString() === "ADMIN" && (
-          <Link href="/dashboard">
-            <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
-              Dashboard
-            </button>
-          </Link>
+          <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
+            <Link href="/dashboard">Dashboard</Link>
+          </button>
         )}
 
         <button className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,75%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,65%)]">
