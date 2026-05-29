@@ -103,10 +103,13 @@ export default function CreateProductModal() {
                   </label>
                   <select
                     id="category"
-                    value={category || "others"}
+                    value={othercategory ? "others" : category}
                     onChange={handleCategory}
                     className="bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded-lg font-semibold text-gray-700"
                   >
+                    <option className="font-semibold text-gray-700" value="">
+                      Select
+                    </option>
                     <option
                       className="font-semibold text-gray-700"
                       value="cakes"
@@ -134,7 +137,7 @@ export default function CreateProductModal() {
                       placeholder="others"
                       onChange={(e) => setCategory(e.target.value)}
                       value={category}
-                      className="px-2 py-2 rounded-lg border border-gray-400"
+                      className="w-35 px-2 py-2 rounded-lg border border-gray-400"
                     />
                   ) : (
                     ""
@@ -149,7 +152,7 @@ export default function CreateProductModal() {
             </div>
             <button
               type="submit"
-              className="relative my-2 md:absolute top-0 right-0 bg-green-300 hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold drop-shadow-lg cursor-pointer"
+              className="relative my-2 md:absolute top-0 right-0 bg-green-300 hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold drop-shadow-lg cursor-pointer text-gray-700"
             >
               Create Product
             </button>
