@@ -34,7 +34,7 @@ export default function MultiImageUpload({
 
   return (
     <div className="relative w-full md:w-87.5 rounded-xl bg-gray-100 p-4">
-      <h2 className="font-semibold mb-4 w-full flex justify-center">
+      <h2 className="font-semibold mb-4 w-full flex justify-center text-gray-700">
         Upload Image
       </h2>
 
