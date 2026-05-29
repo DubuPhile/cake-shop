@@ -17,7 +17,7 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base">
+      <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base text-gray-700">
         <h3>Size</h3>
         <h3>Price</h3>
       </div>
@@ -56,7 +56,7 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
           <button
             type="button"
             onClick={() => removeSize(index)}
-            className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-lg w-22 text-xs md:text-base drop-shadow-lg font-semibold"
+            className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-lg w-22 text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold"
           >
             Remove
           </button>
@@ -66,7 +66,7 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
       <button
         type="button"
         onClick={addSize}
-        className="bg-green-300  hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-lg text-xs md:text-base drop-shadow-lg font-semibold"
+        className="bg-green-300 hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-lg text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold"
       >
         Add Size
       </button>
