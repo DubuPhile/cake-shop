@@ -13,6 +13,7 @@ import { useDebounce } from "@/hook/useDebounce";
 import Spinner from "@/app/(components)/Spinner";
 import Rating from "@/app/(components)/Rating";
 import CreateProductModal from "../../(dashboardComponents)/CreateProductModal";
+import ProductOption from "../../(dashboardComponents)/ProductOption";
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -87,12 +88,14 @@ export default function Products() {
           <Spinner />
         ) : (
           products?.map((product) => (
-            <Link
-              href={`/dashboard/products/${product.id}`}
+            <div
               key={product.id}
-              className={`border border-gray-200 dark:border-gray-700 shadow rounded-md p-4 max-w-full w-full mx-auto `}
+              className={`relative border border-gray-200 dark:border-gray-700 shadow rounded-md p-4 max-w-full w-full mx-auto `}
             >
-              <div className="flex flex-col items-center">
+              <Link
+                href={`/dashboard/products/${product.id}`}
+                className="flex flex-col items-center"
+              >
                 <img
                   src={product.image.find((img) => img.isPrimary)?.url}
                   alt={product.name}
@@ -110,8 +113,9 @@ export default function Products() {
                 <div className="flex items-center mt-2">
                   <Rating rating={product.rating} />
                 </div>
-              </div>
-            </Link>
+              </Link>
+              <ProductOption productId={product.id} />
+            </div>
           ))
         )}
       </div>
