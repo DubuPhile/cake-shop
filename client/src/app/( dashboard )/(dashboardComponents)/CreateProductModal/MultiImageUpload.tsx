@@ -4,15 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 
 type MultiImageUploadProps = {
-  setImages: React.Dispatch<React.SetStateAction<string[]>>;
-  images: string[];
+  setImages: React.Dispatch<React.SetStateAction<File[]>>;
 };
 
-export default function MultiImageUpload({
-  setImages,
-  images,
-}: MultiImageUploadProps) {
+export default function MultiImageUpload({ setImages }: MultiImageUploadProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -22,9 +19,11 @@ export default function MultiImageUpload({
 
     const files = Array.from(e.target.files);
 
+    setImages((prev) => [...prev, ...files]);
+
     const imageUrls = files.map((file) => URL.createObjectURL(file));
 
-    setImages((prev) => [...prev, ...imageUrls]);
+    setPreviewUrls((prev) => [...prev, ...imageUrls]);
 
     // set first image as preview
     if (!selectedImage && imageUrls.length > 0) {
@@ -60,7 +59,7 @@ export default function MultiImageUpload({
 
       {/* Thumbnail List */}
       <div className="flex gap-2 mt-4 w-full md:w-[320px] overflow-auto">
-        {images.map((img, index) => (
+        {previewUrls.map((img, index) => (
           <div key={index} className="relative">
             <button
               type="button"
