@@ -1,21 +1,18 @@
 "use client";
 
 import { PlusCircleIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "@/app/( dashboard )/(dashboardComponents)/Header";
-import { useGetAllProductsQuery } from "@/redux/features/product";
+import {
+  useCreateProductMutation,
+  useGetAllProductsQuery,
+} from "@/redux/features/product";
 import SearchInput from "@/app/(components)/SearchInput";
 import Link from "next/link";
 import { useDebounce } from "@/hook/useDebounce";
 import Spinner from "@/app/(components)/Spinner";
 import Rating from "@/app/(components)/Rating";
-
-type ProductFormData = {
-  name: string;
-  price: number;
-  rating?: number;
-  stockQuantity: number;
-};
+import CreateProductModal from "../../(dashboardComponents)/CreateProductModal";
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -23,14 +20,12 @@ export default function Products() {
   const [category, setCategory] = useState<string>("");
   const debounceSearch = useDebounce({ value: searchTerm, delay: 300 });
 
-  //const [createProduct] = useCreateProductMutation();
+  const [createProduct] = useCreateProductMutation();
   const {
     data: products,
     isLoading,
     isError,
   } = useGetAllProductsQuery({ search: debounceSearch, category: category });
-
-  console.log(products);
 
   if (isError || !products) {
     return (
@@ -40,9 +35,9 @@ export default function Products() {
     );
   }
 
-  // const handleCreateProduct = async (productData: ProductFormData) => {
-  //   await createProduct(productData);
-  // };
+  const handleCreateProduct = async (productData: FormData) => {
+    await createProduct(productData);
+  };
 
   return (
     <main className="mx-auto pb-10 w-full h-[85vh] min-h-[85vh] ">
@@ -99,7 +94,7 @@ export default function Products() {
             >
               <div className="flex flex-col items-center">
                 <img
-                  src={product.image}
+                  src={product.image.find((img) => img.isPrimary)?.url}
                   alt={product.name}
                   className="h-40 object-cover"
                 />
@@ -122,13 +117,13 @@ export default function Products() {
       </div>
 
       {/* MODAL */}
-      {/* {isModalOpen && (
+      {isModalOpen && (
         <CreateProductModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onCreate={handleCreateProduct}
         />
-      )} */}
+      )}
     </main>
   );
 }
