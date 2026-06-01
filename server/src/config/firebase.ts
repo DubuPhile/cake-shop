@@ -1,10 +1,11 @@
 import admin from "firebase-admin";
 import fs from "fs";
+import path from "path";
 
 const serviceAccountPath =
   process.env.NODE_ENV === "production"
     ? "/etc/secrets/FirebaseKey.json"
-    : "../../FirebaseKey.json";
+    : path.join(process.cwd(), "FirebaseKey.json");
 
 const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf-8"));
 
