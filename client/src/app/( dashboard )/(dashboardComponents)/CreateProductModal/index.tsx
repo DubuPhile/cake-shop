@@ -5,26 +5,31 @@ import { CircleX } from "lucide-react";
 import React, { useState } from "react";
 import MultiImageUpload from "./MultiImageUpload";
 import Sizes from "./Sizes";
-
-export type Sizes = {
-  size: string;
-  price: string;
-};
+import { sizes } from "@/redux/features/product";
 
 type form = {
   prodName: string;
   description: string;
 };
 
-export default function CreateProductModal() {
-  const [images, setImages] = useState<string[]>([]);
+export interface CreateProdModal {
+  onClose: () => void;
+  isOpen: Boolean;
+  onCreate: (productData: FormData) => Promise<void>;
+}
+export default function CreateProductModal({
+  isOpen,
+  onClose,
+  onCreate,
+}: CreateProdModal) {
+  const [images, setImages] = useState<File[]>([]);
 
   const [form, setForm] = useState<form>({
     prodName: "",
     description: "",
   });
 
-  const [sizes, setSizes] = useState<Sizes[]>([
+  const [sizes, setSizes] = useState<sizes[]>([
     {
       size: "",
       price: "",
@@ -32,6 +37,29 @@ export default function CreateProductModal() {
   ]);
   const [category, setCategory] = useState<string>("");
   const [othercategory, setOtherCategory] = useState<boolean>(false);
+
+  const handleCreateProd = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+
+      if (!images) return alert("no image");
+
+      const formData = new FormData();
+      formData.append("name", form.prodName);
+      formData.append("category", category);
+      formData.append("description", form.description);
+      formData.append("sizes", JSON.stringify(sizes));
+
+      images.forEach((image) => {
+        formData.append("image", image);
+      });
+
+      onCreate(formData);
+      onClose();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.target.value === "others"
@@ -49,6 +77,8 @@ export default function CreateProductModal() {
     }));
   };
 
+  if (!isOpen) return null;
+
   const labelCSS =
     "block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 font-semibold";
   const inputCSS =
@@ -59,14 +89,17 @@ export default function CreateProductModal() {
         <div className="bg-gray-100 rounded-t-md py-3 px-3 drop-shadow-lg">
           <Header name={"Create New Product"} />
           <button
-            //onClick={onClose}
+            onClick={onClose}
             className="absolute top-0 right-0 mx-4 my-4 cursor-pointer rounded-full"
           >
             <CircleX className="w-4 h-4 md:w-7 md:h-7 text-gray-800 hover:bg-red-400 rounded-full" />
           </button>
         </div>
         <div className="flex justify-center m-2">
-          <form className="relative m-5 w-full max-w-200">
+          <form
+            className="relative m-5 w-full max-w-200"
+            onSubmit={handleCreateProd}
+          >
             <div className="md:flex justify-between gap-2">
               <div>
                 <label htmlFor="prodName" className={labelCSS}>
@@ -147,7 +180,7 @@ export default function CreateProductModal() {
                 <Sizes sizes={sizes} setSizes={setSizes} />
               </div>
               <div className="my-2 md:mt-20 ">
-                <MultiImageUpload setImages={setImages} images={images} />
+                <MultiImageUpload setImages={setImages} />
               </div>
             </div>
             <button
