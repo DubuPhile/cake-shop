@@ -9,7 +9,7 @@ interface OTPModalProps {
   isOpen: boolean;
   onClose: () => void;
   verifyData: VerifyOTP | undefined;
-  verifyOtp: any;
+  verifyOtp: (otpValue: string) => Promise<void>;
 }
 
 export interface VerifyOTP {
