@@ -63,3 +63,24 @@ export const VerifyResetPwd = z.object({
     .min(6, "Password must be at least 8 characters")
     .max(72, "Password is too long"),
 });
+
+export const createProductSchema = z.object({
+  name: z.string(),
+  category: z.string(),
+  description: z.string(),
+
+  sizes: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        return JSON.parse(val);
+      }
+      return val;
+    },
+    z.array(
+      z.object({
+        size: z.string(),
+        price: z.coerce.number(), // ✅ auto converts "55" → 55
+      }),
+    ),
+  ),
+});
