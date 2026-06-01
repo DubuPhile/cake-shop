@@ -89,12 +89,12 @@ export default function login() {
     }
   };
 
-  const handleVerifyOtp = async (otp: number) => {
+  const handleVerifyOtp = async (otp: string) => {
     if (!verify) return;
 
     const success = await verOtp({
       purpose: verify?.purpose,
-      otpCode: otp,
+      otpCode: Number(otp),
       email: verify?.email,
     }).unwrap();
 
