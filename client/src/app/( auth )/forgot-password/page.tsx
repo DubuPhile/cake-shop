@@ -91,12 +91,12 @@ export default function ForgotPassword() {
     }
   };
 
-  const verifyOtp = async (otp: number) => {
+  const verifyOtp = async (otp: string) => {
     if (!verifyEmail) return;
 
     const success = await verify({
       purpose: verifyEmail.purpose,
-      otpCode: otp,
+      otpCode: Number(otp),
       email: verifyEmail.email,
     }).unwrap();
 
