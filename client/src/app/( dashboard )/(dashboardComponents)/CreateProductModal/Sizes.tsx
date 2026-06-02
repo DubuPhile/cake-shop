@@ -8,7 +8,7 @@ type sizesProps = {
 
 export default function Sizes({ sizes, setSizes }: sizesProps) {
   const addSize = () => {
-    setSizes([...sizes, { size: "", price: "" }]);
+    setSizes([...sizes, { size: "", price: 0 }]);
   };
 
   const removeSize = (index: number) => {
@@ -47,7 +47,7 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
             value={item.price}
             onChange={(e) => {
               const updated = [...sizes];
-              updated[index].price = e.target.value;
+              updated[index].price = Number(e.target.value);
               setSizes(updated);
             }}
             className="border p-2 rounded-lg border-gray-400 "
