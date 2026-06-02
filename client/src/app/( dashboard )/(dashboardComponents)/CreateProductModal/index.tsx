@@ -2,7 +2,7 @@
 
 import Header from "@/app/( dashboard )/(dashboardComponents)/Header";
 import { CircleX } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MultiImageUpload from "./MultiImageUpload";
 import Sizes from "./Sizes";
 import { sizes } from "@/redux/features/product";
@@ -22,6 +22,7 @@ export default function CreateProductModal({
   onClose,
   onCreate,
 }: CreateProdModal) {
+  const [show, setShow] = useState(false);
   const [images, setImages] = useState<File[]>([]);
 
   const [form, setForm] = useState<form>({
@@ -32,11 +33,26 @@ export default function CreateProductModal({
   const [sizes, setSizes] = useState<sizes[]>([
     {
       size: "",
-      price: "",
+      price: 0,
     },
   ]);
   const [category, setCategory] = useState<string>("");
   const [othercategory, setOtherCategory] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => {
+        setShow(true);
+      });
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setShow(false);
+    setTimeout(() => {
+      onClose();
+    }, 500);
+  };
 
   const handleCreateProd = (e: React.SyntheticEvent<HTMLFormElement>) => {
     try {
@@ -55,7 +71,7 @@ export default function CreateProductModal({
       });
 
       onCreate(formData);
-      onClose();
+      handleClose();
     } catch (err) {
       console.log(err);
     }
@@ -85,11 +101,17 @@ export default function CreateProductModal({
     "block w-[80%] md:w-full max-w-75 mb-2 p-2 border-gray-400 border rounded-md text-xs md:text-base";
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex justify-center h-full w-full z-50">
-      <div className="relative my-10 w-[90%] shadow-lg rounded-md bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto">
+      <div
+        className={`relative my-10 w-[90%] shadow-lg rounded-md bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto transition-all duration-500 ${
+          show
+            ? "scale-100 translate-y-0 opacity-100"
+            : "scale-95 translate-y-4 opacity-0"
+        }`}
+      >
         <div className="bg-gray-100 rounded-t-md py-3 px-3 drop-shadow-lg">
           <Header name={"Create New Product"} />
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-0 right-0 mx-4 my-4 cursor-pointer rounded-full"
           >
             <CircleX className="w-4 h-4 md:w-7 md:h-7 text-gray-800 hover:bg-red-400 rounded-full" />
