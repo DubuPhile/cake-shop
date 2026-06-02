@@ -90,8 +90,6 @@ export const createProduct = async (
     const { name, category, description, sizes } = req.body as ProductData;
     const files = (req.files as Express.Multer.File[]) || [];
 
-    console.log(req.body);
-
     if (!userId) throw new Error("Unauthorized");
     const foundUser = await prisma.users.findUnique({
       where: {
@@ -151,5 +149,84 @@ export const createProduct = async (
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error create Product server!" });
+  }
+};
+
+interface ProductParams {
+  id: string;
+}
+
+export const getProductStock = async (
+  req: Request<ProductParams>,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    if (!id || Array.isArray(id)) {
+      res.status(400).json({
+        message: "Invalid product id",
+      });
+      return;
+    }
+    const stock = await prisma.productSize.findMany({
+      where: {
+        productId: id,
+      },
+    });
+    if (stock.length === 0 || !stock) {
+      res.status(404).json({ message: "Product not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, data: stock, message: "Product stocks!" });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error Server getProductStock" });
+  }
+};
+
+type UpdateStock = {
+  id: string;
+  price: number;
+  stock: number;
+};
+
+export const updateStocks = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const sizes = req.body as UpdateStock[];
+    if (sizes.length === 0 || !sizes) {
+      res.status(400).json({ message: "Invalid Sizes" });
+    }
+    const data = await prisma.$transaction(
+      sizes.map((s) =>
+        prisma.productSize.update({
+          where: { id: s.id },
+          data: {
+            stock: s.stock,
+            price: s.price,
+          },
+        }),
+      ),
+    );
+    res
+      .status(200)
+      .json({ success: true, data: data, message: "Update Stock Success!" });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error updateStock server" });
   }
 };
