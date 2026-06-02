@@ -1,11 +1,18 @@
 import { api } from "@/redux/state/api";
 
-export interface ProductSize {
+export type ProductSize = {
   id: string;
   size: string;
   price: number;
   stock: number;
+  productId?: string;
+};
+export interface ProductStock {
+  data: ProductSize[];
+  success: boolean;
+  message: string;
 }
+
 type User = {
   name: string;
   avatar: string;
@@ -34,13 +41,22 @@ type ProductQueryParams = {
 
 export type sizes = {
   size: string;
-  price: string;
+  price: number;
+  stock?: number;
 };
 
 type Images = {
   url: string;
   isPrimary: Boolean;
 };
+
+export interface CreateProduct {
+  name: string;
+  category: string;
+  description: string;
+  sizes: sizes[];
+  images: File[];
+}
 
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -62,8 +78,26 @@ export const ProductSlice = api.injectEndpoints({
         body: productData,
       }),
     }),
+    getProductStock: builder.query<ProductStock, string>({
+      query: (params) => ({
+        url: `/product/getStock/${params}`,
+        method: "GET",
+      }),
+      providesTags: ["Products"],
+    }),
+    updateStocks: builder.mutation<ProductStock, ProductSize[]>({
+      query: (sizes) => ({
+        url: "/product/updateStock",
+        method: "POST",
+        body: sizes,
+      }),
+    }),
   }),
 });
 
-export const { useGetAllProductsQuery, useCreateProductMutation } =
-  ProductSlice;
+export const {
+  useGetAllProductsQuery,
+  useCreateProductMutation,
+  useGetProductStockQuery,
+  useUpdateStocksMutation,
+} = ProductSlice;
