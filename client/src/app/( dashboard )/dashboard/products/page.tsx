@@ -114,7 +114,7 @@ export default function Products() {
                   <Rating rating={product.rating} />
                 </div>
               </Link>
-              <ProductOption productId={product.id} />
+              <ProductOption productId={product.id} name={product.name} />
             </div>
           ))
         )}
