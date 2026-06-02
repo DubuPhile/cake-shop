@@ -51,7 +51,9 @@ export const OTPModal = ({
       setError("");
       setTimeLeft(60);
       inputsRef.current[0]?.focus();
-      setShow(true);
+      requestAnimationFrame(() => {
+        setShow(true);
+      });
     }
   }, [isOpen]);
 
