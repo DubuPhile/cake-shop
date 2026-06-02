@@ -61,12 +61,12 @@ export default function Register() {
       toast.error(`${err.data?.message || "Invalid user, email or password."}`);
     }
   };
-  const handleVerify = async (otp: number) => {
+  const handleVerify = async (otp: string) => {
     if (!verifyEmail) return;
 
     const success = await verify({
       purpose: verifyEmail?.purpose,
-      otpCode: otp,
+      otpCode: Number(otp),
       email: verifyEmail?.email,
     }).unwrap();
 
