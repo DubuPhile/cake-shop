@@ -1,13 +1,16 @@
 import useOutsideClick from "@/hook/useOutsideClick";
 import { EllipsisVertical } from "lucide-react";
 import { useRef, useState } from "react";
+import StocksModal from "../StocksModal";
 
 type Props = {
   productId: string;
+  name: string;
 };
 
-export default function ProductOption({ productId }: Props) {
+export default function ProductOption({ productId, name }: Props) {
   const [open, setOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const openRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClick({ ref: openRef, callback: () => setOpen(false) });
@@ -16,7 +19,7 @@ export default function ProductOption({ productId }: Props) {
     console.log(`delete ${productId}`);
   };
   const handleAddStock = () => {
-    console.log(`addStock ${productId}`);
+    setIsModalOpen(true);
   };
   return (
     <div ref={openRef} className="absolute top-0 right-0 inline-block">
@@ -53,6 +56,15 @@ export default function ProductOption({ productId }: Props) {
           Delete
         </button>
       </div>
+      {/* MODAL */}
+      {isModalOpen && (
+        <StocksModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          id={productId}
+          name={name}
+        />
+      )}
     </div>
   );
 }
