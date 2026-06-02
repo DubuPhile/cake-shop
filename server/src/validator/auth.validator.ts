@@ -64,23 +64,20 @@ export const VerifyResetPwd = z.object({
     .max(72, "Password is too long"),
 });
 
-export const createProductSchema = z.object({
-  name: z.string(),
-  category: z.string(),
-  description: z.string(),
+const sizeSchema = z.object({
+  size: z.string().min(1, "Size is required"),
+  price: z.number().min(0, "Price must be positive"),
+});
 
-  sizes: z.preprocess(
-    (val) => {
-      if (typeof val === "string") {
-        return JSON.parse(val);
-      }
-      return val;
-    },
-    z.array(
-      z.object({
-        size: z.string(),
-        price: z.coerce.number(), // ✅ auto converts "55" → 55
-      }),
-    ),
-  ),
+export const createProductSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  category: z.string().min(1, "Category is required"),
+  description: z.string().min(1, "Description is required"),
+
+  sizes: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return JSON.parse(val);
+    }
+    return val;
+  }, z.array(sizeSchema)),
 });
