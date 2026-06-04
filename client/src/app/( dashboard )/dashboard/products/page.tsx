@@ -26,6 +26,7 @@ export default function Products() {
     data: products,
     isLoading,
     isError,
+    refetch,
   } = useGetAllProductsQuery({ search: debounceSearch, category: category });
 
   if (isError || !products) {
@@ -38,6 +39,7 @@ export default function Products() {
 
   const handleCreateProduct = async (productData: FormData) => {
     await createProduct(productData);
+    refetch();
   };
 
   return (
@@ -114,7 +116,11 @@ export default function Products() {
                   <Rating rating={product.rating} />
                 </div>
               </Link>
-              <ProductOption productId={product.id} name={product.name} />
+              <ProductOption
+                productId={product.id}
+                name={product.name}
+                refetch={refetch}
+              />
             </div>
           ))
         )}
