@@ -103,7 +103,7 @@ export default function Sidebar() {
           isCollapsed={isSideBarCollapsed}
         />
         <SidebarLink
-          href="/inventory"
+          href="/dashboard/inventory"
           icon={Archive}
           label="Inventory"
           isCollapsed={isSideBarCollapsed}
