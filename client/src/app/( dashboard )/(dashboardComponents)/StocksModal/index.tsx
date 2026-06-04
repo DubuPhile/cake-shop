@@ -1,5 +1,6 @@
 import {
   ProductSize,
+  useGetAllProductsQuery,
   useGetProductStockQuery,
   useUpdateStocksMutation,
 } from "@/redux/features/product";
@@ -13,9 +14,16 @@ type Props = {
   name: string;
   onClose: () => void;
   isOpen: boolean;
+  refetch: () => void;
 };
 
-export default function StocksModal({ id, onClose, isOpen, name }: Props) {
+export default function StocksModal({
+  id,
+  onClose,
+  isOpen,
+  name,
+  refetch,
+}: Props) {
   const [sizes, setSizes] = useState<ProductSize[]>([]);
   const [show, setShow] = useState(false);
 
@@ -41,13 +49,14 @@ export default function StocksModal({ id, onClose, isOpen, name }: Props) {
     }, 500);
   };
 
-  const UpdateStocks = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const UpdateStocks = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      const updatedstock = updateStock(sizes).unwrap();
+      const updatedstock = await updateStock(sizes).unwrap();
       if (!updatedstock) return toast.error("Error update Stock");
 
       toast.success("Product Stock Update!");
+      refetch();
       handleClose();
     } catch (err) {
       console.log(err);
@@ -66,7 +75,7 @@ export default function StocksModal({ id, onClose, isOpen, name }: Props) {
               : "scale-95 translate-y-4 opacity-0"
           }`}
         >
-          <div className="bg-gray-100 rounded-t-md py-6 px-6 drop-shadow-lg">
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-t-md py-6 px-6 drop-shadow-lg">
             <Header name={`Update ${name}`} />
             <button
               onClick={handleClose}
@@ -75,7 +84,7 @@ export default function StocksModal({ id, onClose, isOpen, name }: Props) {
               <X className="w-4 h-4 md:w-7 md:h-7 text-gray-800 hover:bg-red-400 rounded-full" />
             </button>
             <form onSubmit={UpdateStocks}>
-              <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base text-gray-700 mt-5">
+              <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base mt-5">
                 <h3 className="w-full flex justify-center">Sizes</h3>
                 <h3 className="w-full flex justify-center">Prices</h3>
                 <h3 className="w-full flex justify-center">Stock</h3>
@@ -130,8 +139,8 @@ export default function StocksModal({ id, onClose, isOpen, name }: Props) {
                   />
                 </div>
               ))}
-              <div className="w-full flex flex-row justify-end">
-                <button className="px-3 py-2 rounded-lg bg-red-200 hover:bg-red-300 font-semibold text-xs md:text-base cursor-pointer">
+              <div className="w-full flex flex-row justify-end mt-5">
+                <button className="px-3 py-2 rounded-lg bg-red-200 hover:bg-red-300 active:bg-red-400 dark:bg-red-400 dark:hover:bg-red-500 dark:active:bg-red-600 font-semibold text-xs md:text-base cursor-pointer">
                   Update
                 </button>
               </div>
