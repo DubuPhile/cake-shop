@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
 import { bucket } from "../config/firebase";
 
+//GET ALL PRODUCTS
 export const getAllProducts = async (
   req: Request,
   res: Response,
@@ -81,6 +82,7 @@ type Sizes = {
   stock: number;
 };
 
+//CREATE PRODUCT
 export const createProduct = async (
   req: AuthRequest,
   res: Response,
@@ -156,6 +158,7 @@ interface ProductParams {
   id: string;
 }
 
+//GET PRODUCT STOCKS
 export const getProductStock = async (
   req: Request<ProductParams>,
   res: Response,
@@ -194,6 +197,7 @@ type UpdateStock = {
   stock: number;
 };
 
+// UPDATE PRODUCT STOCKS
 export const updateStocks = async (
   req: AuthRequest,
   res: Response,
@@ -228,5 +232,73 @@ export const updateStocks = async (
     res
       .status(500)
       .json({ success: false, message: "Error updateStock server" });
+  }
+};
+
+export const deleteProduct = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const { productId } = req.params;
+    if (!productId) {
+      res.status(400).json({ message: "Invalid productId" });
+      return;
+    }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId.toString(),
+      },
+      include: {
+        image: true,
+      },
+    });
+
+    if (!product) {
+      res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+      return;
+    }
+
+    await Promise.all(
+      product.image.map(async (img) => {
+        const encodedPath = img.url.split("/o/")[1];
+
+        if (!encodedPath) {
+          throw new Error("Invalid Firebase URL");
+        }
+        const filePath = decodeURIComponent(encodedPath.split("?")[0] ?? "");
+
+        await bucket.file(filePath).delete();
+      }),
+    );
+
+    const deletedProduct = await prisma.product.delete({
+      where: {
+        id: productId.toString(),
+      },
+    });
+
+    console.log(deletedProduct);
+
+    res.status(204).send();
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+      return;
+    }
+    console.log(err);
+    res.status(500).json({ success: false, message: "Delete Product Error" });
   }
 };
