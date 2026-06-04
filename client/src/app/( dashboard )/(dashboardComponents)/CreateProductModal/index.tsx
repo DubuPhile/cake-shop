@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import MultiImageUpload from "./MultiImageUpload";
 import Sizes from "./Sizes";
 import { sizes } from "@/redux/features/product";
+import toast from "react-hot-toast";
 
 type form = {
   prodName: string;
@@ -71,8 +72,10 @@ export default function CreateProductModal({
       });
 
       onCreate(formData);
+      toast.success(`Product ${form.prodName} Created!`);
       handleClose();
     } catch (err) {
+      toast.error("Create Failed!");
       console.log(err);
     }
   };
