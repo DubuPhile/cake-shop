@@ -77,10 +77,11 @@ export default function login() {
           hasLocalPassword: false,
         }),
       );
+      const lastpath = localStorage.getItem("lastPath");
       setUser("");
       setPwd("");
       toast.success("Login Success!");
-      router.push("/");
+      router.push(lastpath || "/");
     } catch (err: any) {
       setPwd("");
       console.log(err);
@@ -108,7 +109,8 @@ export default function login() {
       }),
     );
     toast.success("Verify Successfully!");
-    router.push("/");
+    const lastpath = localStorage.getItem("lastPath");
+    router.push(lastpath || "/");
   };
 
   return (
