@@ -122,7 +122,7 @@ export default function login() {
           <div
             className={`w-100vw w-125 max-w-125 flex items-center justify-center transition-all duration-500 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
           >
-            <div className="w-100 flex flex-col items-center justify-center bg-gray-50 rounded-2xl drop-shadow-lg">
+            <div className="w-100 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-2xl drop-shadow-lg">
               <h1 className="my-10 text-2xl font-bold">Log-in</h1>
               {errMsg && (
                 <p ref={errorRef} className="mx-3 my-1 text-base text-red-500">
@@ -135,7 +135,7 @@ export default function login() {
               >
                 <div className="group flex flex-col gap w-70">
                   <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
+                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                     htmlFor="username"
                   >
                     Username/Email
@@ -153,7 +153,7 @@ export default function login() {
                 </div>
                 <div className="group relative flex flex-col gap w-70">
                   <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
+                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
                     htmlFor="password"
                   >
                     Password
@@ -182,7 +182,7 @@ export default function login() {
                     Log In
                   </button>
                   <Link
-                    className="transition-all duration-300 hover:scale-110 hover:text-gray-700 font-semibold text-sm"
+                    className="transition-all duration-300 hover:scale-110 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm"
                     href="/forgot-password"
                   >
                     Forgot Password
@@ -191,7 +191,7 @@ export default function login() {
               </form>
 
               <Link
-                className=" transition-all duration-300 hover:scale-110 hover:text-gray-700 font-semibold text-sm"
+                className=" transition-all duration-300 hover:scale-110 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm"
                 href="/register"
               >
                 Create Account?
