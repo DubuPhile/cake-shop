@@ -105,13 +105,13 @@ export default function CreateProductModal({
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex justify-center h-full w-full z-50">
       <div
-        className={`relative my-10 w-[90%] shadow-lg rounded-md bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto transition-all duration-500 ${
+        className={`relative my-10 w-[90%] shadow-lg rounded-md bg-white dark:bg-gray-700 max-h-[90vh] overflow-y-auto transition-all duration-500 ${
           show
             ? "scale-100 translate-y-0 opacity-100"
             : "scale-95 translate-y-4 opacity-0"
         }`}
       >
-        <div className="bg-gray-100 rounded-t-md py-3 px-3 drop-shadow-lg">
+        <div className="bg-gray-100 dark:bg-gray-700 rounded-t-md py-3 px-3 drop-shadow-lg">
           <Header name={"Create New Product"} />
           <button
             onClick={handleClose}
