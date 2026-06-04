@@ -94,7 +94,7 @@ export default function Products() {
             >
               <Link
                 href={`/dashboard/products/${product.id}`}
-                className="flex flex-col items-center"
+                className="flex flex-col items-center transition-scale duration-300 hover:scale-105"
               >
                 <img
                   src={product.image.find((img) => img.isPrimary)?.url}
