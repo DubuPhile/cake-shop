@@ -84,7 +84,7 @@ export default function Register() {
           {LoadRegister || LoadVerify ? (
             <Spinner />
           ) : (
-            <div className="w-100 flex flex-col items-center justify-center bg-gray-50 rounded-2xl drop-shadow-lg">
+            <div className="w-100 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-2xl drop-shadow-lg">
               <h1 className="mt-10 mb-8 text-2xl font-bold">Create Account</h1>
               {errorMsg && (
                 <p ref={errorRef} className="mx-3 my-1 text-base text-red-500">
@@ -101,7 +101,7 @@ export default function Register() {
 
                 <div className="group flex flex-col gap w-70">
                   <label
-                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
                     htmlFor="username"
                   >
                     Username
@@ -118,7 +118,7 @@ export default function Register() {
                 </div>
                 <div className="group flex flex-col gap w-70">
                   <label
-                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${email ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${email ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
                     htmlFor="email"
                   >
                     Email
@@ -135,7 +135,7 @@ export default function Register() {
                 </div>
                 <div className="group relative flex flex-col gap w-70 mb-5">
                   <label
-                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
+                    className={`cursor-text transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500"}`}
                     htmlFor="new-password"
                   >
                     Password
