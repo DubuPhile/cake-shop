@@ -2,22 +2,40 @@ import useOutsideClick from "@/hook/useOutsideClick";
 import { EllipsisVertical } from "lucide-react";
 import { useRef, useState } from "react";
 import StocksModal from "../StocksModal";
+import Confirmation from "@/app/(components)/Confirmation";
+import { useDeleteProductMutation } from "@/redux/features/product";
+import toast from "react-hot-toast";
 
 type Props = {
   productId: string;
   name: string;
+  refetch: () => void;
 };
 
-export default function ProductOption({ productId, name }: Props) {
+export default function ProductOption({ productId, name, refetch }: Props) {
   const [open, setOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const openRef = useRef<HTMLDivElement | null>(null);
+  const [deleteProduct] = useDeleteProductMutation();
 
   useOutsideClick({ ref: openRef, callback: () => setOpen(false) });
 
   const handleDelete = () => {
-    console.log(`delete ${productId}`);
+    setDeleteModalOpen(true);
   };
+
+  const ConfirmDelete = async () => {
+    try {
+      await deleteProduct(productId).unwrap();
+      toast.success(`${name} Deleted!`);
+      refetch();
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete Error");
+    }
+  };
+
   const handleAddStock = () => {
     setIsModalOpen(true);
   };
@@ -62,6 +80,16 @@ export default function ProductOption({ productId, name }: Props) {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           id={productId}
+          name={name}
+          refetch={refetch}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <Confirmation
+          isOpen={isDeleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onConfirm={ConfirmDelete}
+          Purpose="Delete"
           name={name}
         />
       )}
