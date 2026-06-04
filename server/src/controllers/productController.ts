@@ -45,19 +45,7 @@ export const getAllProducts = async (
       },
     });
 
-    const productsWithRating = products.map((product) => {
-      const total = product.review.reduce((sum, r) => sum + r.rating, 0);
-
-      const average = product.review.length ? total / product.review.length : 0;
-
-      return {
-        ...product,
-        rating: average,
-        reviewCount: product.review.length,
-      };
-    });
-
-    res.status(200).json(productsWithRating);
+    res.status(200).json(products);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error to Get Products" });
@@ -108,7 +96,7 @@ export const createProduct = async (
 
     const imageUrls = await Promise.all(
       files.map(async (file, index) => {
-        const fileName = `Products/${name}/${Date.now()}-${file.originalname}${index}`;
+        const fileName = `Products/${name}/${Date.now()}-${file.originalname}`;
 
         const fileUpload = bucket.file(fileName);
 
@@ -119,7 +107,10 @@ export const createProduct = async (
           public: true,
         });
 
-        return `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+        return {
+          url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
+          filepath: fileName,
+        };
       }),
     );
 
@@ -136,8 +127,9 @@ export const createProduct = async (
           })),
         },
         image: {
-          create: imageUrls.map((url, index) => ({
-            url,
+          create: imageUrls.map((imgUrl, index) => ({
+            url: imgUrl.url,
+            path: imgUrl.filepath,
             isPrimary: index === 0,
           })),
         },
@@ -270,14 +262,16 @@ export const deleteProduct = async (
 
     await Promise.all(
       product.image.map(async (img) => {
-        const encodedPath = img.url.split("/o/")[1];
-
-        if (!encodedPath) {
-          throw new Error("Invalid Firebase URL");
+        if (img.path) {
+          await bucket.file(img.path).delete();
+        } else {
+          const encodedPath = img.url.split("/o/")[1];
+          if (!encodedPath) {
+            throw new Error("Invalid Firebase URL");
+          }
+          const filePath = decodeURIComponent(encodedPath.split("?")[0] ?? "");
+          await bucket.file(filePath).delete();
         }
-        const filePath = decodeURIComponent(encodedPath.split("?")[0] ?? "");
-
-        await bucket.file(filePath).delete();
       }),
     );
 
