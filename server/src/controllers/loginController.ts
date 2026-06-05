@@ -85,7 +85,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
-    //add verify device
+    //COMMENT OUT THIS FOR TESTING
     const deviceToken = req.cookies?.device_id;
 
     let trustedDevice = null;
@@ -117,6 +117,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         .json({ message: "Verify Login First", data: generateOtp.createdOtp });
       return;
     }
+    //UNTIL HERE
 
     const roles = updatedUser.roles ?? [];
 
