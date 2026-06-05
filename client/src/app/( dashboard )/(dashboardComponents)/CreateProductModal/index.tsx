@@ -5,7 +5,7 @@ import { CircleX } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import MultiImageUpload from "./MultiImageUpload";
 import Sizes from "./Sizes";
-import { sizes } from "@/redux/features/product";
+import { ProductSize } from "@/redux/features/product";
 import toast from "react-hot-toast";
 
 type form = {
@@ -31,7 +31,7 @@ export default function CreateProductModal({
     description: "",
   });
 
-  const [sizes, setSizes] = useState<sizes[]>([
+  const [sizes, setSizes] = useState<ProductSize[]>([
     {
       size: "",
       price: 0,
@@ -72,8 +72,6 @@ export default function CreateProductModal({
       });
 
       onCreate(formData);
-      toast.success(`Product ${form.prodName} Created!`);
-      handleClose();
     } catch (err) {
       toast.error("Create Failed!");
       console.log(err);
@@ -164,6 +162,7 @@ export default function CreateProductModal({
                     value={othercategory ? "others" : category}
                     onChange={handleCategory}
                     className="bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded-lg font-semibold text-gray-700"
+                    required
                   >
                     <option className="font-semibold text-gray-700" value="">
                       Select
@@ -196,6 +195,7 @@ export default function CreateProductModal({
                       onChange={(e) => setCategory(e.target.value)}
                       value={category}
                       className="w-35 px-2 py-2 rounded-lg border border-gray-400"
+                      required
                     />
                   ) : (
                     ""
