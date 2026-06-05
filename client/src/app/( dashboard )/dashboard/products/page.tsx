@@ -14,6 +14,7 @@ import Spinner from "@/app/(components)/Spinner";
 import Rating from "@/app/(components)/Rating";
 import CreateProductModal from "../../(dashboardComponents)/CreateProductModal";
 import ProductOption from "../../(dashboardComponents)/ProductOption";
+import toast from "react-hot-toast";
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -38,8 +39,16 @@ export default function Products() {
   }
 
   const handleCreateProduct = async (productData: FormData) => {
-    await createProduct(productData);
-    refetch();
+    try {
+      await createProduct(productData).unwrap();
+
+      refetch();
+      toast.success(`Product Created!`);
+      setIsModalOpen(false);
+    } catch (err: any) {
+      console.log(err);
+      toast.error("Failed to create product");
+    }
   };
 
   return (
@@ -113,7 +122,7 @@ export default function Products() {
                   Stock: {product.sizes[0].stock}
                 </div>
                 <div className="flex items-center mt-2">
-                  <Rating rating={product.rating} />
+                  <Rating rating={product.averageRating} />
                 </div>
               </Link>
               <ProductOption
