@@ -1,6 +1,5 @@
 import {
   ProductSize,
-  useGetAllProductsQuery,
   useGetProductStockQuery,
   useUpdateStocksMutation,
 } from "@/redux/features/product";
