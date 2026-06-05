@@ -52,6 +52,66 @@ export const getAllProducts = async (
   }
 };
 
+//GET PRODUCT
+export const getProductInfo = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ message: "Invalid" });
+      return;
+    }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: id.toString(),
+      },
+      include: {
+        sizes: true,
+        image: true,
+        review: {
+          where: {
+            parentId: null,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            user: {
+              select: {
+                userId: true,
+                name: true,
+                avatar: true,
+              },
+            },
+            replies: {
+              orderBy: {
+                createdAt: "asc",
+              },
+              include: {
+                user: {
+                  select: {
+                    userId: true,
+                    name: true,
+                    avatar: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json(product);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: "Error Server in getProductInfo" });
+  }
+};
+
 type ProductData = {
   name: string;
   category: string;
