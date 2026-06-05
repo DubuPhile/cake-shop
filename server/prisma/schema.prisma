@@ -80,6 +80,8 @@ model Product {
   name        String
   category    String
   description String?
+  averageRating Float       @default(0)
+  reviewCount Int            @default(0)
   image       ProductImage[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -91,6 +93,7 @@ model Product {
 model ProductImage {
   id         String   @id @default(uuid())
   url        String
+  path       String
   isPrimary  Boolean  @default(false)
 
   productId  String
@@ -108,9 +111,9 @@ model ProductSize {
 }
 
 model Review {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
 
-  rating      Int
+  rating      Int?
   comment     String?
 
   userId      String
@@ -119,8 +122,13 @@ model Review {
   user         Users     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  parentId    String?
+  parent      Review? @relation("ReviewReplies", fields: [parentId], references: [id])
+
+  // Replies
+  replies     Review[] @relation("ReviewReplies")
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([userId, productId])
 }
