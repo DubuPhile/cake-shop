@@ -3,19 +3,22 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getProductInfo,
   getProductStock,
   updateStocks,
 } from "../controllers/productController";
 import verifyJWT from "../middleware/verifyJWT";
 import { upload } from "../middleware/multer";
 import { validate } from "../middleware/validate";
-import { createProductSchema } from "../validator/auth.validator";
+import { createProductSchema, sizeSchema } from "../validator/auth.validator";
 import { verifyRoles } from "../middleware/verifyRoles";
 import ROLE_LIST from "../config/roleLists";
 
 const router = express.Router();
 
 router.get("/getAll", getAllProducts);
+router.get("/:id", getProductInfo);
+
 router.post(
   "/create",
   verifyJWT,
@@ -28,6 +31,7 @@ router.post(
   "/updateStock",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
+  validate(sizeSchema),
   updateStocks,
 );
 
