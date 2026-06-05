@@ -1,10 +1,15 @@
 import { api } from "@/redux/state/api";
 
+type Images = {
+  url: string;
+  isPrimary: Boolean;
+};
+
 export type ProductSize = {
-  id: string;
+  id?: string;
   size: string;
   price: number;
-  stock: number;
+  stock?: number;
   productId?: string;
 };
 export interface ProductStock {
@@ -18,10 +23,19 @@ type User = {
   avatar: string;
 };
 
+export interface Replies {
+  id?: string;
+  comment: string;
+  parentId: string;
+  user: User;
+}
+
 export interface ProductReview {
+  id?: string;
   rating: number;
   comment: string;
-  userId: User[];
+  user: User[];
+  replies?: Replies[];
 }
 
 export interface Products {
@@ -30,7 +44,7 @@ export interface Products {
   category: string;
   description: string;
   image: Images[];
-  rating: number;
+  averageRating: number;
   sizes: ProductSize[];
   review: ProductReview[];
 }
@@ -39,22 +53,11 @@ type ProductQueryParams = {
   category?: string;
 };
 
-export type sizes = {
-  size: string;
-  price: number;
-  stock?: number;
-};
-
-type Images = {
-  url: string;
-  isPrimary: Boolean;
-};
-
 export interface CreateProduct {
   name: string;
   category: string;
   description: string;
-  sizes: sizes[];
+  sizes: ProductSize[];
   images: File[];
 }
 
