@@ -1,9 +1,9 @@
-import { sizes } from "@/redux/features/product";
+import { ProductSize } from "@/redux/features/product";
 import React from "react";
 
 type sizesProps = {
-  setSizes: React.Dispatch<React.SetStateAction<sizes[]>>;
-  sizes: sizes[];
+  setSizes: React.Dispatch<React.SetStateAction<ProductSize[]>>;
+  sizes: ProductSize[];
 };
 
 export default function Sizes({ sizes, setSizes }: sizesProps) {
