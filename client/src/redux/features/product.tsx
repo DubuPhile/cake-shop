@@ -46,7 +46,7 @@ export interface Products {
   image: Images[];
   averageRating: number;
   sizes: ProductSize[];
-  review: ProductReview[];
+  review?: ProductReview[];
 }
 type ProductQueryParams = {
   search?: string;
@@ -71,6 +71,13 @@ export const ProductSlice = api.injectEndpoints({
           search: params?.search,
           category: params?.category,
         },
+      }),
+      providesTags: ["Products"],
+    }),
+    getProductInfo: builder.query<Products, string>({
+      query: (productId) => ({
+        url: `/product/${productId}`,
+        method: "GET",
       }),
       providesTags: ["Products"],
     }),
@@ -110,4 +117,5 @@ export const {
   useGetProductStockQuery,
   useUpdateStocksMutation,
   useDeleteProductMutation,
+  useGetProductInfoQuery,
 } = ProductSlice;
