@@ -19,12 +19,14 @@ import icon from "@/app/icon.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import useOutsideClick from "@/hook/useOutsideClick";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const mobileRef = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
 
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
@@ -100,6 +102,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href={"/login"}
+                onClick={() => localStorage.setItem("lastPath", pathname)}
                 className="flex gap-3 hover:bg-[hsl(359,100%,95%)] dark:hover:bg-[hsl(359,100%,35%)] px-3 py-2 rounded-full"
               >
                 <UserRound />
