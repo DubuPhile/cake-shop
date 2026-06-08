@@ -35,6 +35,7 @@ export default function CreateProductModal({
     {
       size: "",
       price: 0,
+      stock: 0,
     },
   ]);
   const [category, setCategory] = useState<string>("");
