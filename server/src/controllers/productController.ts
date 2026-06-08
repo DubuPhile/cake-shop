@@ -29,6 +29,7 @@ export const getAllProducts = async (
             : {},
         ],
       },
+      orderBy: { name: "asc" },
       include: {
         sizes: true,
         image: true,
@@ -52,7 +53,7 @@ export const getAllProducts = async (
   }
 };
 
-//GET PRODUCT
+//GET PRODUCT INFO
 export const getProductInfo = async (
   req: Request,
   res: Response,
@@ -287,6 +288,7 @@ export const updateStocks = async (
   }
 };
 
+//DELETE PRODUCT
 export const deleteProduct = async (
   req: AuthRequest,
   res: Response,
@@ -354,5 +356,62 @@ export const deleteProduct = async (
     }
     console.log(err);
     res.status(500).json({ success: false, message: "Delete Product Error" });
+  }
+};
+
+interface ProductParams {
+  productId: string;
+}
+
+export const updateProduct = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    const { name, description, category } = req.body;
+    const { productId } = req.params;
+
+    if (!productId) {
+      res.status(400).json({ message: "Forbidden" });
+      return;
+    }
+
+    if (!name || !description || !category) {
+      res
+        .status(400)
+        .json({ message: "Name, Description and Category is Required." });
+      return;
+    }
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const user = await prisma.users.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const updatedProduct = await prisma.product.update({
+      where: {
+        id: productId.toString(),
+      },
+      data: {
+        name: name,
+        description: description,
+        category: category,
+      },
+    });
+
+    res.status(200).json({ message: "Product Updated!", data: updatedProduct });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Invalid Server updateProduct." });
   }
 };
