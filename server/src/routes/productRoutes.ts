@@ -5,12 +5,17 @@ import {
   getAllProducts,
   getProductInfo,
   getProductStock,
+  updateProduct,
   updateStocks,
 } from "../controllers/productController";
 import verifyJWT from "../middleware/verifyJWT";
 import { upload } from "../middleware/multer";
 import { validate } from "../middleware/validate";
-import { createProductSchema, sizeSchema } from "../validator/auth.validator";
+import {
+  createProductSchema,
+  ProductDetailSchema,
+  sizeSchema,
+} from "../validator/auth.validator";
 import { verifyRoles } from "../middleware/verifyRoles";
 import ROLE_LIST from "../config/roleLists";
 
@@ -40,6 +45,14 @@ router.delete(
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
   deleteProduct,
+);
+
+router.patch(
+  "/:productId",
+  verifyJWT,
+  verifyRoles(ROLE_LIST.Admin),
+  validate(ProductDetailSchema),
+  updateProduct,
 );
 
 export default router;
