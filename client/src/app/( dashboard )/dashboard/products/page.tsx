@@ -108,7 +108,7 @@ export default function Products() {
                 className="flex flex-col items-center transition-scale duration-300 hover:scale-105"
               >
                 <img
-                  src={product.image.find((img) => img.isPrimary)?.url}
+                  src={product.image?.find((img) => img.isPrimary)?.url}
                   alt={product.name}
                   className="h-40 object-cover"
                 />
@@ -116,13 +116,13 @@ export default function Products() {
                   {product.name}
                 </h3>
                 <p className="text-gray-800 dark:text-gray-100">
-                  ${product.sizes[0].price.toFixed(2)}
+                  ${product.sizes?.[0]?.price.toFixed(2)}
                 </p>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Stock: {product.sizes[0].stock}
+                  Stock: {product.sizes?.[0]?.stock}
                 </div>
                 <div className="flex items-center mt-2">
-                  <Rating rating={product.averageRating} />
+                  <Rating rating={product.averageRating || 0} />
                 </div>
               </Link>
               <ProductOption
