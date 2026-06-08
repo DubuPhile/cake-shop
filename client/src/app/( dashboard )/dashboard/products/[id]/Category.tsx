@@ -35,31 +35,19 @@ export default function Category({ category, setForm, disabled }: props) {
         value={otherCategory ? "others" : category}
         onChange={handleCategory}
         disabled={!disabled}
-        className={`group px-2 py-2 rounded-lg font-semibold  ${disabled ? "bg-[#0000002c] hover:bg-gray-300 dark:hover:bg-gray-700 appearance-auto" : "bg-none appearance-none"}`}
+        className={`group px-2 py-2 rounded-lg font-semibold  ${disabled ? "bg-white border border-gray-300 dark:bg-[#0000002c] shadow-md appearance-auto" : "bg-none appearance-none"}`}
         required
       >
-        <option
-          className="font-semibold text-gray-700 dark:group-hover:text-gray-50"
-          value=""
-        >
+        <option className="font-semibold text-gray-700 " value="">
           Select
         </option>
-        <option
-          className="font-semibold text-gray-700 dark:group-hover:text-gray-50"
-          value="cakes"
-        >
+        <option className="font-semibold text-gray-700" value="cakes">
           Cakes
         </option>
-        <option
-          className="font-semibold text-gray-700 dark:group-hover:text-gray-50"
-          value="desserts"
-        >
+        <option className="font-semibold text-gray-700" value="desserts">
           Desserts
         </option>
-        <option
-          className="font-semibold text-gray-700 dark:group-hover:text-gray-50"
-          value="others"
-        >
+        <option className="font-semibold text-gray-700" value="others">
           Others
         </option>
       </select>
