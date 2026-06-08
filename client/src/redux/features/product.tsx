@@ -43,9 +43,9 @@ export interface Products {
   name: string;
   category: string;
   description: string;
-  image: Images[];
-  averageRating: number;
-  sizes: ProductSize[];
+  image?: Images[];
+  averageRating?: number;
+  sizes?: ProductSize[];
   review?: ProductReview[];
 }
 type ProductQueryParams = {
@@ -102,6 +102,13 @@ export const ProductSlice = api.injectEndpoints({
         body: sizes,
       }),
     }),
+    updateProductDetails: builder.mutation<void, Products>({
+      query: (changeData) => ({
+        url: `/product/${changeData.id}`,
+        method: "PATCH",
+        body: { ...changeData },
+      }),
+    }),
     deleteProduct: builder.mutation<void, string>({
       query: (productId) => ({
         url: `/product/${productId}`,
@@ -118,4 +125,5 @@ export const {
   useUpdateStocksMutation,
   useDeleteProductMutation,
   useGetProductInfoQuery,
+  useUpdateProductDetailsMutation,
 } = ProductSlice;
