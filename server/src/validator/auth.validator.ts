@@ -108,3 +108,12 @@ export const ratingSchema = z
     message: "You must provide either a rating or a comment",
     path: ["rating"],
   });
+
+export const ProductDetailSchema = z.object({
+  name: z.string().min(5, "Name is required"),
+  category: z.string().min(5, "Category is required"),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(500, "Description too Long"),
+});
