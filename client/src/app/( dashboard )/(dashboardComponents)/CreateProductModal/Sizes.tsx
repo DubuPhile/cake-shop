@@ -8,7 +8,7 @@ type sizesProps = {
 
 export default function Sizes({ sizes, setSizes }: sizesProps) {
   const addSize = () => {
-    setSizes([...sizes, { size: "", price: 0 }]);
+    setSizes([...sizes, { size: "", price: 0, stock: 0 }]);
   };
 
   const removeSize = (index: number) => {
@@ -17,15 +17,16 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base text-gray-700">
-        <h3>Size</h3>
-        <h3>Price</h3>
+      <div className="grid grid-cols-4 gap-2 mb-2 font-semibold text-xs md:text-base text-gray-700">
+        <h3 className="w-full flex justify-center">Size</h3>
+        <h3 className="w-full flex justify-center">Price</h3>
+        <h3 className="w-full flex justify-center">Stock</h3>
       </div>
 
       {sizes.map((item, index) => (
         <div
           key={index}
-          className="grid grid-cols-3 gap-2 mb-2 text-xs md:text-base"
+          className="grid grid-cols-4 gap-2 mb-2 text-xs md:text-base"
         >
           <input
             id={`size-${index}`}
@@ -50,7 +51,25 @@ export default function Sizes({ sizes, setSizes }: sizesProps) {
               updated[index].price = Number(e.target.value);
               setSizes(updated);
             }}
-            className="border p-2 rounded-lg border-gray-400 "
+            className="border p-2 rounded-lg border-gray-400 text-center pl-4"
+          />
+
+          <input
+            id={`stock-${index}`}
+            type="number"
+            placeholder="Stock"
+            value={item.stock}
+            onChange={(e) => {
+              const updatedSizes = [...sizes];
+
+              updatedSizes[index] = {
+                ...updatedSizes[index],
+                stock: Number(e.target.value),
+              };
+
+              setSizes(updatedSizes);
+            }}
+            className="border pl-3 rounded-lg border-gray-400 text-center"
           />
 
           <button
