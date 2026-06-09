@@ -1,6 +1,7 @@
 import { api } from "@/redux/state/api";
 
 type Images = {
+  id?: string;
   url: string;
   isPrimary: Boolean;
 };
@@ -34,7 +35,7 @@ export interface ProductReview {
   id?: string;
   rating: number;
   comment: string;
-  user: User[];
+  user: User;
   replies?: Replies[];
 }
 
@@ -43,10 +44,10 @@ export interface Products {
   name: string;
   category: string;
   description: string;
-  image?: Images[];
+  images?: Images[];
   averageRating?: number;
   sizes?: ProductSize[];
-  review?: ProductReview[];
+  reviews?: ProductReview[];
 }
 type ProductQueryParams = {
   search?: string;
@@ -115,6 +116,19 @@ export const ProductSlice = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    deleteSize: builder.mutation<void, string>({
+      query: (Id) => ({
+        url: `/product/${Id}/size`,
+        method: "DELETE",
+      }),
+    }),
+    addSize: builder.mutation<void, ProductSize>({
+      query: (data) => ({
+        url: `/product/addSize`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -124,6 +138,8 @@ export const {
   useGetProductStockQuery,
   useUpdateStocksMutation,
   useDeleteProductMutation,
+  useDeleteSizeMutation,
   useGetProductInfoQuery,
   useUpdateProductDetailsMutation,
+  useAddSizeMutation,
 } = ProductSlice;
