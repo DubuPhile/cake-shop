@@ -69,7 +69,7 @@ export default function CreateProductModal({
       formData.append("sizes", JSON.stringify(sizes));
 
       images.forEach((image) => {
-        formData.append("image", image);
+        formData.append("images", image);
       });
 
       onCreate(formData);
