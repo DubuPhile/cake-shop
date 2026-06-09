@@ -290,6 +290,40 @@ export const updateStocks = async (
   }
 };
 
+//ADD SIZE
+export const addSize = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const { size, price, stock, productId } = req.body;
+    if (!size || !price || !stock || !productId) {
+      res.status(400).json({ message: "Size, price, stock is Required" });
+    }
+
+    const newSize = await prisma.productSize.create({
+      data: {
+        size: size,
+        price: price,
+        stock: stock,
+        product: { connect: { id: productId } },
+      },
+    });
+
+    res
+      .status(201)
+      .json({ success: true, message: "Add size successfull!", data: newSize });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error Server AddSize" });
+  }
+};
+
 //DELETE SIZE
 export const deleteSize = async (
   req: AuthRequest,
