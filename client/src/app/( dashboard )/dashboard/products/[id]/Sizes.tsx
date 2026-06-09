@@ -1,27 +1,66 @@
-import { ProductSize } from "@/redux/features/product";
+import AddSizeModal from "@/app/( dashboard )/(dashboardComponents)/AddSizeModal";
+import {
+  ProductSize,
+  useDeleteSizeMutation,
+  useUpdateStocksMutation,
+} from "@/redux/features/product";
 import { Ban, Save, SquarePen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 type Props = {
   sizes: ProductSize[];
   setSizes: (sizes: ProductSize[]) => void;
   onCancel: () => void;
+  refetch: () => void;
+  id: string;
 };
 
-export default function Sizes({ sizes, setSizes, onCancel }: Props) {
+export default function Sizes({
+  sizes,
+  setSizes,
+  onCancel,
+  refetch,
+  id,
+}: Props) {
   const [disable, setDisable] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [updateStock] = useUpdateStocksMutation();
+  const [deleteSize] = useDeleteSizeMutation();
 
   const addSize = () => {
-    setSizes([...sizes, { size: "", price: 0, stock: 0 }]);
+    setOpenModal(true);
   };
 
-  const removeSize = (index: number) => {
-    setSizes(sizes.filter((_, i) => i !== index));
+  const removeSize = async (id: string, size: string) => {
+    try {
+      await deleteSize(id).unwrap();
+
+      refetch();
+      toast.success(`${size} has been Deleted!`);
+    } catch (err) {
+      console.log(err);
+      toast.error(`Delete ${size} Failed!`);
+    }
   };
 
   const onCanceled = async () => {
     onCancel();
     setDisable(false);
+  };
+
+  const updateStocks = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      e.preventDefault();
+      await updateStock(sizes).unwrap();
+
+      refetch();
+      setDisable(false);
+      toast.success("Update Success!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Update Stock Failed");
+    }
   };
 
   return (
@@ -31,14 +70,16 @@ export default function Sizes({ sizes, setSizes, onCancel }: Props) {
         <h3 className="w-full flex justify-center items-center">Price</h3>
         <h3 className="w-full flex justify-center items-center">Stock</h3>
         {!disable && (
-          <button
-            type="button"
-            onClick={() => setDisable(true)}
-            className="flex w-full justify-center gap-1 px-2 py-1 items-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-          >
-            <span className="font-semibold">Edit</span>{" "}
-            <SquarePen className="w-5 h-5" />
-          </button>
+          <div>
+            <button
+              type="button"
+              onClick={() => setDisable(true)}
+              className="flex w-22 justify-center gap-1 px-2 py-1 items-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+            >
+              <span className="font-semibold">Edit</span>{" "}
+              <SquarePen className="w-5 h-5" />
+            </button>
+          </div>
         )}
       </div>
 
@@ -98,44 +139,52 @@ export default function Sizes({ sizes, setSizes, onCancel }: Props) {
             }}
             className={`rounded-lg ${disable ? "border border-gray-400" : ""} text-center pl-3`}
           />
-          {disable && (
-            <button
-              type="button"
-              onClick={() => removeSize(index)}
-              className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-lg w-22 text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold cursor-pointer"
-            >
-              Remove
-            </button>
-          )}
+
+          <button
+            type="button"
+            onClick={() => removeSize(item.id || "", item.size || "")}
+            className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-2xl w-22 text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold cursor-pointer"
+          >
+            Remove
+          </button>
         </div>
       ))}
       {!disable ? (
         <button
           type="button"
           onClick={addSize}
-          className="bg-green-300 hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-lg text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold"
+          className="bg-green-300 hover:bg-green-400 active:bg-green-500 px-3 py-2 rounded-2xl text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold ml-6"
         >
           Add Size
         </button>
       ) : (
-        <div className="gap-2 flex">
+        <div className="gap-2 flex mt-5">
           <button
             type="button"
             onClick={onCanceled}
-            className="flex justify-center gap-1 px-2 py-1 items-center rounded-lg  hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl  hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
           >
             <Ban className="w-4 h-4" />
             <span className="font-semibold">Cancel</span>{" "}
           </button>
           <button
             type="button"
-            onClick={() => setDisable(false)}
-            className="flex justify-center gap-1 px-2 py-1 items-center rounded-lg bg-green-300 hover:bg-green-400 active:bg-green-500  dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-800 cursor-pointer"
+            onClick={updateStocks}
+            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl bg-green-300 hover:bg-green-400 active:bg-green-500  dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-800 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span className="font-semibold">Save</span>
           </button>
         </div>
+      )}
+
+      {openModal && (
+        <AddSizeModal
+          id={id.toString()}
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+          refetch={refetch}
+        />
       )}
     </>
   );
