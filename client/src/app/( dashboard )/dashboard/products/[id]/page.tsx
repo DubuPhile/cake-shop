@@ -7,9 +7,16 @@ import {
 } from "@/redux/features/product";
 import { SquarePen } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Category from "./Category";
 import Sizes from "./Sizes";
+import Spinner from "@/app/(components)/Spinner";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -23,29 +30,18 @@ export default function ProductPage() {
   const [changeDetails] = useUpdateProductDetailsMutation();
 
   const [disabled, setDisabled] = useState<boolean>(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   const [form, setForm] = useState<Products>({
     id: "",
     name: "",
     category: "",
     description: "",
-    image: [],
+    images: [],
     sizes: [],
     averageRating: 0,
   });
-
-  useEffect(() => {
-    if (product) {
-      setForm({
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        description: product.description,
-        image: product.image,
-        sizes: product.sizes ?? [],
-        averageRating: product.averageRating,
-      });
-    }
-  }, [product]);
 
   const handleChangeDetails = async () => {
     try {
@@ -62,9 +58,58 @@ export default function ProductPage() {
       console.log(err);
     }
   };
+
   const handleCancel = () => {
     setDisabled(false);
   };
+
+  const adjustHeight = useCallback(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, []);
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    const value = e.target.value;
+
+    setForm((prev) => ({
+      ...prev,
+      description: value,
+    }));
+
+    adjustHeight();
+  };
+
+  /** USE EFFECTS */
+
+  useEffect(() => {
+    if (product) {
+      setForm({
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        description: product.description,
+        images: product.images,
+        sizes: product.sizes ?? [],
+        averageRating: product.averageRating,
+      });
+    }
+  }, [product]);
+
+  useLayoutEffect(() => {
+    adjustHeight();
+  }, [form.description, adjustHeight]);
+
+  useEffect(() => {
+    window.addEventListener("resize", adjustHeight);
+
+    return () => {
+      window.removeEventListener("resize", adjustHeight);
+    };
+  }, []);
 
   const content = (
     <>
@@ -108,16 +153,12 @@ export default function ProductPage() {
         <div className={`${!disabled ? "pl-5" : ""}`}>
           <textarea
             id="description"
+            ref={textareaRef}
             value={form.description}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
+            onChange={handleDescriptionChange}
             autoComplete="none"
             disabled={!disabled}
-            className={`px-5 py-2 w-full h-20 md:h-40 md:max-w-100 text-xs md:text-base indent-8 resize-none rounded-lg transition-all duration-300 ${disabled ? "bg-white border shadow-md border-gray-300 dark:bg-[#0000002c]" : "bg-none"}`}
+            className={`px-2 py-2 w-full min-h-20 max-w-100 lg:max-w-130 text-xs md:text-base indent-8 resize-none rounded-lg transition-all duration-300 ${disabled ? "bg-white border shadow-md border-gray-300 dark:bg-[#0000002c] ml-3" : "bg-none"}`}
           />
         </div>
         <div className="flex items-center">
@@ -142,20 +183,20 @@ export default function ProductPage() {
             <button
               type="button"
               onClick={handleCancel}
-              className="shadow-sm bg-gray-300 hover:bg-gray-400 active:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 dark:active:bg-gray-900 px-2 py-1 rounded-2xl font-semibold"
+              className="shadow-sm bg-gray-300 hover:bg-gray-400 active:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 dark:active:bg-gray-900 px-3 py-2 rounded-2xl font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleChangeDetails}
-              className="shadow-sm bg-green-300 hover:bg-green-400 active:bg-green-500 dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-900 px-2 py-1 rounded-2xl font-semibold"
+              className="shadow-sm bg-green-300 hover:bg-green-400 active:bg-green-500 dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-900 px-3 py-2 rounded-2xl font-semibold cursor-pointer"
             >
               Save Changes
             </button>
           </div>
         )}
-        <div className="w-100 lg:w-150 transition-all duration-300 mt-2">
+        <div className="w-100 lg:w-130 transition-all duration-300 mt-2">
           <Sizes
             sizes={form.sizes ?? []}
             setSizes={(newSizes) =>
@@ -170,11 +211,19 @@ export default function ProductPage() {
                 sizes: product?.sizes,
               }))
             }
+            refetch={refetch}
+            id={id.toString()}
           />
         </div>
       </div>
     </>
   );
 
-  return content;
+  return isLoading ? (
+    <div className="h-[100vh]">
+      <Spinner />
+    </div>
+  ) : (
+    content
+  );
 }
