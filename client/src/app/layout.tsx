@@ -36,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${lobster.variable} h-full antialiased flex flex-col items-center`}
+      className={`${geistSans.variable} ${geistMono.variable} ${lobster.variable} h-full antialiased `}
     >
       <body className="min-h-full flex flex-col items-center bg-[#FFF8F3]/90 text-gray-900  dark:bg-gray-800 dark:text-gray-50 w-full">
         <Store>{children}</Store>
