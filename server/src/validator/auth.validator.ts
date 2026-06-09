@@ -12,6 +12,10 @@ export const registerSchema = z.object({
   username: z.string().optional(),
 });
 
+export const deleteSchema = z.object({
+  Id: z.uuid(),
+});
+
 /** LOGIN SCHEMA*/
 export const loginSchema = z.object({
   user: z.union([
@@ -74,14 +78,15 @@ export const VerifyResetPwd = z.object({
 });
 
 /** SIZE SCHEMA*/
-export const sizeSchema = z.array(
-  z.object({
-    id: z.string().optional(),
-    size: z.string().min(1, "Size is required"),
-    price: z.number().min(0, "Price must be positive"),
-    stock: z.number().min(0, "Stock must be positive").optional(),
-  }),
-);
+export const sizeSchema = z.object({
+  id: z.string().optional(),
+  size: z.string().min(1, "Size is required"),
+  price: z.number().min(0, "Price must be positive"),
+  stock: z.number().min(0, "Stock must be positive").optional(),
+  productId: z.uuid().optional(),
+});
+
+export const sizeArraySchema = z.array(sizeSchema);
 
 /** CREATE PRODUCT SCHEMA*/
 export const createProductSchema = z.object({
@@ -94,7 +99,7 @@ export const createProductSchema = z.object({
       return JSON.parse(val);
     }
     return val;
-  }, sizeSchema),
+  }, sizeArraySchema),
 });
 
 /** RATING SCHEMA*/
