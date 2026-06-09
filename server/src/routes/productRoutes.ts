@@ -1,7 +1,9 @@
 import express from "express";
 import {
+  addSize,
   createProduct,
   deleteProduct,
+  deleteSize,
   getAllProducts,
   getProductInfo,
   getProductStock,
@@ -13,7 +15,9 @@ import { upload } from "../middleware/multer";
 import { validate } from "../middleware/validate";
 import {
   createProductSchema,
+  deleteSchema,
   ProductDetailSchema,
+  sizeArraySchema,
   sizeSchema,
 } from "../validator/auth.validator";
 import { verifyRoles } from "../middleware/verifyRoles";
@@ -36,14 +40,30 @@ router.post(
   "/updateStock",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
-  validate(sizeSchema),
+  validate(sizeArraySchema),
   updateStocks,
 );
 
-router.delete(
-  "/:productId",
+router.post(
+  "/addSize",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
+  validate(sizeSchema, "body"),
+  addSize,
+);
+
+router.delete(
+  "/:Id/size",
+  verifyJWT,
+  verifyRoles(ROLE_LIST.Admin),
+  validate(deleteSchema, "params"),
+  deleteSize,
+);
+router.delete(
+  "/:Id",
+  verifyJWT,
+  verifyRoles(ROLE_LIST.Admin),
+  validate(deleteSchema, "params"),
   deleteProduct,
 );
 
