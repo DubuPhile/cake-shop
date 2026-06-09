@@ -32,8 +32,8 @@ export const getAllProducts = async (
       orderBy: { name: "asc" },
       include: {
         sizes: true,
-        image: true,
-        review: {
+        images: true,
+        reviews: {
           include: {
             user: {
               select: {
@@ -71,8 +71,8 @@ export const getProductInfo = async (
       },
       include: {
         sizes: true,
-        image: true,
-        review: {
+        images: true,
+        reviews: {
           where: {
             parentId: null,
           },
@@ -142,7 +142,7 @@ export const createProduct = async (
     const files = (req.files as Express.Multer.File[]) || [];
 
     if (!userId) throw new Error("Unauthorized");
-    const foundUser = await prisma.users.findUnique({
+    const foundUser = await prisma.users.findFirst({
       where: {
         userId: userId,
       },
@@ -187,7 +187,7 @@ export const createProduct = async (
             price: Number(sizes.price),
           })),
         },
-        image: {
+        images: {
           create: imageUrls.map((imgUrl, index) => ({
             url: imgUrl.url,
             path: imgUrl.filepath,
@@ -246,6 +246,7 @@ export const getProductStock = async (
 
 type UpdateStock = {
   id: string;
+  size: string;
   price: number;
   stock: number;
 };
@@ -271,6 +272,7 @@ export const updateStocks = async (
         prisma.productSize.update({
           where: { id: s.id },
           data: {
+            size: s.size,
             stock: s.stock,
             price: s.price,
           },
@@ -288,6 +290,36 @@ export const updateStocks = async (
   }
 };
 
+//DELETE SIZE
+export const deleteSize = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const { Id } = req.params;
+    if (!Id) {
+      res.status(400).json({ message: "Invalid sizeId" });
+      return;
+    }
+
+    await prisma.productSize.delete({
+      where: {
+        id: Id.toString(),
+      },
+    });
+
+    res.status(204).send();
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error Server DeleteSize" });
+  }
+};
+
 //DELETE PRODUCT
 export const deleteProduct = async (
   req: AuthRequest,
@@ -299,18 +331,18 @@ export const deleteProduct = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { productId } = req.params;
-    if (!productId) {
-      res.status(400).json({ message: "Invalid productId" });
+    const { Id } = req.params;
+    if (!Id) {
+      res.status(400).json({ message: "Invalid Id" });
       return;
     }
 
     const product = await prisma.product.findUnique({
       where: {
-        id: productId.toString(),
+        id: Id.toString(),
       },
       include: {
-        image: true,
+        images: true,
       },
     });
 
@@ -323,7 +355,7 @@ export const deleteProduct = async (
     }
 
     await Promise.all(
-      product.image.map(async (img) => {
+      product.images.map(async (img) => {
         if (img.path) {
           await bucket.file(img.path).delete();
         } else {
@@ -339,7 +371,7 @@ export const deleteProduct = async (
 
     const deletedProduct = await prisma.product.delete({
       where: {
-        id: productId.toString(),
+        id: Id.toString(),
       },
     });
 
