@@ -108,7 +108,7 @@ export default function Products() {
                 className="flex flex-col items-center transition-scale duration-300 hover:scale-105"
               >
                 <img
-                  src={product.image?.find((img) => img.isPrimary)?.url}
+                  src={product.images?.find((img) => img.isPrimary)?.url}
                   alt={product.name}
                   className="h-40 object-cover"
                 />
