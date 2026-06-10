@@ -1,6 +1,6 @@
 import { api } from "@/redux/state/api";
 
-type Images = {
+export type Images = {
   id?: string;
   url: string;
   isPrimary: Boolean;
@@ -19,7 +19,7 @@ export interface ProductStock {
   message: string;
 }
 
-type User = {
+export type User = {
   name: string;
   avatar: string;
 };
