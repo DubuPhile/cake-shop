@@ -16,6 +16,7 @@ import verifyOTPRoutes from "./routes/verifyOTPRoutes";
 import pwdRoutes from "./routes/pwdRoutes";
 import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
+import imageRoutes from "./routes/imageRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -38,6 +39,7 @@ app.use("/verifyOtp", verifyOTPRoutes);
 app.use("/pwd", pwdRoutes);
 app.use("/product", productRoutes);
 app.use("/user", userRoutes);
+app.use("/image", imageRoutes);
 
 const port = process.env.PORT || 3001;
 
