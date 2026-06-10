@@ -335,15 +335,15 @@ export const deleteSize = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { Id } = req.params;
-    if (!Id) {
+    const { id } = req.params;
+    if (!id) {
       res.status(400).json({ message: "Invalid sizeId" });
       return;
     }
 
     await prisma.productSize.delete({
       where: {
-        id: Id.toString(),
+        id: id.toString(),
       },
     });
 
@@ -365,15 +365,15 @@ export const deleteProduct = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { Id } = req.params;
-    if (!Id) {
+    const { id } = req.params;
+    if (!id) {
       res.status(400).json({ message: "Invalid Id" });
       return;
     }
 
     const product = await prisma.product.findUnique({
       where: {
-        id: Id.toString(),
+        id: id.toString(),
       },
       include: {
         images: true,
@@ -405,7 +405,7 @@ export const deleteProduct = async (
 
     const deletedProduct = await prisma.product.delete({
       where: {
-        id: Id.toString(),
+        id: id.toString(),
       },
     });
 
