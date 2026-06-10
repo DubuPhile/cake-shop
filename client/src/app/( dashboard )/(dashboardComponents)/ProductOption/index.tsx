@@ -47,7 +47,7 @@ export default function ProductOption({ productId, name, refetch }: Props) {
         className={`w-full flex justify-end bg-transparent rounded-lg`}
       >
         <EllipsisVertical
-          className={`w-8 h-8 hover:bg-gray-300 px-2 py-2 rounded-lg ${open ? "inset-shadow-[1px_2px_3px_rgba(0,0,0,0.3)] bg-gray-200 " : ""}`}
+          className={`w-8 h-8 bg-white/60 dark:bg-black/20 hover:bg-gray-300 dark:hover:bg-gray-900 px-2 py-2 rounded-lg cursor-pointer ${open ? "inset-shadow-[1px_2px_3px_rgba(0,0,0,0.3)] bg-gray-200 " : ""}`}
         />
       </button>
       <div
