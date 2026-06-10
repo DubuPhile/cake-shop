@@ -15,7 +15,7 @@ import { upload } from "../middleware/multer";
 import { validate } from "../middleware/validate";
 import {
   createProductSchema,
-  deleteSchema,
+  idSchema,
   ProductDetailSchema,
   sizeArraySchema,
   sizeSchema,
@@ -31,7 +31,7 @@ router.get("/:id", getProductInfo);
 router.post(
   "/create",
   verifyJWT,
-  upload.array("image", 10),
+  upload.array("images", 10),
   validate(createProductSchema),
   createProduct,
 );
@@ -53,17 +53,17 @@ router.post(
 );
 
 router.delete(
-  "/:Id/size",
+  "/:id/size",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
-  validate(deleteSchema, "params"),
+  validate(idSchema, "params"),
   deleteSize,
 );
 router.delete(
-  "/:Id",
+  "/:id",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
-  validate(deleteSchema, "params"),
+  validate(idSchema, "params"),
   deleteProduct,
 );
 
