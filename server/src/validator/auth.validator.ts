@@ -12,8 +12,8 @@ export const registerSchema = z.object({
   username: z.string().optional(),
 });
 
-export const deleteSchema = z.object({
-  Id: z.uuid(),
+export const idSchema = z.object({
+  id: z.uuid(),
 });
 
 /** LOGIN SCHEMA*/
