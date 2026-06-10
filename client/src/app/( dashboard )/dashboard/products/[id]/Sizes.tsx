@@ -153,7 +153,7 @@ export default function Sizes({
         <button
           type="button"
           onClick={addSize}
-          className="bg-green-300 hover:bg-green-400 active:bg-green-500 px-3 py-2 rounded-2xl text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold ml-6"
+          className="bg-green-300 hover:bg-green-400 active:bg-green-500 px-3 py-2 rounded-2xl text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold ml-6 cursor-pointer"
         >
           Add Size
         </button>
@@ -162,7 +162,7 @@ export default function Sizes({
           <button
             type="button"
             onClick={onCanceled}
-            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl  hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl text-xs md:text-base bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 cursor-pointer"
           >
             <Ban className="w-4 h-4" />
             <span className="font-semibold">Cancel</span>{" "}
@@ -170,7 +170,7 @@ export default function Sizes({
           <button
             type="button"
             onClick={updateStocks}
-            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl bg-green-300 hover:bg-green-400 active:bg-green-500  dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-800 cursor-pointer"
+            className="flex justify-center gap-1 px-3 py-2 items-center rounded-2xl bg-green-300 hover:bg-green-400 active:bg-green-500 text-xs md:text-base dark:bg-green-600 dark:hover:bg-green-700 dark:active:bg-green-800 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span className="font-semibold">Save</span>
