@@ -225,12 +225,11 @@ export const getProductStock = async (
       return;
     }
     const stock = await prisma.productSize.findMany({
-      where: {
-        productId: id,
-      },
+      where: { OR: [{ productId: id }, { id: id }] },
     });
-    if (stock.length === 0 || !stock) {
+    if (stock.length === 0) {
       res.status(404).json({ message: "Product not found" });
+      return;
     }
 
     res
@@ -479,5 +478,34 @@ export const updateProduct = async (
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Invalid Server updateProduct." });
+  }
+};
+
+export const getAllStocks = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const search = req.query.search?.toString();
+    const stock = await prisma.productSize.findMany({
+      where: {
+        product: search
+          ? { name: { contains: search, mode: "insensitive" } }
+          : {},
+      },
+      orderBy: {
+        product: {
+          name: "asc",
+        },
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    res.status(200).json({ success: true, data: stock });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false });
   }
 };
