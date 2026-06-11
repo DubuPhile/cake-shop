@@ -21,6 +21,7 @@ export default function SearchInput({
         <input
           id="Searchbar"
           type="text"
+          autoComplete="off"
           className="w-full py-2 px-4 rounded-lg outline-none text-gray-700"
           placeholder={placeholder}
           value={value}
