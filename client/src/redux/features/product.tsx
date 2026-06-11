@@ -12,11 +12,12 @@ export type ProductSize = {
   price: number;
   stock?: number;
   productId?: string;
+  product?: Products;
 };
 export interface ProductStock {
   data: ProductSize[];
   success: boolean;
-  message: string;
+  message?: string;
 }
 
 export type User = {
@@ -48,6 +49,7 @@ export interface Products {
   averageRating?: number;
   sizes?: ProductSize[];
   reviews?: ProductReview[];
+  createdAt?: string | Date;
 }
 type ProductQueryParams = {
   search?: string;
@@ -75,6 +77,18 @@ export const ProductSlice = api.injectEndpoints({
       }),
       providesTags: ["Products"],
     }),
+
+    getAllStock: builder.query<ProductStock, ProductQueryParams | void>({
+      query: (params) => ({
+        url: "/product/getAllStock",
+        method: "GET",
+        params: {
+          search: params?.search,
+        },
+      }),
+      providesTags: ["STOCKS"],
+    }),
+
     getProductInfo: builder.query<Products, string>({
       query: (productId) => ({
         url: `/product/${productId}`,
@@ -134,6 +148,7 @@ export const ProductSlice = api.injectEndpoints({
 
 export const {
   useGetAllProductsQuery,
+  useGetAllStockQuery,
   useCreateProductMutation,
   useGetProductStockQuery,
   useUpdateStocksMutation,
