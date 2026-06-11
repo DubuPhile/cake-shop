@@ -71,7 +71,13 @@ export default function Users() {
           ) : (
             // add isBlock here for true and false
             <div className="flex items-center justify-center w-full h-full">
-              <button className="bg-red-400 px-2 py-1 rounded-2xl cursor-pointer text-sm text-white font-semibold hover:bg-red-500 active:bg-red-600">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log(params.row.userId);
+                }}
+                className="bg-red-400 px-2 py-1 rounded-2xl cursor-pointer text-sm text-white font-semibold hover:bg-red-500 active:bg-red-600"
+              >
                 Block
               </button>
             </div>
@@ -102,6 +108,11 @@ export default function Users() {
           rows={Users ?? []}
           columns={columns}
           getRowId={(row) => row.userId}
+          sx={{
+            "& .MuiDataGrid-columnHeaderTitle": {
+              fontWeight: 600,
+            },
+          }}
           checkboxSelection
           className="bg-white shadow rounded-lg border border-gray-200 dark:border-gray-700 mt-5 text-gray-700!"
         />
