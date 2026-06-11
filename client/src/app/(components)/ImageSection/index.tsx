@@ -23,11 +23,12 @@ export default function ProductGallery({
   productId,
   refetch,
 }: GalleryProps) {
+  const pathname = usePathname();
+  const { roles } = useAppSelector((state) => state.auth);
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDashboard, setIsDashboard] = useState<boolean>(false);
-  const { roles } = useAppSelector((state) => state.auth);
-
   const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
 
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -35,15 +36,13 @@ export default function ProductGallery({
   const [addImg] = useAddImageMutation();
   const [deleteImg] = useDeleteImageMutation();
 
-  const pathname = usePathname();
-
   useEffect(() => {
     if (pathname.includes("dashboard") && roles.toString() === "ADMIN") {
       setIsDashboard(true);
-      return console.log(pathname);
+      return;
     }
     setIsDashboard(false);
-    return console.log("not Dashboard");
+    return;
   }, [pathname]);
 
   const prevImage = async () => {
@@ -98,6 +97,7 @@ export default function ProductGallery({
       refetch();
       setDeleteModalOpen(false);
       setSelectedIndex(0);
+      toast.success("Successfully Deleted!");
     } catch (err) {
       console.log(err);
       toast.error("Delete Image Failed");
