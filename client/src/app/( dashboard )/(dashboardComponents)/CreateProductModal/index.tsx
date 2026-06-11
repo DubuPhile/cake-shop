@@ -7,6 +7,7 @@ import MultiImageUpload from "./MultiImageUpload";
 import Sizes from "./Sizes";
 import { ProductSize } from "@/redux/features/product";
 import toast from "react-hot-toast";
+import Spinner from "@/app/(components)/Spinner";
 
 type form = {
   prodName: string;
@@ -25,6 +26,7 @@ export default function CreateProductModal({
 }: CreateProdModal) {
   const [show, setShow] = useState(false);
   const [images, setImages] = useState<File[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [form, setForm] = useState<form>({
     prodName: "",
@@ -56,7 +58,7 @@ export default function CreateProductModal({
     }, 500);
   };
 
-  const handleCreateProd = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleCreateProd = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
 
@@ -72,7 +74,9 @@ export default function CreateProductModal({
         formData.append("images", image);
       });
 
-      onCreate(formData);
+      setLoading(true);
+      await onCreate(formData);
+      setLoading(false);
     } catch (err) {
       toast.error("Create Failed!");
       console.log(err);
@@ -189,7 +193,7 @@ export default function CreateProductModal({
                   </select>
                   {othercategory ? (
                     <input
-                      id="category"
+                      id="other-category"
                       type="text"
                       autoComplete="off"
                       placeholder="others"
@@ -211,9 +215,14 @@ export default function CreateProductModal({
             </div>
             <button
               type="submit"
+              disabled={loading}
               className="relative my-2 md:absolute top-0 right-0 bg-green-300 hover:bg-green-400 active:bg-green-500 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold drop-shadow-lg cursor-pointer text-gray-700"
             >
-              Create Product
+              {loading ? (
+                <Spinner classnames="w-6 h-6 mx-4" />
+              ) : (
+                "Create Product"
+              )}
             </button>
           </form>
         </div>
