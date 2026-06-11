@@ -5,6 +5,7 @@ import {
   deleteProduct,
   deleteSize,
   getAllProducts,
+  getAllStocks,
   getProductInfo,
   getProductStock,
   updateProduct,
@@ -26,6 +27,8 @@ import ROLE_LIST from "../config/roleLists";
 const router = express.Router();
 
 router.get("/getAll", getAllProducts);
+router.get("/getAllStock", verifyJWT, getAllStocks);
+router.get("/getStock/:id", getProductStock);
 router.get("/:id", getProductInfo);
 
 router.post(
@@ -35,7 +38,7 @@ router.post(
   validate(createProductSchema),
   createProduct,
 );
-router.get("/getStock/:id", getProductStock);
+
 router.post(
   "/updateStock",
   verifyJWT,
