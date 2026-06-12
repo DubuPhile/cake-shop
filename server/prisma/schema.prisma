@@ -41,6 +41,7 @@ model Users {
 
   trustedDevices TrustedDevice[]
   reviews         Review[]
+  likes           ReviewLikes[]
 }
 
 model Otp {
@@ -119,16 +120,32 @@ model Review {
   userId      String
   productId   String
 
-  user         Users     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user         Users    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   parentId    String?
-  parent      Review? @relation("ReviewReplies", fields: [parentId], references: [id])
+  parent      Review?   @relation("ReviewReplies", fields: [parentId], references: [id])
 
   // Replies
-  replies     Review[] @relation("ReviewReplies")
+  replies     Review[]  @relation("ReviewReplies")
+  likesCount  Int       @default(0)
+  likes       ReviewLikes[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+}
+
+model ReviewLikes {
+  id          String    @id @default(uuid())
+
+  userId      String
+  reviewId    String
+
+  user        Users      @relation(fields: [userId], references: [userId])
+  review      Review    @relation(fields: [reviewId], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([userId, reviewId])
 }
