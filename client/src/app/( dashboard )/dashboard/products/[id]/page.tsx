@@ -18,6 +18,7 @@ import Category from "./Category";
 import Sizes from "./Sizes";
 import Spinner from "@/app/(components)/Spinner";
 import ImageSection from "@/app/(components)/ImageSection";
+import CommentSection from "@/app/(components)/CommentSection";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -29,6 +30,8 @@ export default function ProductPage() {
     refetch,
   } = useGetProductInfoQuery(id?.toString());
   const [changeDetails] = useUpdateProductDetailsMutation();
+
+  console.log(product);
 
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -229,6 +232,9 @@ export default function ProductPage() {
             refetch={refetch}
           />
         </div>
+      </div>
+      <div className="w-full flex justify-start mt-5">
+        <CommentSection reviews={product?.reviews} />
       </div>
     </>
   );
