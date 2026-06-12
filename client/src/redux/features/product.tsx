@@ -21,6 +21,7 @@ export interface ProductStock {
 }
 
 export type User = {
+  id?: string;
   name: string;
   avatar: string;
 };
@@ -38,7 +39,14 @@ export interface ProductReview {
   comment: string;
   user: User;
   replies?: Replies[];
+  likes?: Likes[];
+  createdAt?: string | Date;
 }
+type Likes = {
+  id: string;
+  userId: string;
+  reviewId: string;
+};
 
 export interface Products {
   id: string;
