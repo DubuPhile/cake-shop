@@ -41,6 +41,7 @@ export const getAllProducts = async (
                 avatar: true,
               },
             },
+            likes: true,
           },
         },
       },
