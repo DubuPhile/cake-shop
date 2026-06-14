@@ -34,10 +34,20 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
           hasLocalPassword: false,
         }),
       );
-      toast.success("Logout Success!");
+      toast.success("Logout Success!", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
     } catch (err) {
       console.log(err);
-      toast.error("Logout Failed!");
+      toast.error("Logout Failed!", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
     }
   };
 
