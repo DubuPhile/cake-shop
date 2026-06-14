@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
+import { UserRepo } from "../repositories/user.repository";
 
 export const logoutUser = async (
   req: Request,
@@ -12,11 +12,8 @@ export const logoutUser = async (
       return;
     }
     const refreshToken = cookie?.jwt;
-    const foundUser = await prisma.users.findFirst({
-      where: {
-        refreshToken,
-      },
-    });
+    const foundUser = await UserRepo.findByRefreshToken(refreshToken);
+
     if (!foundUser) {
       res.clearCookie("jwt", {
         httpOnly: true,
@@ -26,14 +23,7 @@ export const logoutUser = async (
       res.sendStatus(204);
       return;
     }
-    const update = await prisma.users.update({
-      where: {
-        userId: foundUser.userId,
-      },
-      data: {
-        refreshToken: null,
-      },
-    });
+    await UserRepo.deleteRefreshToken(foundUser.userId);
 
     res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
     res.sendStatus(204);
