@@ -65,10 +65,20 @@ export default function ForgotPassword() {
       setVerifyEmail(OtpData?.data);
       setVerifyModal(true);
       setErrorMsg("");
-      toast.success(`${OtpData.message || "Verification sent."}`);
+      toast.success(`${OtpData.message || "Verification sent."}`, {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
     } catch (err: any) {
       console.log(err);
-      toast.error(`${err?.data?.message || "Invalid Email"}`);
+      toast.error(`${err?.data?.message || "Invalid Email"}`, {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
       setErrorMsg(`${err?.data?.message || "Invalid Email"}`);
     }
   };
@@ -82,11 +92,21 @@ export default function ForgotPassword() {
       setNewPwd("");
       setConfirmPwd("");
       setErrorMsg("");
-      toast.success(`${success?.message || "Reset Password"}`);
+      toast.success(`${success?.message || "Reset Password"}`, {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
       router.push("/login");
     } catch (err: any) {
       console.log(err);
-      toast.error(`${err?.data?.message || "Invalid New Password"}`);
+      toast.error(`${err?.data?.message || "Invalid New Password"}`, {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
       setErrorMsg(`${err?.data?.message || "Invalid New Password"}`);
     }
   };
@@ -96,13 +116,18 @@ export default function ForgotPassword() {
 
     const success = await verify({
       purpose: verifyEmail.purpose,
-      otpCode: Number(otp),
+      otpCode: otp,
       email: verifyEmail.email,
     }).unwrap();
 
     setIsVerify(true);
     setVerifyModal(false);
-    toast.success("Verification successful!");
+    toast.success("Verification successful!", {
+      style: {
+        fontWeight: "600",
+        color: "green",
+      },
+    });
   };
 
   return (

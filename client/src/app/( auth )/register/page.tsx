@@ -53,12 +53,25 @@ export default function Register() {
 
       setVerifyModal(true);
       setVerifyEmail(newUserData?.data);
-      toast.success(newUserData?.message);
+      toast.success(newUserData?.message, {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
 
       console.log(verifyEmail);
     } catch (err: any) {
       console.log(err);
-      toast.error(`${err.data?.message || "Invalid user, email or password."}`);
+      toast.error(
+        `${err.data?.message || "Invalid user, email or password."}`,
+        {
+          style: {
+            fontWeight: "600",
+            color: "red",
+          },
+        },
+      );
     }
   };
   const handleVerify = async (otp: string) => {
@@ -66,12 +79,17 @@ export default function Register() {
 
     const success = await verify({
       purpose: verifyEmail?.purpose,
-      otpCode: Number(otp),
+      otpCode: otp,
       email: verifyEmail?.email,
     }).unwrap();
 
     //modal
-    toast.success(`${success?.message || "Register Success!"}`);
+    toast.success(`${success?.message || "Register Success!"}`, {
+      style: {
+        fontWeight: "600",
+        color: "green",
+      },
+    });
     console.log(`${success?.message || "Register Success!"}`);
     router.push("/login");
   };

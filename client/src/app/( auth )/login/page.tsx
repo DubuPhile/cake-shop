@@ -80,12 +80,23 @@ export default function login() {
       const lastpath = localStorage.getItem("lastPath");
       setUser("");
       setPwd("");
-      toast.success("Login Success!");
+      toast.success("Login Success!", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
       router.push(lastpath || "/");
     } catch (err: any) {
       setPwd("");
       console.log(err);
-      toast.error(`${err?.data?.message || "Login Failed"}`);
+      toast.error(`${err?.data?.message || "Login Failed"}`, {
+        style: {
+          fontWeight: "600",
+          color: "red",
+          textAlign: "center",
+        },
+      });
       setErrMsg(`${err?.data?.message || "Login Failed"}`);
     }
   };
@@ -95,7 +106,7 @@ export default function login() {
 
     const success = await verOtp({
       purpose: verify?.purpose,
-      otpCode: Number(otp),
+      otpCode: otp,
       email: verify?.email,
     }).unwrap();
 
@@ -108,7 +119,12 @@ export default function login() {
         roles: decoded?.UserInfo.roles,
       }),
     );
-    toast.success("Verify Successfully!");
+    toast.success("Verify Successfully!", {
+      style: {
+        fontWeight: "600",
+        color: "green",
+      },
+    });
     const lastpath = localStorage.getItem("lastPath");
     router.push(lastpath || "/");
   };
