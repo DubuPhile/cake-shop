@@ -1,153 +1,30 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { OTPRequest, sendOTP } from "./OTPController";
-import crypto from "crypto";
+import { AuthService } from "../services/auth.service";
 
-type loginUser = {
-  user: string;
-  pwd: string;
-};
-
-// Login
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { user, pwd } = req.body as loginUser;
-    if (!pwd || !user) {
-      res.status(400).json({ message: "All fields are required" });
-      return;
-    }
+    const body = req.body;
 
-    const foundUser = await prisma.users.findFirst({
-      where: {
-        OR: [{ name: user }, { email: user }],
-      },
-    });
-
-    if (!foundUser) {
-      res.status(401).json({ message: "User not found." });
-      return;
-    }
-    // Check lock
-    if (
-      foundUser.lockUntil &&
-      new Date(foundUser.lockUntil).getTime() > Date.now()
-    ) {
-      const mins = Math.ceil(
-        (new Date(foundUser.lockUntil).getTime() - Date.now()) / 60000,
-      );
-
-      res.status(403).json({
-        message: `Account locked. Try again in ${mins} minutes.`,
+    if (!body.user || !body.pwd) {
+      res.status(400).json({
+        message: "All fields are required",
       });
       return;
     }
 
-    const match = await bcrypt.compare(pwd, foundUser.password);
-
-    if (!match) {
-      const MAX_ATTEMPTS = 5;
-      const LOCK_TIME = 30 * 60 * 1000;
-
-      const attempts = (foundUser.loginAttempts ?? 0) + 1;
-
-      const shouldLock = attempts >= MAX_ATTEMPTS;
-
-      await prisma.users.update({
-        where: { userId: foundUser.userId },
-        data: {
-          loginAttempts: attempts,
-          lockUntil: shouldLock
-            ? new Date(Date.now() + LOCK_TIME)
-            : foundUser.lockUntil,
-        },
-      });
-
-      if (shouldLock) {
-        res.status(403).json({
-          message:
-            "Account locked due to too many failed login attempts. Try again later.",
-        });
-        return;
-      }
-
-      res.status(401).json({ message: "Invalid User & password" });
-      return;
-    }
-
-    // reset attempts after success
-    const updatedUser = await prisma.users.update({
-      where: { userId: foundUser.userId },
-      data: {
-        loginAttempts: 0,
-        lockUntil: null,
-      },
-    });
-
-    //COMMENT OUT THIS FOR TESTING
     const deviceToken = req.cookies?.device_id;
 
-    let trustedDevice = null;
+    const result = await AuthService.login(body, deviceToken);
 
-    if (deviceToken) {
-      const hashed = crypto
-        .createHash("sha256")
-        .update(deviceToken)
-        .digest("hex");
-
-      trustedDevice = await prisma.trustedDevice.findFirst({
-        where: {
-          userId: foundUser.userId,
-          deviceToken: hashed,
-        },
+    if (result.requiresOTP) {
+      res.status(200).json({
+        message: "Verify Login First",
+        data: result.otp,
       });
-    }
-
-    if (!trustedDevice) {
-      const verifyOTP = {
-        email: foundUser.email,
-        purpose: "LOGIN",
-      } as OTPRequest;
-
-      const generateOtp = await sendOTP(verifyOTP);
-
-      res
-        .status(200)
-        .json({ message: "Verify Login First", data: generateOtp.createdOtp });
       return;
     }
-    //UNTIL HERE
 
-    const roles = updatedUser.roles ?? [];
-
-    const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          _id: updatedUser.userId,
-          user: updatedUser.name,
-          isAdmin: updatedUser.isAdmin,
-          roles,
-        },
-      },
-      process.env.ACCESS_TOKEN_SECRET as string,
-      { expiresIn: "15m" },
-    );
-
-    const refreshToken = jwt.sign(
-      { user: updatedUser.name },
-      process.env.REFRESH_TOKEN_SECRET as string,
-      { expiresIn: "1h" },
-    );
-
-    await prisma.users.update({
-      where: { userId: updatedUser.userId },
-      data: {
-        refreshToken,
-      },
-    });
-
-    res.cookie("jwt", refreshToken, {
+    res.cookie("jwt", result.refreshToken, {
       httpOnly: true,
       sameSite: "lax",
       secure: false,
@@ -155,9 +32,43 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       path: "/",
     });
 
-    res.json({ accessToken });
-  } catch (err) {
+    res.json({
+      accessToken: result.accessToken,
+    });
+  } catch (err: any) {
+    if (err.message === "USER_NOT_FOUND") {
+      res.status(401).json({
+        message: "User not found.",
+      });
+      return;
+    }
+
+    if (err.message === "INVALID_CREDENTIALS") {
+      res.status(401).json({
+        message: "Invalid user & password",
+      });
+      return;
+    }
+
+    if (err.message === "ACCOUNT_LOCKED_MAX") {
+      res.status(403).json({
+        message: "Account locked due to too many failed login attempts.",
+      });
+      return;
+    }
+
+    if (err.type === "ACCOUNT_LOCKED") {
+      res.status(403).json({
+        message: `Account locked. Try again in ${err.mins} minutes.`,
+      });
+      return;
+    }
+
     console.log(err);
-    res.status(500).json({ message: "Login Failed", success: false });
+
+    res.status(500).json({
+      message: "Login Failed",
+      success: false,
+    });
   }
 };
