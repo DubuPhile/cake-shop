@@ -6,7 +6,7 @@ type Purpose = "VERIFY_EMAIL" | "RESET_PASSWORD" | "LOGIN" | "CHANGE_PASSWORD";
 
 export interface verifyOTP {
   purpose: Purpose;
-  otpCode: number;
+  otpCode: string;
   email: string;
 }
 
