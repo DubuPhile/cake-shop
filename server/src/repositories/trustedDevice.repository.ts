@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { CreateTrustedDevice } from "../types/trustedDevice.types";
 
 export const TrustedDeviceRepo = {
   findTrustedDevice: async (userId: string, deviceToken: string) => {
@@ -6,6 +7,23 @@ export const TrustedDeviceRepo = {
       where: {
         userId,
         deviceToken,
+      },
+    });
+  },
+
+  create: async ({
+    userId,
+    deviceToken,
+    ipAddress,
+    userAgent,
+  }: CreateTrustedDevice) => {
+    return prisma.trustedDevice.create({
+      data: {
+        userId,
+        deviceToken,
+        ipAddress,
+        userAgent,
+        verifiedAt: new Date(),
       },
     });
   },
