@@ -1,14 +1,14 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 import { UserRepo } from "../repositories/user.repository";
 import { TrustedDeviceRepo } from "../repositories/trustedDevice.repository";
 import { sendOTP } from "./otp.service";
 import { OTPRequest } from "../controllers/OTPController";
-import { Login, Register } from "../types/auth.types";
+import { Login, Register, VerifyOTP } from "../types/auth.types";
 import { TokenService } from "./token.service";
 import { UserInfo } from "../types/token.types";
+import { OtpRepo } from "../repositories/otp.repository";
 
 const MAX_ATTEMPTS = 5;
 const LOCK_TIME = 30 * 60 * 1000;
@@ -133,5 +133,81 @@ export const AuthService = {
     const OtpData = sendOtp.createdOtp;
 
     return { OtpData };
+  },
+
+  //VERIFY OTP
+  verifyOTP: async (payload: VerifyOTP, req: any) => {
+    const { otpCode, email, purpose } = payload;
+
+    const foundOtp = await OtpRepo.foundOTP(email, purpose);
+
+    if (!foundOtp) {
+      throw new Error("OTP_NOT_FOUND");
+    }
+
+    if (foundOtp.attempts >= 5) {
+      throw new Error("ATTEMPTS_REACHED");
+    }
+
+    const isValid = await bcrypt.compare(otpCode, foundOtp.code);
+
+    if (!isValid) {
+      await OtpRepo.increamentAttempts(foundOtp.id);
+      throw new Error("INVALID_OTP");
+    }
+
+    await OtpRepo.markUsed(foundOtp.id);
+
+    switch (purpose) {
+      case "VERIFY_EMAIL":
+        await UserRepo.createAccount({
+          name: foundOtp.name || "",
+          password: foundOtp.password || "",
+          email: foundOtp.email,
+        });
+
+        await OtpRepo.deleteUsedOtp(foundOtp.id, purpose);
+
+        return { message: "Create user Successfully", success: true };
+
+      case "LOGIN":
+        const foundUser = await UserRepo.findEmail(foundOtp.email);
+        if (!foundUser) {
+          throw new Error("USER_NOT_FOUND");
+        }
+
+        const deviceToken = crypto.randomBytes(32).toString("hex");
+        const hashed = crypto
+          .createHash("sha256")
+          .update(deviceToken)
+          .digest("hex");
+
+        await TrustedDeviceRepo.create({
+          userId: foundUser.userId,
+          deviceToken: hashed,
+          ipAddress: req.ip ?? null,
+          userAgent: req.headers["user-agent"] ?? null,
+        });
+
+        const userInfo = {
+          userId: foundUser.userId,
+          name: foundUser.name,
+          roles: Array(foundUser.roles) ?? [],
+          isAdmin: foundUser.isAdmin,
+        } as UserInfo;
+
+        const accessToken = TokenService.generateAccessToken(userInfo);
+
+        const refreshToken = TokenService.generateRefreshToken(foundUser.name);
+
+        await UserRepo.saveRefreshToken(foundUser.userId, refreshToken);
+
+        await OtpRepo.deleteUsedOtp(foundOtp.id, purpose);
+
+        return { deviceToken, refreshToken, accessToken };
+
+      default:
+        return { message: "Verify Successfully", success: true };
+    }
   },
 };
