@@ -4,8 +4,15 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { OTPEmailStyle, sendEmail } from "../utils/sendEmail";
+import { OtpRepo } from "../repositories/otp.repository";
+import { TokenService } from "../services/token.service";
+import { UserInfo } from "../types/token.types";
+import { UserRepo } from "../repositories/user.repository";
+import { TrustedDeviceRepo } from "../repositories/trustedDevice.repository";
+import { VerifyOTP } from "../types/auth.types";
+import { AuthService } from "../services/auth.service";
 
-type OtpPurpose =
+export type OtpPurpose =
   | "VERIFY_EMAIL"
   | "RESET_PASSWORD"
   | "LOGIN"
@@ -99,19 +106,16 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
 
 export const resendOTP = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, purpose, name, password } = req.body;
+    const { email, purpose } = req.body;
 
-    const foundOTP = await prisma.otp.findFirst({
-      where: { email: email, purpose: purpose },
-      select: { email: true, purpose: true, name: true, password: true },
-    });
+    const foundOTP = await OtpRepo.searchOTP(email, purpose);
 
     if (!foundOTP) {
       res.status(404).json({ message: "OTP no match found" });
       return;
     }
 
-    if (name && password && purpose === "VERIFY_EMAIL") {
+    if (foundOTP.name && foundOTP.password && purpose === "VERIFY_EMAIL") {
       const verifyEmail = {
         email: foundOTP.email,
         name: foundOTP.name,
@@ -143,174 +147,69 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
 };
 
 /* VERIFY OTP */
+
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { otpCode, email, purpose } = req.body;
+    const payload = req.body as VerifyOTP;
 
-    if (otpCode.length !== 6 || typeof otpCode !== "string") {
-      res.status(400).json({
-        message: "Invalid OTP Format",
-        success: false,
-      });
-      return;
+    const result = await AuthService.verifyOTP(payload, req);
+
+    switch (payload.purpose) {
+      case "VERIFY_EMAIL":
+        res.status(201).json(result);
+        break;
+      case "LOGIN":
+        res.cookie("device_id", result?.deviceToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+        });
+
+        res.cookie("jwt", result?.refreshToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: false,
+          maxAge: 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.status(200).json({ accessToken: result?.accessToken });
+        break;
+
+      default:
+        res.status(200).json(result);
+        break;
     }
-
-    const foundOtp = await prisma.otp.findFirst({
-      where: {
-        email,
-        purpose,
-        expiresAt: {
-          gt: new Date(),
-        },
-      },
-    });
-
-    if (!foundOtp) {
-      res.status(404).json({
-        message: "OTP not found or expired",
-        success: false,
-      });
-      return;
-    }
-
-    // 2. check attempts
-    if (foundOtp.attempts >= 5) {
-      res.status(429).json({
-        message: "Too many attempts",
-        success: false,
-      });
-      return;
-    }
-
-    // 3. compare OTP
-    const isValid = await bcrypt.compare(otpCode, foundOtp.code);
-
-    if (!isValid) {
-      // increase attempts
-      await prisma.otp.update({
-        where: { id: foundOtp.id },
-        data: {
-          attempts: { increment: 1 },
-        },
-      });
-
-      res.status(400).json({
-        message: "Invalid OTP",
-        success: false,
-      });
-      return;
-    }
-
-    const verified = await prisma.otp.update({
-      where: { id: foundOtp.id },
-      data: {
-        isUsed: true,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (foundOtp.name && foundOtp.password && purpose === "VERIFY_EMAIL") {
-      await prisma.users.create({
-        data: {
-          name: foundOtp.name,
-          password: foundOtp.password,
-          email: foundOtp.email,
-        },
-      });
-
-      await prisma.otp.delete({
-        where: { id: foundOtp.id, isUsed: true, purpose },
-      });
-
-      res
-        .status(201)
-        .json({ message: "Create user Successfully", success: true });
-      return;
-    }
-    // Verify Login
-    if (purpose === "LOGIN") {
-      const foundUser = await prisma.users.findFirst({
-        where: {
-          email: foundOtp.email,
-        },
-      });
-      if (!foundUser) {
-        res.status(404).json({ message: "User not Found" });
-        return;
-      }
-
-      const deviceToken = crypto.randomBytes(32).toString("hex");
-      const hashed = crypto
-        .createHash("sha256")
-        .update(deviceToken)
-        .digest("hex");
-
-      await prisma.trustedDevice.create({
-        data: {
-          userId: foundUser.userId,
-          deviceToken: hashed,
-          ipAddress: req.ip ?? null,
-          userAgent: req.headers["user-agent"] ?? null,
-          verifiedAt: new Date(),
-        },
-      });
-
-      res.cookie("device_id", deviceToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
-      });
-
-      const roles = foundUser.roles ?? [];
-
-      const accessToken = jwt.sign(
-        {
-          UserInfo: {
-            _id: foundUser.userId,
-            user: foundUser.name,
-            isAdmin: foundUser.isAdmin,
-            roles,
-          },
-        },
-        process.env.ACCESS_TOKEN_SECRET as string,
-        { expiresIn: "15m" },
-      );
-
-      const refreshToken = jwt.sign(
-        { user: foundUser.name },
-        process.env.REFRESH_TOKEN_SECRET as string,
-        { expiresIn: "1h" },
-      );
-
-      await prisma.users.update({
-        where: { userId: foundUser.userId },
-        data: {
-          refreshToken,
-        },
-      });
-
-      res.cookie("jwt", refreshToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000,
-        path: "/",
-      });
-
-      await prisma.otp.delete({
-        where: { id: foundOtp.id, isUsed: true, purpose },
-      });
-
-      res.status(200).json({ accessToken });
-      return;
-    }
-
-    res.status(200).json({ message: "Verify Successfully", success: true });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
-    res.status(500).json({ message: "OTP Server Error", success: false });
+    switch (err.message) {
+      case "OTP_NOT_FOUND":
+        res.status(404).json({
+          message: "OTP not found or expired",
+          success: false,
+        });
+        break;
+      case "ATTEMPTS_REACHED":
+        res.status(429).json({
+          message: "Too many attempts",
+          success: false,
+        });
+        break;
+      case "INVALID_OTP":
+        res.status(400).json({
+          message: "Invalid OTP",
+          success: false,
+        });
+        break;
+      case "USER_NOT_FOUND":
+        res.status(404).json({ message: "User not Found" });
+        break;
+
+      default:
+        res
+          .status(500)
+          .json({ success: false, message: "ERROR SERVER VERIFYOTP" });
+    }
   }
 };
