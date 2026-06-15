@@ -11,11 +11,19 @@ export interface VerifyAccounts {
 }
 
 export const OtpRepo = {
+  //DELETE OTP
   deleteOtp: async (email: string, purpose: OtpPurpose) => {
     return prisma.otp.deleteMany({
       where: { email, purpose },
     });
   },
+  //DELETE USED OTP
+  deleteUsedOtp: async (id: string, purpose: OtpPurpose) => {
+    return prisma.otp.delete({
+      where: { id, isUsed: true, purpose },
+    });
+  },
+
   // CREATE OTP FOR REGISTER
   createOTPNewAccount: async ({
     email,
@@ -81,7 +89,7 @@ export const OtpRepo = {
     });
   },
 
-  verifyOTP: async (email: string, purpose: OtpPurpose) => {
+  foundOTP: async (email: string, purpose: OtpPurpose) => {
     return prisma.otp.findFirst({
       where: {
         email: email,
@@ -90,6 +98,24 @@ export const OtpRepo = {
         expiresAt: {
           gt: new Date(),
         },
+      },
+    });
+  },
+
+  markUsed: async (id: string) => {
+    return prisma.otp.update({
+      where: { id },
+      data: {
+        isUsed: true,
+      },
+    });
+  },
+
+  increamentAttempts: async (id: string) => {
+    return prisma.otp.update({
+      where: { id },
+      data: {
+        attempts: { increment: 1 },
       },
     });
   },
