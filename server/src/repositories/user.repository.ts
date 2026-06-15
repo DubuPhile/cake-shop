@@ -1,6 +1,17 @@
 import { prisma } from "../../lib/prisma";
+import { CreateAccount } from "../types/auth.types";
 
 export const UserRepo = {
+  //CREATE USER
+  createAccount: async ({ name, email, password }: CreateAccount) => {
+    return prisma.users.create({
+      data: {
+        name,
+        password,
+        email,
+      },
+    });
+  },
   // FIND BY NAME OR EMAIL
   findByNameOrEmail: async (user: string) => {
     return prisma.users.findFirst({
