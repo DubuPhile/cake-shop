@@ -1,108 +1,9 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import { OTPEmailStyle, sendEmail } from "../utils/sendEmail";
 import { OtpRepo } from "../repositories/otp.repository";
-import { TokenService } from "../services/token.service";
-import { UserInfo } from "../types/token.types";
-import { UserRepo } from "../repositories/user.repository";
-import { TrustedDeviceRepo } from "../repositories/trustedDevice.repository";
 import { VerifyOTP } from "../types/auth.types";
 import { AuthService } from "../services/auth.service";
-
-export type OtpPurpose =
-  | "VERIFY_EMAIL"
-  | "RESET_PASSWORD"
-  | "LOGIN"
-  | "CHANGE_PASSWORD";
-
-export interface OTPRequest extends Request {
-  email: string;
-  name?: string;
-  password?: string;
-  purpose: OtpPurpose;
-}
-
-type createdOtp = {
-  email: string;
-  purpose: OtpPurpose;
-  id: string;
-};
-
-export interface Otp {
-  createdOtp: createdOtp;
-}
-
-export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
-  try {
-    const { email, purpose, name, password } = generateOTP;
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedOtp = await bcrypt.hash(otp, 10);
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
-    await prisma.otp.deleteMany({
-      where: { email, purpose },
-    });
-
-    if (name && password && purpose === "VERIFY_EMAIL") {
-      const createdOtp = await prisma.otp.create({
-        data: {
-          name,
-          password,
-          email,
-          code: hashedOtp,
-          expiresAt,
-          purpose,
-        },
-        select: {
-          id: true,
-          email: true,
-          purpose: true,
-        },
-      });
-      //SEND EMAIL
-      const emailOtp = await sendEmail({
-        to: createdOtp.email,
-        subject: "Verification OTP",
-        html: OTPEmailStyle(otp),
-      });
-
-      if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
-
-      console.log(otp); // for test
-      return { createdOtp };
-    }
-
-    const createdOtp = await prisma.otp.create({
-      data: {
-        email,
-        code: hashedOtp,
-        expiresAt,
-        purpose,
-      },
-      select: {
-        id: true,
-        email: true,
-        purpose: true,
-      },
-    });
-    //SEND EMAIL
-    const emailOtp = await sendEmail({
-      to: createdOtp.email,
-      subject: "Verification OTP",
-      html: OTPEmailStyle(otp),
-    });
-
-    if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
-
-    console.log(otp); //for Test
-    return { createdOtp };
-  } catch (err) {
-    console.log(err);
-    throw new Error("Failed to send OTP");
-  }
-};
+import { sendOTP } from "../services/otp.service";
+import { OTPRequest } from "../types/otp.types";
 
 export const resendOTP = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -142,6 +43,7 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
       .status(200)
       .json({ message: "Resend OTP success!", success: true, data: OTPData });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Error ResetOTP", success: false });
   }
 };
@@ -159,7 +61,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
         res.status(201).json(result);
         break;
       case "LOGIN":
-        res.cookie("device_id", result?.deviceToken, {
+        res.cookie(`device_${result.userId}`, result?.deviceToken, {
           httpOnly: true,
           secure: false,
           sameSite: "lax",
