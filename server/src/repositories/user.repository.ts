@@ -1,7 +1,37 @@
 import { prisma } from "../../lib/prisma";
 import { CreateAccount } from "../types/auth.types";
 
+const safeUserSelect = {
+  userId: true,
+  name: true,
+  email: true,
+  roles: true,
+  isAdmin: true,
+} as const;
+
 export const UserRepo = {
+  //SEARCH USER
+  searchUser: async (search?: string) => {
+    return prisma.users.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search ?? "",
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search ?? "",
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      select: safeUserSelect,
+    });
+  },
   //CREATE USER
   createAccount: async ({ name, email, password }: CreateAccount) => {
     return prisma.users.create({
@@ -26,6 +56,14 @@ export const UserRepo = {
       where: {
         email: email,
       },
+    });
+  },
+  findbyId: async (id: string) => {
+    return prisma.users.findFirst({
+      where: {
+        userId: id,
+      },
+      select: safeUserSelect,
     });
   },
   //UPDATE LOGIN ATTEMPTS
@@ -77,6 +115,14 @@ export const UserRepo = {
       },
       data: {
         refreshToken: null,
+      },
+    });
+  },
+
+  deleteUserbyId: async (userId: string) => {
+    return prisma.users.delete({
+      where: {
+        userId,
       },
     });
   },
