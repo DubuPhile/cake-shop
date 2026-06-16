@@ -64,6 +64,20 @@ export const OTPModal = ({
     }, 500);
   };
 
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>, idx: number) => {
+    if (e.key === "ArrowRight") {
+      inputsRef.current[idx + 1]?.focus();
+    }
+
+    if (e.key === "ArrowLeft") {
+      inputsRef.current[idx - 1]?.focus();
+    }
+
+    if (e.key === "Backspace" && !otp[idx]) {
+      inputsRef.current[idx - 1]?.focus();
+    }
+  };
+
   const handleChange = (value: string, idx: number) => {
     if (!/^\d?$/.test(value)) return;
 
@@ -117,14 +131,14 @@ export const OTPModal = ({
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-500 ${show ? "opacity-100" : "opacity-0"}`}
     >
       <div
-        className={`w-full max-w-md rounded-2xl bg-white shadow-xl transition-all duration-500 ${
+        className={`w-full max-w-md rounded-2xl bg-gray-100 dark:bg-gray-700 shadow-xl transition-all duration-500 ${
           show
             ? "scale-100 translate-y-0 opacity-100"
             : "scale-95 translate-y-4 opacity-0"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center rounded-t-2xl justify-between bg-gray-200 p-4">
+        <div className="flex items-center rounded-t-2xl justify-between bg-gray-200 dark:bg-gray-800 p-4">
           <h2 className="text-lg font-semibold">Enter OTP</h2>
           <button
             onClick={handleClose}
@@ -152,6 +166,7 @@ export const OTPModal = ({
                   inputsRef.current[idx] = el;
                 }}
                 onChange={(e) => handleChange(e.target.value, idx)}
+                onKeyDown={(e) => handleKey(e, idx)}
                 className="h-12 w-12 rounded-lg border text-center text-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             ))}
@@ -177,7 +192,7 @@ export const OTPModal = ({
                 inputsRef.current[0]?.focus();
                 handleResend(); // resend OTP API
               }}
-              className="text-sm font-medium text-blue-600 hover:underline hover:cursor-pointer"
+              className="text-sm text-blue-500 font-semibold hover:underline hover:cursor-pointer"
             >
               Resend OTP
             </button>
@@ -186,7 +201,7 @@ export const OTPModal = ({
           <div className="flex justify-end gap-2">
             <button
               onClick={handleClose}
-              className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-100 hover:cursor-pointer"
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-600 dark:active:bg-gray-800 hover:cursor-pointer"
             >
               Cancel
             </button>
