@@ -1,37 +1,11 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
-
-const safeUserSelect = {
-  userId: true,
-  name: true,
-  email: true,
-  roles: true,
-  isAdmin: true,
-} as const;
+import { UserRepo } from "../repositories/user.repository";
 
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const search = req.query.search?.toString();
-    const users = await prisma.users.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: search ?? "",
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: search ?? "",
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
-      select: safeUserSelect,
-    });
+    const users = await UserRepo.searchUser(search);
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: "Error Fetching Users" });
@@ -56,21 +30,12 @@ export const deleteUser = async (
       return;
     }
 
-    const foundUser = await prisma.users.findFirst({
-      where: {
-        userId: id,
-      },
-      select: safeUserSelect,
-    });
+    const foundUser = await UserRepo.findbyId(id);
     if (!foundUser) {
       res.status(404).json({ message: "User not Found", success: false });
       return;
     }
-    await prisma.users.delete({
-      where: {
-        userId: foundUser.userId,
-      },
-    });
+    await UserRepo.deleteUserbyId(foundUser.userId);
 
     res.status(200).json({
       message: `users with an id of ${id} has been deleted`,
