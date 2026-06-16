@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
 import { AuthRequest } from "../middleware/verifyJWT";
-import { OTPRequest, sendOTP } from "./OTPController";
+import { sendOTP } from "../services/otp.service";
+import { OTPRequest } from "../types/otp.types";
 
 /* CHANGE PASSWORD */
 
