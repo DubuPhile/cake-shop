@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
+import { UserRepo } from "../repositories/user.repository";
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -11,8 +12,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
+    const foundUser = await UserRepo.findByNameOrEmail(body.user);
 
-    const deviceToken = req.cookies?.device_id;
+    const deviceToken = req.cookies?.[`device_${foundUser?.userId}`];
 
     const result = await AuthService.login(body, deviceToken);
 
@@ -36,6 +38,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       accessToken: result.accessToken,
     });
   } catch (err: any) {
+    console.log(err);
+
     if (err.message === "USER_NOT_FOUND") {
       res.status(401).json({
         message: "User not found.",
@@ -64,7 +68,19 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    console.log(err);
+    if (err.message === "CREATE_FAILED_OTP") {
+      res.status(400).json({ message: "Create Otp Failed" });
+      return;
+    }
+
+    if (err.message === "SEND_EMAIL_FAILED") {
+      res.status(400).json({ message: "Sending Email Failed" });
+      return;
+    }
+    if (err.message === "ERROR_SEND_EMAIL") {
+      res.status(400).json({ message: "Error in SendOtp" });
+      return;
+    }
 
     res.status(500).json({
       message: "Login Failed",
