@@ -4,11 +4,11 @@ import crypto from "crypto";
 import { UserRepo } from "../repositories/user.repository";
 import { TrustedDeviceRepo } from "../repositories/trustedDevice.repository";
 import { sendOTP } from "./otp.service";
-import { OTPRequest } from "../controllers/OTPController";
 import { Login, Register, VerifyOTP } from "../types/auth.types";
 import { TokenService } from "./token.service";
 import { UserInfo } from "../types/token.types";
 import { OtpRepo } from "../repositories/otp.repository";
+import { OTPRequest } from "../types/otp.types";
 
 const MAX_ATTEMPTS = 5;
 const LOCK_TIME = 30 * 60 * 1000;
@@ -204,7 +204,12 @@ export const AuthService = {
 
         await OtpRepo.deleteUsedOtp(foundOtp.id, purpose);
 
-        return { deviceToken, refreshToken, accessToken };
+        return {
+          deviceToken,
+          refreshToken,
+          accessToken,
+          userId: foundUser.userId,
+        };
 
       default:
         return { message: "Verify Successfully", success: true };
