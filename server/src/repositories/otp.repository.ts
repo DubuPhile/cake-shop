@@ -1,14 +1,6 @@
 import { prisma } from "../../lib/prisma";
-import { OtpPurpose } from "../controllers/OTPController";
-
-export interface VerifyAccounts {
-  email: string;
-  name?: string;
-  password?: string;
-  code: string;
-  purpose: OtpPurpose;
-  expiresAt: Date;
-}
+import { OtpPurpose } from "../generated/prisma/enums";
+import { VerifyAccounts } from "../types/otp.types";
 
 export const OtpRepo = {
   //DELETE OTP
