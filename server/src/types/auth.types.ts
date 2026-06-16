@@ -1,4 +1,4 @@
-import { OtpPurpose } from "../controllers/OTPController";
+import { OtpPurpose } from "./otp.types";
 
 export interface Login {
   user: string;
