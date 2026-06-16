@@ -1,7 +1,7 @@
-import { Otp, OTPRequest } from "../controllers/OTPController";
 import bcrypt from "bcrypt";
 import { OtpRepo } from "../repositories/otp.repository";
 import { OTPEmailStyle, sendEmail } from "../utils/sendEmail";
+import { Otp, OTPRequest } from "../types/otp.types";
 
 export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
   try {
@@ -23,7 +23,7 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
       });
 
       if (!createdOtp) {
-        throw new Error("Failed to Create OTP");
+        throw new Error("CREATE_FAILED_OTP");
       }
 
       //SEND EMAIL
@@ -33,7 +33,7 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
         html: OTPEmailStyle(otp),
       });
 
-      if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
+      if (emailOtp.error?.statusCode) throw new Error("SEND_EMAIL_FAILED");
 
       console.log(otp); // for test
       return { createdOtp };
@@ -52,12 +52,12 @@ export const sendOTP = async (generateOTP: OTPRequest): Promise<Otp> => {
       html: OTPEmailStyle(otp),
     });
 
-    if (emailOtp.error?.statusCode) throw new Error("Failed to Send Email");
+    if (emailOtp.error?.statusCode) throw new Error("SEND_EMAIL_FAILED");
 
     console.log(otp); //for Test
     return { createdOtp };
   } catch (err) {
     console.log(err);
-    throw new Error("Failed to send OTP");
+    throw new Error("ERROR_SEND_EMAIL");
   }
 };
