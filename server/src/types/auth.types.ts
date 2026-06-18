@@ -22,3 +22,9 @@ export interface VerifyOTP {
   purpose: OtpPurpose;
   otpCode: string;
 }
+
+export interface ChangePwd {
+  newPwd: string;
+  currentPwd: string;
+  verified: string;
+}
