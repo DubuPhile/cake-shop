@@ -1,8 +1,13 @@
 import { prisma } from "../../lib/prisma";
-import { OtpPurpose } from "../generated/prisma/enums";
+import { OtpPurpose } from "../types/otp.types";
 import { VerifyAccounts } from "../types/otp.types";
 
 export const OtpRepo = {
+  deleteById: async (id: string) => {
+    return prisma.otp.delete({
+      where: { id },
+    });
+  },
   //DELETE OTP
   deleteOtp: async (email: string, purpose: OtpPurpose) => {
     return prisma.otp.deleteMany({
@@ -100,6 +105,12 @@ export const OtpRepo = {
       data: {
         isUsed: true,
       },
+    });
+  },
+
+  findUsedOtp: async (id: string) => {
+    return prisma.otp.findFirst({
+      where: { id: id, isUsed: true },
     });
   },
 
