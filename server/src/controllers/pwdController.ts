@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { AuthRequest } from "../middleware/verifyJWT";
 import { sendOTP } from "../services/otp.service";
 import { OTPRequest } from "../types/otp.types";
+import { ChangePwd } from "../types/auth.types";
+import { AuthService } from "../services/auth.service";
 
 /* CHANGE PASSWORD */
 
@@ -13,58 +15,19 @@ export const changePassword = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
-    const { newPwd, currentPwd, verified } = req.body;
+    const payload = req.body as ChangePwd;
 
     if (!userId) {
       res.status(400).json({ message: "userId not found" });
       return;
     }
 
-    const verifiedOtp = await prisma.otp.findFirst({
-      where: { id: verified, isUsed: true },
-    });
-    if (!verifiedOtp) {
-      res.status(403).json({ message: "not verified" });
-      return;
-    }
-
-    const foundUser = await prisma.users.findFirst({
-      where: { userId: userId },
-    });
-    if (!foundUser) {
-      res.status(404).json({ message: "user not found" });
-      return;
-    }
-
-    const matchPwd = bcrypt.compare(currentPwd, foundUser.password);
-    if (!matchPwd) {
-      res.status(400).json({ message: "password not match" });
-      return;
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPwd = await bcrypt.hash(newPwd, salt);
-
-    const NewDetails = await prisma.users.update({
-      where: {
-        userId: foundUser.userId,
-        email: foundUser.email,
-      },
-      data: {
-        password: hashedPwd,
-      },
-      select: {
-        userId: true,
-        email: true,
-        name: true,
-      },
-    });
-
-    await prisma.otp.delete({ where: { id: verifiedOtp.id } });
+    const result = AuthService.changePasword(payload, userId);
 
     res.status(200).json({
       message: "Change password Success!",
       success: true,
-      data: NewDetails,
+      data: result,
     });
   } catch (err) {
     console.log(err);
