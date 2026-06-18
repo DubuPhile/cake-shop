@@ -11,7 +11,7 @@ export interface OTPRequest extends Request {
   purpose: OtpPurpose;
 }
 
-type createdOtp = {
+export type createdOtp = {
   email: string;
   purpose: OtpPurpose;
   id: string;
