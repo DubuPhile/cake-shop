@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { UserRepo } from "../repositories/user.repository";
 import { TrustedDeviceRepo } from "../repositories/trustedDevice.repository";
 import { sendOTP } from "./otp.service";
-import { Login, Register, VerifyOTP } from "../types/auth.types";
+import { ChangePwd, Login, Register, VerifyOTP } from "../types/auth.types";
 import { TokenService } from "./token.service";
 import { UserInfo } from "../types/token.types";
 import { OtpRepo } from "../repositories/otp.repository";
@@ -214,5 +214,31 @@ export const AuthService = {
       default:
         return { message: "Verify Successfully", success: true };
     }
+  },
+
+  changePasword: async (payload: ChangePwd, id: string) => {
+    const { verified, newPwd, currentPwd } = payload;
+
+    const verifiedOtp = await OtpRepo.findUsedOtp(verified);
+    if (!verifiedOtp) throw new Error("NOT_VERIFIED");
+
+    const foundUser = await UserRepo.findbyId(id);
+    if (!foundUser) throw new Error("USER_NOT_FOUND");
+
+    const matchPwd = await bcrypt.compare(currentPwd, foundUser.password);
+    if (!matchPwd) throw new Error("PASSWORD_NOT_MATCH");
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPwd = await bcrypt.hash(newPwd, salt);
+
+    const NewDetails = await UserRepo.updatePwd(
+      foundUser.userId,
+      foundUser.email,
+      hashedPwd,
+    );
+
+    await OtpRepo.deleteById(verifiedOtp.id);
+
+    return { NewDetails };
   },
 };
