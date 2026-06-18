@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
 import { bucket } from "../config/firebase";
 import { ProductImageService } from "../services/productImage.service";
 import { productRepo } from "../repositories/product.repository";
 import { UserRepo } from "../repositories/user.repository";
+import { imgProdRepo } from "../repositories/productImg.repository";
 
 export const addImage = async (
   req: AuthRequest,
@@ -75,21 +75,13 @@ export const deleteImage = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const user = await prisma.users.findFirst({
-      where: {
-        userId: userId,
-      },
-    });
+    const user = await UserRepo.findbyId(userId);
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
-    const foundImage = await prisma.productImage.findFirst({
-      where: {
-        id: id.toString(),
-      },
-    });
+    const foundImage = await imgProdRepo.findImg(id.toString());
 
     if (!foundImage) {
       res.status(404).json("Image not Found");
@@ -106,9 +98,7 @@ export const deleteImage = async (
       await bucket.file(filePath).delete();
     }
 
-    await prisma.productImage.delete({
-      where: { id: foundImage.id },
-    });
+    await imgProdRepo.delete(foundImage.id);
 
     res.status(204).send();
   } catch (err) {
