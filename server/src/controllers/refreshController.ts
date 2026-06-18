@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { prisma } from "../../lib/prisma";
-
-type RefreshTokenPayload = JwtPayload & {
-  user: string;
-};
+import { AuthService } from "../services/auth.service";
 
 export const handleRefreshToken = async (
   req: Request,
@@ -18,52 +13,21 @@ export const handleRefreshToken = async (
       return;
     }
 
-    const foundUser = await prisma.users.findFirst({
-      where: {
-        refreshToken,
-      },
-    });
+    const result = await AuthService.refreshToken(refreshToken);
 
-    if (!foundUser) {
-      res.sendStatus(403);
-      return;
-    }
-
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET as string,
-      (err, decoded) => {
-        const payload = decoded as RefreshTokenPayload;
-        console.log(payload);
-
-        if (err || !payload || foundUser.name !== payload.user) {
-          res.sendStatus(403);
-          return;
-        }
-
-        const roles = foundUser.roles ?? [];
-
-        const accessToken = jwt.sign(
-          {
-            UserInfo: {
-              _id: foundUser.userId,
-              user: foundUser.name,
-              isAdmin: foundUser.isAdmin,
-              roles,
-            },
-          },
-          process.env.ACCESS_TOKEN_SECRET as string,
-          { expiresIn: "15m" },
-        );
-
-        res.json({
-          accessToken,
-          hasLocalPassword: Boolean(foundUser.password),
-        });
-      },
-    );
+    res.json(result);
   } catch (err: any) {
     console.error(err);
+    if (err instanceof Error) {
+      switch (err.message) {
+        case "UNAUTHORIZED":
+          res.status(401).json({ message: "Unauthorized" });
+          return;
+        case "FORBIDDEN":
+          res.status(400).json({ message: "Forbidden" });
+          return;
+      }
+    }
     res.status(500).json({
       message: `Refresh token error: ${err.message}`,
     });
