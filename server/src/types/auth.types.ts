@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { OtpPurpose } from "./otp.types";
 
 export interface Login {
@@ -27,4 +28,24 @@ export interface ChangePwd {
   newPwd: string;
   currentPwd: string;
   verified: string;
+}
+
+export interface ResetPwd {
+  newPwd: string;
+  email: string;
+}
+
+export type UserData = {
+  name: string;
+  email: string;
+  userId: string;
+};
+
+export type RefreshTokenPayload = JwtPayload & {
+  user: string;
+};
+
+export interface RefreshToken {
+  accessToken: string;
+  hasLocalPassword: boolean;
 }
