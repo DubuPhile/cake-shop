@@ -63,7 +63,23 @@ export const UserRepo = {
       where: {
         userId: id,
       },
-      select: safeUserSelect,
+    });
+  },
+
+  updatePwd: async (userId: string, email: string, password: string) => {
+    return prisma.users.update({
+      where: {
+        userId,
+        email,
+      },
+      data: {
+        password,
+      },
+      select: {
+        userId: true,
+        email: true,
+        name: true,
+      },
     });
   },
   //UPDATE LOGIN ATTEMPTS
