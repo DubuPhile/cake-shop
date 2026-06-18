@@ -12,10 +12,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
+
     const foundUser = await UserRepo.findByNameOrEmail(body.user);
-
     const deviceToken = req.cookies?.[`device_${foundUser?.userId}`];
-
     const result = await AuthService.login(body, deviceToken);
 
     if (result.requiresOTP) {
