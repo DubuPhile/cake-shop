@@ -114,6 +114,16 @@ export const OtpRepo = {
     });
   },
 
+  findusedOtpReset: async (email: string) => {
+    return prisma.otp.findFirst({
+      where: {
+        email: email,
+        isUsed: true,
+        purpose: "RESET_PASSWORD",
+      },
+    });
+  },
+
   increamentAttempts: async (id: string) => {
     return prisma.otp.update({
       where: { id },
