@@ -59,7 +59,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     switch (payload.purpose) {
       case "VERIFY_EMAIL":
         res.status(201).json(result);
-        break;
+        return;
       case "LOGIN":
         res.cookie(`device_${result.userId}`, result?.deviceToken, {
           httpOnly: true,
@@ -77,11 +77,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
         });
 
         res.status(200).json({ accessToken: result?.accessToken });
-        break;
+        return;
 
       default:
         res.status(200).json(result);
-        break;
+        return;
     }
   } catch (err: any) {
     console.log(err);
@@ -91,22 +91,22 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
           message: "OTP not found or expired",
           success: false,
         });
-        break;
+        return;
       case "ATTEMPTS_REACHED":
         res.status(429).json({
           message: "Too many attempts",
           success: false,
         });
-        break;
+        return;
       case "INVALID_OTP":
         res.status(400).json({
           message: "Invalid OTP",
           success: false,
         });
-        break;
+        return;
       case "USER_NOT_FOUND":
         res.status(404).json({ message: "User not Found" });
-        break;
+        return;
 
       default:
         res
