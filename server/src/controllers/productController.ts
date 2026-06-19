@@ -1,9 +1,26 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
-import { bucket } from "../config/firebase";
+import { productRepo } from "../repositories/product.repository";
+import { ProductService } from "../services/product.service";
+import { NewProductData, Sizes } from "../types/product.types";
+import { ProductSizeRepo } from "../repositories/productSize.repository";
 
-//GET ALL PRODUCTS
+export const getCategory = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await productRepo.getCategory();
+    const category = result.map((p) => p.category);
+    console.log(category);
+    res.status(200).json(category);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "ERROR GET CATEGORY" });
+  }
+};
+/** GET ALL PRODUCTS */
 export const getAllProducts = async (
   req: Request,
   res: Response,
@@ -11,41 +28,10 @@ export const getAllProducts = async (
   try {
     const search = req.query.search?.toString();
     const category = req.query.category?.toString();
-    const products = await prisma.product.findMany({
-      where: {
-        AND: [
-          search
-            ? {
-                name: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              }
-            : {},
-          category
-            ? {
-                category,
-              }
-            : {},
-        ],
-      },
-      orderBy: { name: "asc" },
-      include: {
-        sizes: true,
-        images: true,
-        reviews: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                avatar: true,
-              },
-            },
-            likes: true,
-          },
-        },
-      },
-    });
+    const products = await productRepo.getAllProductWithSearch(
+      search,
+      category,
+    );
 
     res.status(200).json(products);
   } catch (err) {
@@ -54,7 +40,7 @@ export const getAllProducts = async (
   }
 };
 
-//GET PRODUCT INFO
+/** GET PRODUCT INFO */
 export const getProductInfo = async (
   req: Request,
   res: Response,
@@ -66,46 +52,7 @@ export const getProductInfo = async (
       return;
     }
 
-    const product = await prisma.product.findUnique({
-      where: {
-        id: id.toString(),
-      },
-      include: {
-        sizes: true,
-        images: true,
-        reviews: {
-          where: {
-            parentId: null,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          include: {
-            user: {
-              select: {
-                userId: true,
-                name: true,
-                avatar: true,
-              },
-            },
-            replies: {
-              orderBy: {
-                createdAt: "asc",
-              },
-              include: {
-                user: {
-                  select: {
-                    userId: true,
-                    name: true,
-                    avatar: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    const product = await productRepo.getProduct(id.toString());
 
     res.status(200).json(product);
   } catch (err) {
@@ -114,120 +61,53 @@ export const getProductInfo = async (
   }
 };
 
-type ProductData = {
-  name: string;
-  category: string;
-  description: string;
-  images: [
-    {
-      url: string;
-    },
-  ];
-  sizes: Sizes[];
-};
-
-type Sizes = {
-  price: number;
-  size: string;
-  stock: number;
-};
-
-//CREATE PRODUCT
+/** CREATE PRODUCT */
 export const createProduct = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
-    const { name, category, description, sizes } = req.body as ProductData;
+    const payload = req.body as NewProductData;
     const files = (req.files as Express.Multer.File[]) || [];
 
     if (!userId) throw new Error("Unauthorized");
-    const foundUser = await prisma.users.findFirst({
-      where: {
-        userId: userId,
-      },
-    });
-    if (!foundUser) throw new Error("User not found");
     if (!files || files.length === 0) {
       res.status(400).json({
         message: "No images uploaded",
       });
       return;
     }
-
-    const imageUrls = await Promise.all(
-      files.map(async (file, index) => {
-        const fileName = `Products/${name}/${Date.now()}-${file.originalname}`;
-
-        const fileUpload = bucket.file(fileName);
-
-        await fileUpload.save(file.buffer, {
-          metadata: {
-            contentType: file.mimetype,
-          },
-          public: true,
-        });
-
-        return {
-          url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
-          filepath: fileName,
-        };
-      }),
-    );
-
-    const data = await prisma.product.create({
-      data: {
-        name: name,
-        category: category,
-        description: description,
-        sizes: {
-          create: sizes.map((sizes) => ({
-            size: sizes.size,
-            stock: sizes.stock || 0,
-            price: Number(sizes.price),
-          })),
-        },
-        images: {
-          create: imageUrls.map((imgUrl, index) => ({
-            url: imgUrl.url,
-            path: imgUrl.filepath,
-            isPrimary: index === 0,
-          })),
-        },
-      },
-    });
+    const data = await ProductService.createProduct(userId, payload, files);
     res.status(201).json({
       success: true,
       message: "Product created Successfully!",
       data: data,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
+    if (err.message === "USER_NOT_FOUND") {
+      res.status(404).json({ message: "User not found", success: false });
+      return;
+    }
     res.status(500).json({ message: "Error create Product server!" });
   }
 };
 
-interface ProductParams {
-  id: string;
-}
-
-//GET PRODUCT STOCKS
+/** GET PRODUCT STOCKS */
 export const getProductStock = async (
-  req: Request<ProductParams>,
+  req: Request,
   res: Response,
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    if (!id || Array.isArray(id)) {
+    if (!id) {
       res.status(400).json({
         message: "Invalid product id",
       });
       return;
     }
-    const stock = await prisma.productSize.findMany({
-      where: { OR: [{ productId: id }, { id: id }] },
-    });
+    const stock = await ProductSizeRepo.getSizes(id.toString());
     if (stock.length === 0) {
       res.status(404).json({ message: "Product not found" });
       return;
@@ -244,14 +124,7 @@ export const getProductStock = async (
   }
 };
 
-type UpdateStock = {
-  id: string;
-  size: string;
-  price: number;
-  stock: number;
-};
-
-// UPDATE PRODUCT STOCKS
+/** UPDATE STOCK */
 export const updateStocks = async (
   req: AuthRequest,
   res: Response,
@@ -263,22 +136,11 @@ export const updateStocks = async (
       return;
     }
 
-    const sizes = req.body as UpdateStock[];
+    const sizes = req.body as Sizes[];
     if (sizes.length === 0 || !sizes) {
       res.status(400).json({ message: "Invalid Sizes" });
     }
-    const data = await prisma.$transaction(
-      sizes.map((s) =>
-        prisma.productSize.update({
-          where: { id: s.id },
-          data: {
-            size: s.size,
-            stock: s.stock,
-            price: s.price,
-          },
-        }),
-      ),
-    );
+    const data = await ProductSizeRepo.updateProdSizes(sizes);
     res
       .status(200)
       .json({ success: true, data: data, message: "Update Stock Success!" });
@@ -290,7 +152,7 @@ export const updateStocks = async (
   }
 };
 
-//ADD SIZE
+/** ADD SIZE */
 export const addSize = async (
   req: AuthRequest,
   res: Response,
@@ -301,19 +163,17 @@ export const addSize = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { size, price, stock, productId } = req.body;
-    if (!size || !price || !stock || !productId) {
+    const payload = req.body as Sizes;
+    if (
+      !payload.size ||
+      !payload.price ||
+      !payload.stock ||
+      !payload.productId
+    ) {
       res.status(400).json({ message: "Size, price, stock is Required" });
     }
 
-    const newSize = await prisma.productSize.create({
-      data: {
-        size: size,
-        price: price,
-        stock: stock,
-        product: { connect: { id: productId } },
-      },
-    });
+    const newSize = await ProductSizeRepo.addSize(payload);
 
     res
       .status(201)
@@ -324,7 +184,7 @@ export const addSize = async (
   }
 };
 
-//DELETE SIZE
+/** DELETE SIZE */
 export const deleteSize = async (
   req: AuthRequest,
   res: Response,
@@ -341,11 +201,7 @@ export const deleteSize = async (
       return;
     }
 
-    await prisma.productSize.delete({
-      where: {
-        id: id.toString(),
-      },
-    });
+    await ProductSizeRepo.deleteSize(id.toString());
 
     res.status(204).send();
   } catch (err) {
@@ -354,7 +210,7 @@ export const deleteSize = async (
   }
 };
 
-//DELETE PRODUCT
+/** DELETE PRODUCT */
 export const deleteProduct = async (
   req: AuthRequest,
   res: Response,
@@ -371,49 +227,13 @@ export const deleteProduct = async (
       return;
     }
 
-    const product = await prisma.product.findUnique({
-      where: {
-        id: id.toString(),
-      },
-      include: {
-        images: true,
-      },
-    });
-
-    if (!product) {
-      res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-      return;
-    }
-
-    await Promise.all(
-      product.images.map(async (img) => {
-        if (img.path) {
-          await bucket.file(img.path).delete();
-        } else {
-          const encodedPath = img.url.split("/o/")[1];
-          if (!encodedPath) {
-            throw new Error("Invalid Firebase URL");
-          }
-          const filePath = decodeURIComponent(encodedPath.split("?")[0] ?? "");
-          await bucket.file(filePath).delete();
-        }
-      }),
-    );
-
-    const deletedProduct = await prisma.product.delete({
-      where: {
-        id: id.toString(),
-      },
-    });
+    const deletedProduct = await ProductService.deleteProduct(id.toString());
 
     console.log(deletedProduct);
 
     res.status(204).send();
   } catch (err: any) {
-    if (err.code === "P2025") {
+    if (err.code === "P2025" || err.message === "PRODUCT_NOT_FOUND") {
       res.status(404).json({
         success: false,
         message: "Product not found",
