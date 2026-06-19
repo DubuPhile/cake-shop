@@ -6,6 +6,7 @@ import Header from "@/app/( dashboard )/(dashboardComponents)/Header";
 import {
   useCreateProductMutation,
   useGetAllProductsQuery,
+  useGetCategoryQuery,
 } from "@/redux/features/product";
 import SearchInput from "@/app/(components)/SearchInput";
 import Link from "next/link";
@@ -23,6 +24,7 @@ export default function Products() {
   const debounceSearch = useDebounce({ value: searchTerm, delay: 500 });
 
   const [createProduct] = useCreateProductMutation();
+  const { data: Categories } = useGetCategoryQuery();
   const {
     data: products,
     isLoading,
@@ -41,9 +43,8 @@ export default function Products() {
   const handleCreateProduct = async (productData: FormData) => {
     try {
       await createProduct(productData).unwrap();
-
-      refetch();
       toast.success(`Product Created!`);
+      refetch();
       setIsModalOpen(false);
     } catch (err: any) {
       console.log(err);
@@ -82,15 +83,17 @@ export default function Products() {
             <option className="font-semibold " value="">
               All Categories
             </option>
-            <option className="font-semibold" value="cakes">
-              Cake
-            </option>
-            <option className="font-semibold" value="desserts">
-              Desserts
-            </option>
-            <option className="font-semibold" value="birthday cakes">
-              Birthday Cake
-            </option>
+            {Categories?.map((category) => {
+              return (
+                <option
+                  key={category}
+                  className="font-semibold"
+                  value={category}
+                >
+                  {category}
+                </option>
+              );
+            })}
           </select>
         </div>
 
