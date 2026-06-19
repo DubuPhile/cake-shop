@@ -96,6 +96,13 @@ export const ProductSlice = api.injectEndpoints({
       }),
       providesTags: ["STOCKS"],
     }),
+    getCategory: builder.query<string[], void>({
+      query: () => ({
+        url: "/product/category",
+        method: "GET",
+      }),
+      providesTags: ["Categories"],
+    }),
 
     getProductInfo: builder.query<Products, string>({
       query: (productId) => ({
@@ -110,6 +117,7 @@ export const ProductSlice = api.injectEndpoints({
         method: "POST",
         body: productData,
       }),
+      invalidatesTags: ["Products", "Categories"],
     }),
     getProductStock: builder.query<ProductStock, string>({
       query: (params) => ({
@@ -124,6 +132,7 @@ export const ProductSlice = api.injectEndpoints({
         method: "POST",
         body: sizes,
       }),
+      invalidatesTags: ["STOCKS"],
     }),
     updateProductDetails: builder.mutation<void, Products>({
       query: (changeData) => ({
@@ -131,18 +140,21 @@ export const ProductSlice = api.injectEndpoints({
         method: "PATCH",
         body: { ...changeData },
       }),
+      invalidatesTags: ["Products"],
     }),
     deleteProduct: builder.mutation<void, string>({
       query: (productId) => ({
         url: `/product/${productId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Products"],
     }),
     deleteSize: builder.mutation<void, string>({
       query: (Id) => ({
         url: `/product/${Id}/size`,
         method: "DELETE",
       }),
+      invalidatesTags: ["STOCKS"],
     }),
     addSize: builder.mutation<void, ProductSize>({
       query: (data) => ({
@@ -150,11 +162,13 @@ export const ProductSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["STOCKS"],
     }),
   }),
 });
 
 export const {
+  useGetCategoryQuery,
   useGetAllProductsQuery,
   useGetAllStockQuery,
   useCreateProductMutation,
