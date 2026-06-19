@@ -31,8 +31,6 @@ export default function ProductPage() {
   } = useGetProductInfoQuery(id?.toString());
   const [changeDetails] = useUpdateProductDetailsMutation();
 
-  console.log(product);
-
   const [disabled, setDisabled] = useState<boolean>(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -233,9 +231,13 @@ export default function ProductPage() {
           />
         </div>
       </div>
-      <div className="w-full flex justify-start mt-5">
-        <CommentSection reviews={product?.reviews} />
-      </div>
+      {product?.reviews?.length === 0 ? (
+        ""
+      ) : (
+        <div className="w-full flex justify-start mt-5">
+          <CommentSection reviews={product?.reviews} />
+        </div>
+      )}
     </>
   );
 
