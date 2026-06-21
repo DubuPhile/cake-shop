@@ -3,10 +3,11 @@ import { useRef, useState } from "react";
 import Avatar from "../../../../public/default-avatar.png";
 import { useLogoutMutation } from "@/redux/features/userAuth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setCredentials } from "@/redux/state/auth";
+import { logOut } from "@/redux/state/auth";
 import toast from "react-hot-toast";
 import useOutsideClick from "@/hook/useOutsideClick";
 import { useRouter } from "next/navigation";
+import { api } from "@/redux/state/api";
 
 type UserDropdownProps = {
   user: string | null;
@@ -26,14 +27,8 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
   const handleLogout = async () => {
     try {
       await logout().unwrap();
-      dispatch(
-        setCredentials({
-          user: null,
-          accessToken: null,
-          roles: [],
-          hasLocalPassword: false,
-        }),
-      );
+      dispatch(logOut());
+      dispatch(api.util.resetApiState());
       toast.success("Logout Success!", {
         style: {
           fontWeight: "600",
