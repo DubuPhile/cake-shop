@@ -32,7 +32,9 @@ const verifyJWT = (
     (req.headers.Authorization as string | undefined) ||
     req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
-    res.sendStatus(401);
+    res.status(401).json({
+      message: "Unauthorized",
+    });
     return;
   }
 
@@ -43,7 +45,10 @@ const verifyJWT = (
     process.env.ACCESS_TOKEN_SECRET as string,
     (err, decoded) => {
       if (err) {
-        res.sendStatus(403); // Invalid token
+        console.log(err);
+        res.status(403).json({
+          message: "Forbidden",
+        }); // Invalid token
         return;
       }
 
