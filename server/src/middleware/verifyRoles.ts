@@ -7,14 +7,14 @@ export const verifyRoles =
     const userRole = req.user?.roles;
 
     if (!userRole) {
-      res.sendStatus(401);
+      res.status(401).json({ message: "Unauthorized" });
       return;
     }
 
-    const hasRole = allowedRoles.includes(userRole);
+    const hasRole = allowedRoles.some((role) => userRole.includes(role));
 
     if (!hasRole) {
-      res.sendStatus(403);
+      res.status(403).json({ message: "Forbidde" });
       return;
     }
     next();
