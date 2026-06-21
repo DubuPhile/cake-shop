@@ -37,7 +37,7 @@ export default function AdSlider() {
   }, []);
 
   return (
-    <div className="relative h-125 overflow-hidden rounded-3xl">
+    <div className="relative h-70 sm:h-125 overflow-hidden rounded-3xl">
       {/* Slides */}
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
@@ -60,15 +60,21 @@ export default function AdSlider() {
             <div className="absolute inset-0 bg-black/20" />
 
             {/* Content */}
-            <div className="relative z-10 flex h-full items-center px-12 ">
-              <div className="max-w-lg text-white bg-black/50 p-5 rounded-2xl">
-                <p className="text-sm uppercase tracking-widest">New Product</p>
+            <div className="relative z-10 flex h-full items-center px-5 md:px-12 transition-all duration-300">
+              <div className="max-w-sm md:max-w-lg text-white bg-black/50 p-5 rounded-2xl transition-all duration-300">
+                <p className="text-xs md:text-sm uppercase tracking-widest">
+                  New Product
+                </p>
 
-                <h1 className="text-5xl font-bold mt-2">{ad.title}</h1>
+                <h1 className="text-lg md:text-5xl font-bold mt-2 transition-all duration-300">
+                  {ad.title}
+                </h1>
 
-                <p className="mt-4 text-lg text-gray-200">{ad.description}</p>
+                <p className="mt-4 text-sm md:text-lg text-gray-200 transition-all duration-300">
+                  {ad.description}
+                </p>
 
-                <button className="mt-6 bg-white text-black px-6 py-3 rounded-xl font-semibold hover:scale-105 transition cursor-pointer">
+                <button className="mt-6 text-xs md:text-base bg-white text-black px-3 py-2 md:px-6 md:py-3 rounded-xl font-semibold hover:scale-105 transition cursor-pointer">
                   Buy Now
                 </button>
               </div>
