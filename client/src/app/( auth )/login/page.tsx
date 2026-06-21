@@ -1,17 +1,16 @@
 "use client";
 
-import Spinner from "@/app/(components)/Spinner";
+import { useState } from "react";
+import styles from "./index.module.css";
+import Login from "../(authComponents)/Login";
+import Register from "../(authComponents)/Register";
 import { OTPModal, VerifyOTP } from "@/app/(components)/VerifyModal";
 import { useVerifyOTPMutation } from "@/redux/features/OTPAuth";
-import { useLoginMutation } from "@/redux/features/userAuth";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import { setCredentials } from "@/redux/state/auth";
 import { useAppDispatch } from "@/redux/store";
-import { jwtDecode } from "jwt-decode";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
 
 type UserInfo = {
   user: string;
@@ -23,92 +22,53 @@ export interface MyTokenPayload {
   UserInfo: UserInfo;
 }
 
-export default function login() {
-  const [user, setUser] = useState<string>("");
-  const [pwd, setPwd] = useState<string>("");
-  const [showPwd, setShowPwd] = useState<boolean>(false);
+export interface Props {
+  setVerifyModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setVerify: React.Dispatch<React.SetStateAction<VerifyOTP | undefined>>;
+}
+
+export default function NewLogin() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const [verifyModal, setVerifyModal] = useState<boolean>(false);
   const [verify, setVerify] = useState<VerifyOTP | undefined>();
 
-  const [errMsg, setErrMsg] = useState<string>("");
+  const [verifyOtp] = useVerifyOTPMutation();
 
-  const userRef = useRef<HTMLInputElement | null>(null);
-  const errorRef = useRef<HTMLParagraphElement | null>(null);
-
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-
-  const [login, { isLoading: LoadLogin, isSuccess }] = useLoginMutation();
-  const [verOtp, { isLoading: LoadVerify }] = useVerifyOTPMutation();
-
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    setShow(true);
-  }, []);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [user, pwd]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      const userData = await login({
-        user: user,
-        pwd: pwd,
-      }).unwrap();
-
-      if (userData?.message === "Verify Login First") {
-        setVerifyModal(true);
-        setVerify(userData?.data);
-        return;
-      }
-      if (!userData.accessToken) throw new Error("accessToken not found");
-      const decoded = jwtDecode<MyTokenPayload>(userData.accessToken);
-
-      dispatch(
-        setCredentials({
-          accessToken: userData.accessToken,
-          user: decoded?.UserInfo.user,
-          roles: decoded?.UserInfo.roles,
-          hasLocalPassword: false,
-        }),
-      );
-      const lastpath = localStorage.getItem("lastPath");
-      setUser("");
-      setPwd("");
-      toast.success("Login Success!", {
-        style: {
-          fontWeight: "600",
-          color: "green",
-        },
-      });
-      router.push(lastpath || "/");
-    } catch (err: any) {
-      setPwd("");
-      console.log(err);
-      toast.error(`${err?.data?.message || "Login Failed"}`, {
-        style: {
-          fontWeight: "600",
-          color: "red",
-          textAlign: "center",
-        },
-      });
-      setErrMsg(`${err?.data?.message || "Login Failed"}`);
-    }
-  };
-
-  const handleVerifyOtp = async (otp: string) => {
+  const handleVerify = async (otp: string) => {
     if (!verify) return;
 
-    const success = await verOtp({
+    const success = await verifyOtp({
       purpose: verify?.purpose,
       otpCode: otp,
       email: verify?.email,
     }).unwrap();
+
+    //modal
+    toast.success(`${success?.message || "Register Success!"}`, {
+      style: {
+        fontWeight: "600",
+        color: "green",
+      },
+    });
+    console.log(`${success?.message || "Register Success!"}`);
+    router.push("/login");
+  };
+
+  const handleVerifyOtp = async (otp: string) => {
+    try {
+    } catch (err) {}
+    if (!verify) return;
+
+    const success = await verifyOtp({
+      purpose: verify?.purpose,
+      otpCode: otp,
+      email: verify?.email,
+    }).unwrap();
+
+    console.log(success);
 
     if (!success.accessToken) throw new Error("accessToken not found");
     const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
@@ -130,104 +90,72 @@ export default function login() {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-screen flex items-center h-screen justify-center max-w-300">
-        {LoadLogin || LoadVerify ? (
-          <Spinner />
-        ) : (
+    <>
+      <div className="flex items-center justify-center h-screen w-screen">
+        <div
+          className={`${styles.container} ${isSignUp ? styles.signUpMode : ""}`}
+        >
           <div
-            className={`w-100vw w-125 max-w-125 flex items-center justify-center transition-all duration-500 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`bg-gray-50 dark:bg-gray-700 ${styles.formsContainer}`}
           >
-            <div className="w-100 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-2xl drop-shadow-lg">
-              <h1 className="my-10 text-2xl font-bold">Log-in</h1>
-              {errMsg && (
-                <p ref={errorRef} className="mx-3 my-1 text-base text-red-500">
-                  {errMsg}
-                </p>
-              )}
-              <form
-                className="w-full flex flex-col items-center gap-3 "
-                onSubmit={handleSubmit}
-              >
-                <div className="group flex flex-col gap w-70">
-                  <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${user ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
-                    htmlFor="username"
-                  >
-                    Username/Email
-                  </label>
-                  <input
-                    className="group px-3 py-2 rounded-2xl border border-gray-300"
-                    type="text"
-                    id="username"
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    ref={userRef}
-                    required
-                  />
-                </div>
-                <div className="group relative flex flex-col gap w-70">
-                  <label
-                    className={`transition-all duration-300 group-focus-within:scale-80 group-focus-within:-translate-x-3 group-focus-within:translate-y-0 group-focus-within:text-gray-900 dark:group-focus-within:text-gray-50 ${pwd ? "scale-80 -translate-x-3 translate-y-0 text-gray-900 dark:text-gray-50 cursor-default" : "scale-100 translate-x-3 translate-y-8.5 text-gray-500 cursor-text"}`}
-                    htmlFor="password"
-                  >
-                    Password
-                  </label>
-                  <div className="flex flex-row">
-                    <input
-                      className="px-3 py-2 rounded-2xl border border-gray-300 w-70 "
-                      type={`${showPwd ? "text" : "password"}`}
-                      id="password"
-                      autoComplete="off"
-                      onChange={(e) => setPwd(e.target.value)}
-                      value={pwd}
-                      required
-                    />
-                    <span
-                      className="absolute right-2.5 bottom-2.5 cursor-pointer text-gray-600 z-10"
-                      onClick={() => setShowPwd(!showPwd)}
-                    >
-                      {showPwd ? <Eye /> : <EyeOff />}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex w-70 my-5 items-center justify-between">
-                  <button className="px-4 py-2 bg-pink-400 text-white font-semibold rounded-3xl hover:scale-110 hover:bg-pink-500 active:bg-pink-600 active:scale-105 transition-all duration-300 cursor-pointer">
-                    Log In
-                  </button>
-                  <Link
-                    className="transition-all duration-300 hover:scale-110 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm"
-                    href="/forgot-password"
-                  >
-                    Forgot Password
-                  </Link>
-                </div>
-              </form>
-
-              <Link
-                className=" transition-all duration-300 hover:scale-110 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm"
-                href="/register"
-              >
-                Create Account?
-              </Link>
-
-              <div className=" flex w-75 items-center text-center before:content-[''] before:flex-1 before:border-b before:border-black after:content-[''] after:flex-1 after:border-b after:border-black my-5">
-                <span className="px-3 font-semibold">OR</span>
+            <div className={` ${styles.signinSignup}`}>
+              <div className={`${styles.form} ${styles.signIn}`}>
+                <Login setVerifyModal={setVerifyModal} setVerify={setVerify} />
+              </div>
+              <div className={`${styles.form} ${styles.signUp} mt-10 sm:mt-0`}>
+                <Register
+                  setVerifyModal={setVerifyModal}
+                  setVerify={setVerify}
+                />
               </div>
             </div>
           </div>
-        )}
+          <div className={styles.panelsContainer}>
+            {" "}
+            <div className={`${styles.panel} ${styles.leftPanel}`}>
+              {" "}
+              <div className={styles.content}>
+                {" "}
+                <h3>New here?</h3>{" "}
+                <p>
+                  Create your account in seconds and start enjoying freshly
+                  baked cakes.
+                </p>{" "}
+                <button
+                  className={`${styles.btn} ${styles.transparent}`}
+                  onClick={() => setIsSignUp(true)}
+                >
+                  {" "}
+                  Sign up{" "}
+                </button>{" "}
+              </div>{" "}
+            </div>{" "}
+            <div className={`${styles.panel} ${styles.rightPanel}`}>
+              {" "}
+              <div className={styles.content}>
+                {" "}
+                <h3>Already have an Accout?</h3>{" "}
+                <p>Welcome back! Sign in to continue enjoying fresh cakes.</p>{" "}
+                <button
+                  className={`${styles.btn} ${styles.transparent}`}
+                  onClick={() => setIsSignUp(false)}
+                >
+                  {" "}
+                  Sign in{" "}
+                </button>{" "}
+              </div>{" "}
+            </div>{" "}
+          </div>
+        </div>
       </div>
       {verifyModal && (
         <OTPModal
           isOpen={verifyModal}
           onClose={() => setVerifyModal(false)}
-          verifyOtp={handleVerifyOtp}
           verifyData={verify}
+          verifyOtp={isSignUp ? handleVerify : handleVerifyOtp}
         />
       )}
-    </div>
+    </>
   );
 }
