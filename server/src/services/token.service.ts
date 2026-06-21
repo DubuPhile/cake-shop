@@ -9,7 +9,7 @@ export const TokenService = {
           _id: user.userId,
           user: user.name,
           isAdmin: user.isAdmin,
-          roles: user.roles ?? [],
+          roles: user.roles,
         },
       },
       process.env.ACCESS_TOKEN_SECRET!,
