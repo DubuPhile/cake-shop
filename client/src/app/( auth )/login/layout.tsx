@@ -3,10 +3,10 @@ import React from "react";
 
 export const metadata: Metadata = {
   title: "Login",
-  description: "Login page",
+  description: "Login and Register Page",
 };
 
-export default function loginlayout({
+export default function Loginlayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
