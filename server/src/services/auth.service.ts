@@ -294,14 +294,17 @@ export const AuthService = {
     const foundUser = await UserRepo.findByRefreshToken(token);
     if (!foundUser) throw new Error("UNAUTHORIZED");
 
-    const payload = jwt.verify(
+    jwt.verify(
       token,
       process.env.REFRESH_TOKEN_SECRET as string,
-    ) as RefreshTokenPayload;
+      (err, decoded) => {
+        const payload = decoded as RefreshTokenPayload;
 
-    if (foundUser.name !== payload.user) {
-      throw new Error("FORBIDDEN");
-    }
+        if (err || !payload || foundUser.name !== payload.user) {
+          throw new Error("FORBIDDEN");
+        }
+      },
+    );
 
     const roles = foundUser.roles ?? [];
 
