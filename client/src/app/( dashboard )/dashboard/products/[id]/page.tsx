@@ -19,6 +19,7 @@ import Sizes from "./Sizes";
 import Spinner from "@/app/(components)/Spinner";
 import ImageSection from "@/app/(components)/ImageSection";
 import CommentSection from "@/app/(components)/CommentSection";
+import toast from "react-hot-toast";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -27,9 +28,9 @@ export default function ProductPage() {
     data: product,
     isLoading,
     isError,
-    refetch,
   } = useGetProductInfoQuery(id?.toString());
   const [changeDetails] = useUpdateProductDetailsMutation();
+  const [otherCategory, setOtherCategory] = useState<boolean>(false);
 
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -53,11 +54,22 @@ export default function ProductPage() {
         description: form.description,
         category: form.category,
       }).unwrap();
-      console.log(updatedProduct);
-      refetch();
       setDisabled(false);
+      setOtherCategory(false);
+      toast.success("Save Changes", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
     } catch (err: any) {
       console.log(err);
+      toast.error("Change Failed", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
     }
   };
 
@@ -175,6 +187,8 @@ export default function ProductPage() {
             )}
 
             <Category
+              otherCategory={otherCategory}
+              setOtherCategory={setOtherCategory}
               disabled={disabled}
               setForm={setForm}
               category={form.category}
@@ -217,18 +231,13 @@ export default function ProductPage() {
                 sizes: product?.sizes,
               }))
             }
-            refetch={refetch}
             id={id.toString()}
           />
         </div>
         <div
           className={`relative lg:absolute md:top-0 md:right-0 w-80 sm:w-100 md:w-130 lg:w-100 mt-5 transition-all duration-300`}
         >
-          <ImageSection
-            images={form.images || []}
-            productId={form.id}
-            refetch={refetch}
-          />
+          <ImageSection images={form.images || []} productId={form.id} />
         </div>
       </div>
       {product?.reviews?.length === 0 ? (
@@ -245,6 +254,12 @@ export default function ProductPage() {
     <div className="h-[85vh]">
       <Spinner />
     </div>
+  ) : isError ? (
+    <>
+      <div className="h-[85vh]">
+        <h4 className="text-red-400">Error fetching Product</h4>
+      </div>
+    </>
   ) : (
     content
   );
