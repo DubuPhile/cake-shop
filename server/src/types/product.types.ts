@@ -10,6 +10,12 @@ export interface NewProductData {
   sizes: Sizes[];
 }
 
+export interface editProductData {
+  name: string;
+  category: string;
+  description: string;
+}
+
 export type Sizes = {
   id?: string;
   productId?: string;
@@ -38,3 +44,10 @@ export interface ProductData {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ReviewLikes = {
+  userId: string;
+  createdAt: Date;
+  id: string;
+  reviewId: string;
+};
