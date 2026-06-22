@@ -12,17 +12,10 @@ type Props = {
   sizes: ProductSize[];
   setSizes: (sizes: ProductSize[]) => void;
   onCancel: () => void;
-  refetch: () => void;
   id: string;
 };
 
-export default function Sizes({
-  sizes,
-  setSizes,
-  onCancel,
-  refetch,
-  id,
-}: Props) {
+export default function Sizes({ sizes, setSizes, onCancel, id }: Props) {
   const [disable, setDisable] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [updateStock] = useUpdateStocksMutation();
@@ -36,7 +29,6 @@ export default function Sizes({
     try {
       await deleteSize(id).unwrap();
 
-      refetch();
       toast.success(`${size} has been Deleted!`);
     } catch (err) {
       console.log(err);
@@ -54,7 +46,6 @@ export default function Sizes({
       e.preventDefault();
       await updateStock(sizes).unwrap();
 
-      refetch();
       setDisable(false);
       toast.success("Update Success!");
     } catch (err) {
@@ -183,7 +174,6 @@ export default function Sizes({
           id={id.toString()}
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
-          refetch={refetch}
         />
       )}
     </>
