@@ -43,12 +43,22 @@ export default function Products() {
   const handleCreateProduct = async (productData: FormData) => {
     try {
       await createProduct(productData).unwrap();
-      toast.success(`Product Created!`);
+      toast.success(`Product Created!`, {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
       refetch();
       setIsModalOpen(false);
     } catch (err: any) {
       console.log(err);
-      toast.error("Failed to create product");
+      toast.error("Failed to create product", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
     }
   };
 
