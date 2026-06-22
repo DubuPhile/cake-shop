@@ -78,7 +78,6 @@ export default function CreateProductModal({
       await onCreate(formData);
       setLoading(false);
     } catch (err) {
-      toast.error("Create Failed!");
       console.log(err);
     }
   };
