@@ -1,10 +1,15 @@
 import { bucket } from "../config/firebase";
 import { productRepo } from "../repositories/product.repository";
 import { UserRepo } from "../repositories/user.repository";
-import { NewProductData, ProductData } from "../types/product.types";
+import {
+  editProductData,
+  NewProductData,
+  ProductData,
+} from "../types/product.types";
 import { ProductImageService } from "./productImage.service";
 
 export const ProductService = {
+  /* CREATE PRODUCT SERVICE*/
   createProduct: async (
     userId: string,
     payload: NewProductData,
@@ -21,8 +26,8 @@ export const ProductService = {
 
     return data;
   },
-
-  deleteProduct: async (id: string) => {
+  /* DELETE PRODUCT SERVICE*/
+  deleteProduct: async (id: string): Promise<ProductData> => {
     const product = await productRepo.getProduct(id);
     if (!product) throw new Error("PRODUCT_NOT_FOUND");
 
@@ -43,5 +48,20 @@ export const ProductService = {
 
     const deletedProduct = await productRepo.delete(id);
     return deletedProduct;
+  },
+  /* UPDATE PRODUCT SERVICE*/
+  updateProduct: async (
+    userId?: string,
+    productId?: string,
+    payload?: editProductData,
+  ): Promise<ProductData> => {
+    if (!userId) throw new Error("UNAUTHORIZED");
+    if (!payload) throw new Error("REQUIRED");
+    if (!productId) throw new Error("PRODUCT_NOT_FOUND");
+    const user = await UserRepo.findbyId(userId);
+    if (!user) throw new Error("UNAUTHORIZED");
+
+    const updatedProduct = await productRepo.updateProduct(productId, payload);
+    return updatedProduct;
   },
 };
