@@ -1,5 +1,10 @@
 import { prisma } from "../../lib/prisma";
-import { ImageUrl, NewProductData, ProductData } from "../types/product.types";
+import {
+  editProductData,
+  ImageUrl,
+  NewProductData,
+  ProductData,
+} from "../types/product.types";
 
 export const productRepo = {
   getCategory: async () => {
@@ -127,6 +132,23 @@ export const productRepo = {
       },
     });
   },
+  /** UPDATE PRODUCT */
+  updateProduct: async (
+    id: string,
+    payload: editProductData,
+  ): Promise<ProductData> => {
+    return prisma.product.update({
+      where: {
+        id,
+      },
+      data: {
+        name: payload.name,
+        description: payload.description,
+        category: payload.category,
+      },
+    });
+  },
+
   /** ADD IMAGE */
   addImage: async (id: string, imageUrls: ImageUrl[]) => {
     return prisma.product.update({
