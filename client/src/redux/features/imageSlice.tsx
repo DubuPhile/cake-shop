@@ -8,12 +8,15 @@ export const imageSlice = api.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: ["Products"],
     }),
+
     deleteImage: builder.mutation<void, string>({
       query: (id) => ({
         url: `/image/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Products"],
     }),
   }),
 });
