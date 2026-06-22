@@ -101,7 +101,7 @@ export const ProductSlice = api.injectEndpoints({
         url: "/product/category",
         method: "GET",
       }),
-      providesTags: ["Categories"],
+      providesTags: ["Products"],
     }),
 
     getProductInfo: builder.query<Products, string>({
@@ -132,7 +132,7 @@ export const ProductSlice = api.injectEndpoints({
         method: "POST",
         body: sizes,
       }),
-      invalidatesTags: ["STOCKS"],
+      invalidatesTags: ["STOCKS", "Products"],
     }),
     updateProductDetails: builder.mutation<void, Products>({
       query: (changeData) => ({
@@ -154,7 +154,7 @@ export const ProductSlice = api.injectEndpoints({
         url: `/product/${Id}/size`,
         method: "DELETE",
       }),
-      invalidatesTags: ["STOCKS"],
+      invalidatesTags: ["STOCKS", "Products"],
     }),
     addSize: builder.mutation<void, ProductSize>({
       query: (data) => ({
@@ -162,7 +162,7 @@ export const ProductSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["STOCKS"],
+      invalidatesTags: ["STOCKS", "Products"],
     }),
   }),
 });
