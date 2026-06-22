@@ -8,10 +8,9 @@ type Props = {
   id: string;
   onClose: () => void;
   isOpen: boolean;
-  refetch: () => void;
 };
 
-export default function AddSizeModal({ id, onClose, isOpen, refetch }: Props) {
+export default function AddSizeModal({ id, onClose, isOpen }: Props) {
   const [sizes, setSizes] = useState<ProductSize>({
     size: "",
     price: 0,
@@ -44,12 +43,21 @@ export default function AddSizeModal({ id, onClose, isOpen, refetch }: Props) {
         stock: sizes.stock,
       }).unwrap();
 
-      toast.success("Add size Successfully!");
-      refetch();
+      toast.success("Add size Successfully", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
       handleClose();
     } catch (err) {
       console.log(err);
-      toast.error("Add size failed!");
+      toast.error("Add size failed", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
     }
   };
   return (
