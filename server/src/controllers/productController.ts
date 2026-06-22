@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
 import { productRepo } from "../repositories/product.repository";
 import { ProductService } from "../services/product.service";
-import { NewProductData, Sizes } from "../types/product.types";
+import { editProductData, NewProductData, Sizes } from "../types/product.types";
 import { ProductSizeRepo } from "../repositories/productSize.repository";
 
 export const getCategory = async (
@@ -245,59 +244,39 @@ export const deleteProduct = async (
   }
 };
 
-interface ProductParams {
-  productId: string;
-}
-
 export const updateProduct = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
-    const { name, description, category } = req.body;
+    const payload = req.body as editProductData;
     const { productId } = req.params;
 
-    if (!productId) {
-      res.status(400).json({ message: "Forbidden" });
-      return;
-    }
+    const result = await ProductService.updateProduct(
+      userId,
+      productId?.toString(),
+      payload,
+    );
 
-    if (!name || !description || !category) {
-      res
-        .status(400)
-        .json({ message: "Name, Description and Category is Required." });
-      return;
-    }
-
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const user = await prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-    if (!user) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-    const updatedProduct = await prisma.product.update({
-      where: {
-        id: productId.toString(),
-      },
-      data: {
-        name: name,
-        description: description,
-        category: category,
-      },
-    });
-
-    res.status(200).json({ message: "Product Updated!", data: updatedProduct });
-  } catch (err) {
+    res.status(200).json({ message: "Product Updated!", data: result });
+  } catch (err: any) {
     console.log(err);
+    if (err instanceof Error) {
+      switch (err.message) {
+        case "UNAUTHORIZED":
+          res.status(401).json({ message: "Unauthorized" });
+          return;
+        case "REQUIRED":
+          res
+            .status(400)
+            .json({ message: "Name, Description and Category is Required." });
+          return;
+        case "PRODUCT_NOT_FOUND":
+          res.status(400).json({ message: "ProductId not found" });
+          return;
+      }
+    }
     res.status(500).json({ message: "Invalid Server updateProduct." });
   }
 };
@@ -308,21 +287,7 @@ export const getAllStocks = async (
 ): Promise<void> => {
   try {
     const search = req.query.search?.toString();
-    const stock = await prisma.productSize.findMany({
-      where: {
-        product: search
-          ? { name: { contains: search, mode: "insensitive" } }
-          : {},
-      },
-      orderBy: {
-        product: {
-          name: "asc",
-        },
-      },
-      include: {
-        product: true,
-      },
-    });
+    const stock = await ProductSizeRepo.getAllSizeWithSearch(search);
 
     res.status(200).json({ success: true, data: stock });
   } catch (err) {
