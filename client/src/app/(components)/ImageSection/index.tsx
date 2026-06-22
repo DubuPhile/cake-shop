@@ -15,14 +15,9 @@ import {
 interface GalleryProps {
   images: Images[];
   productId: string;
-  refetch: () => void;
 }
 
-export default function ProductGallery({
-  images,
-  productId,
-  refetch,
-}: GalleryProps) {
+export default function ProductGallery({ images, productId }: GalleryProps) {
   const pathname = usePathname();
   const { roles } = useAppSelector((state) => state.auth);
 
@@ -83,7 +78,6 @@ export default function ProductGallery({
       });
 
       await addImg(form).unwrap();
-      refetch();
     } catch (err) {
       console.log(err);
     }
@@ -94,7 +88,6 @@ export default function ProductGallery({
       if (!images[selectedIndex].id) return;
 
       const deletedImg = await deleteImg(images[selectedIndex].id).unwrap();
-      refetch();
       setDeleteModalOpen(false);
       setSelectedIndex(0);
       toast.success("Successfully Deleted!");
