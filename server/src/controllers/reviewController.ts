@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../middleware/verifyJWT";
-import { bucket } from "../config/firebase";
+import { reviewRepo } from "../repositories/review.repository";
 
 export const toggleReviewLike = async (
   req: AuthRequest,
@@ -22,61 +21,29 @@ export const toggleReviewLike = async (
 
     const reviewIdString = reviewId.toString();
 
-    const existingLike = await prisma.reviewLikes.findUnique({
-      where: {
-        userId_reviewId: {
-          userId,
-          reviewId: reviewIdString,
-        },
-      },
-    });
+    const existingLike = await reviewRepo.checkExistLikes(
+      userId,
+      reviewIdString,
+    );
 
     if (existingLike) {
-      await prisma.$transaction([
-        prisma.reviewLikes.delete({
-          where: {
-            id: existingLike.id,
-          },
-        }),
-
-        prisma.review.update({
-          where: { id: reviewId.toString() },
-          data: {
-            likesCount: {
-              decrement: 1,
-            },
-          },
-        }),
-      ]);
+      const result = await reviewRepo.decreaseLikes(
+        existingLike.id,
+        reviewIdString,
+      );
 
       res.json({
-        liked: false,
+        liked: result,
       });
       return;
     }
-
-    await prisma.$transaction([
-      prisma.reviewLikes.create({
-        data: {
-          userId,
-          reviewId: reviewIdString,
-        },
-      }),
-
-      prisma.review.update({
-        where: { id: reviewIdString },
-        data: {
-          likesCount: {
-            increment: 1,
-          },
-        },
-      }),
-    ]);
+    const result = await reviewRepo.increaseLikes(userId, reviewIdString);
 
     res.status(200).json({
-      liked: true,
+      liked: result,
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ success: false, message: "ERROR ToggleLikes" });
   }
 };
