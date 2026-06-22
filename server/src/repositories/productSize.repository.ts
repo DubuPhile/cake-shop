@@ -36,4 +36,22 @@ export const ProductSizeRepo = {
       where: { id },
     });
   },
+
+  getAllSizeWithSearch: async (search?: string) => {
+    return prisma.productSize.findMany({
+      where: {
+        product: search
+          ? { name: { contains: search, mode: "insensitive" } }
+          : {},
+      },
+      orderBy: {
+        product: {
+          name: "asc",
+        },
+      },
+      include: {
+        product: true,
+      },
+    });
+  },
 };
