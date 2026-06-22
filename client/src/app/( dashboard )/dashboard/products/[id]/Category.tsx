@@ -1,14 +1,22 @@
-import { Products } from "@/redux/features/product";
-import React, { useState } from "react";
+import { Products, useGetCategoryQuery } from "@/redux/features/product";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 type props = {
   category: string;
   setForm: React.Dispatch<React.SetStateAction<Products>>;
   disabled: boolean;
+  otherCategory: boolean;
+  setOtherCategory: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function Category({ category, setForm, disabled }: props) {
-  const [otherCategory, setOtherCategory] = useState<boolean>(false);
+export default function Category({
+  category,
+  setForm,
+  disabled,
+  setOtherCategory,
+  otherCategory,
+}: props) {
+  const { data: Categories } = useGetCategoryQuery();
   const handleCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.target.value === "others"
       ? (setOtherCategory(true),
@@ -41,19 +49,20 @@ export default function Category({ category, setForm, disabled }: props) {
         <option className="font-semibold text-gray-700 " value="">
           Select
         </option>
-        <option className="font-semibold text-gray-700" value="cakes">
-          Cakes
-        </option>
-        <option className="font-semibold text-gray-700" value="desserts">
-          Desserts
-        </option>
+        {Categories?.map((category) => {
+          return (
+            <option key={category} className="font-semibold" value={category}>
+              {category}
+            </option>
+          );
+        })}
         <option className="font-semibold text-gray-700" value="others">
           Others
         </option>
       </select>
       {otherCategory ? (
         <input
-          id="category"
+          id="otherCategory"
           type="text"
           autoComplete="off"
           placeholder="others"
