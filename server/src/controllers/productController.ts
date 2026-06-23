@@ -83,12 +83,19 @@ export const createProduct = async (
       message: "Product created Successfully!",
       data: data,
     });
-  } catch (err: any) {
+  } catch (err) {
     console.log(err);
-    if (err.message === "USER_NOT_FOUND") {
-      res.status(404).json({ message: "User not found", success: false });
-      return;
+    if (err instanceof Error) {
+      switch (err.message) {
+        case "Unauthorized":
+          res.status(401).json({ success: false, message: "Unauthorized" });
+          return;
+        case "USER_NOT_FOUND":
+          res.status(404).json({ success: false, message: "User not found" });
+          return;
+      }
     }
+
     res.status(500).json({ message: "Error create Product server!" });
   }
 };
@@ -232,6 +239,7 @@ export const deleteProduct = async (
 
     res.status(204).send();
   } catch (err: any) {
+    console.log(err);
     if (err.code === "P2025" || err.message === "PRODUCT_NOT_FOUND") {
       res.status(404).json({
         success: false,
@@ -239,11 +247,10 @@ export const deleteProduct = async (
       });
       return;
     }
-    console.log(err);
     res.status(500).json({ success: false, message: "Delete Product Error" });
   }
 };
-
+/** UPDATE PRODUCT */
 export const updateProduct = async (
   req: AuthRequest,
   res: Response,
@@ -280,7 +287,7 @@ export const updateProduct = async (
     res.status(500).json({ message: "Invalid Server updateProduct." });
   }
 };
-
+/** GET ALL STOCK PRODUCT */
 export const getAllStocks = async (
   req: AuthRequest,
   res: Response,
