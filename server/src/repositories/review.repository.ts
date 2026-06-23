@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import { ReviewLikes } from "../types/product.types";
+import { RateProd, ReviewData, ReviewLikes } from "../types/product.types";
 
 export const reviewRepo = {
   checkExistLikes: async (
@@ -58,5 +58,83 @@ export const reviewRepo = {
     ]);
 
     return true;
+  },
+
+  existingReview: async (
+    userId: string,
+    productId: string,
+  ): Promise<ReviewData | null> => {
+    return prisma.review.findFirst({
+      where: {
+        userId,
+        productId,
+        parentId: null,
+      },
+    });
+  },
+
+  createReview: async (
+    userId: string,
+    productId: string,
+    payload: RateProd,
+  ): Promise<ReviewData> => {
+    return prisma.review.create({
+      data: {
+        rating: Number(payload.rating),
+        comment: payload.comment,
+        user: { connect: { userId } },
+        product: { connect: { id: productId } },
+      },
+    });
+  },
+
+  updateAvgRating: async (productId: string) => {
+    const stats = await prisma.review.aggregate({
+      where: {
+        productId,
+        parentId: null,
+      },
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+    });
+
+    await prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        averageRating: stats._avg.rating ?? 0,
+        reviewCount: stats._count.rating,
+      },
+    });
+    return stats;
+  },
+  findParentById: async (parentId: string): Promise<ReviewData | null> => {
+    return prisma.review.findUnique({
+      where: {
+        id: parentId,
+        parentId: null,
+      },
+    });
+  },
+
+  createReply: async (
+    comment: string,
+    parentId: string,
+    productId: string,
+    userId: string,
+  ): Promise<ReviewData> => {
+    return prisma.review.create({
+      data: {
+        parent: { connect: { id: parentId } },
+        comment: comment,
+        product: { connect: { id: productId } },
+        user: { connect: { userId } },
+      },
+    });
   },
 };
