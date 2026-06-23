@@ -31,6 +31,9 @@ export interface Replies {
   comment: string;
   parentId: string;
   user: User;
+  createdAt: Date;
+  likes?: Likes[];
+  likesCount?: number;
 }
 
 export interface ProductReview {
@@ -41,6 +44,7 @@ export interface ProductReview {
   replies?: Replies[];
   likes?: Likes[];
   createdAt?: string | Date;
+  likesCount?: number;
 }
 type Likes = {
   id: string;
