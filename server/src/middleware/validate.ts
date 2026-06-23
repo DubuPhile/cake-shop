@@ -5,7 +5,7 @@ export const validate =
   (schema: z.ZodType, source: "body" | "params" | "query" = "body") =>
   (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req[source]);
-    console.log(result);
+    // console.log(result);
     if (!result.success) {
       return res.status(400).json({
         success: false,
@@ -13,6 +13,6 @@ export const validate =
       });
     }
 
-    req.body = result.data;
+    req[source] = result.data;
     next();
   };
