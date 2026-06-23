@@ -51,3 +51,20 @@ export type ReviewLikes = {
   id: string;
   reviewId: string;
 };
+
+export type RateProd = {
+  rating: string;
+  comment: string;
+};
+
+export type ReviewData = {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  rating: number | null;
+  comment: string | null;
+  productId: string;
+  parentId: string | null;
+  likesCount: number;
+  updatedAt: Date;
+};
