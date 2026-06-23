@@ -62,10 +62,10 @@ export default function Login({ setVerifyModal, setVerify }: Props) {
 
       await dispatch(
         setCredentials({
+          userId: decoded.UserInfo._id,
           accessToken: userData.accessToken,
           user: decoded?.UserInfo.user,
           roles: decoded?.UserInfo.roles,
-          hasLocalPassword: false,
         }),
       );
       const lastpath = localStorage.getItem("lastPath");

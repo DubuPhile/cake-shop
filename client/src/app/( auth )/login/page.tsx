@@ -13,6 +13,7 @@ import { setCredentials } from "@/redux/state/auth";
 import { useAppDispatch } from "@/redux/store";
 
 type UserInfo = {
+  _id: string;
   user: string;
   roles: string[];
   isAdmin: boolean;
@@ -74,6 +75,7 @@ export default function NewLogin() {
     const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
     await dispatch(
       setCredentials({
+        userId: decoded.UserInfo._id,
         accessToken: success.accessToken,
         user: decoded?.UserInfo.user,
         roles: decoded?.UserInfo.roles,

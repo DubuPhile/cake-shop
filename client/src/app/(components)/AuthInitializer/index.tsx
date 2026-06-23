@@ -19,10 +19,10 @@ export default function AuthInitializer() {
         const decoded = await jwtDecode<MyTokenPayload>(result.accessToken);
         dispatch(
           setCredentials({
+            userId: decoded?.UserInfo._id,
             accessToken: result.accessToken,
             user: decoded?.UserInfo.user,
             roles: decoded?.UserInfo.roles,
-            hasLocalPassword: false,
           }),
         );
       } catch (err) {
