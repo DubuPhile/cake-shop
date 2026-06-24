@@ -2,24 +2,36 @@
 
 import SearchInput from "@/app/(components)/SearchInput";
 import { useDebounce } from "@/hook/useDebounce";
-import { useGetAllStockQuery } from "@/redux/features/product";
+import {
+  useDeleteSizeMutation,
+  useGetAllStockQuery,
+} from "@/redux/features/product";
 import { useState } from "react";
 import Header from "../../(dashboardComponents)/Header";
 import { DataGrid } from "@mui/x-data-grid";
 import { GridColDef } from "@mui/x-data-grid";
 import StocksModal from "../../(dashboardComponents)/StocksModal";
+import toast from "react-hot-toast";
+import Confirmation from "@/app/(components)/Confirmation";
 
 type Stock = {
   id: string;
   productName: string;
+  size?: string;
 };
 
 export default function Inventory() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [stockDetail, setStockDetail] = useState<Stock>({
     id: "",
     productName: "",
+  });
+  const [deleteStock, setDeleteStock] = useState<Stock>({
+    id: "",
+    productName: "",
+    size: "",
   });
   const debounceSearch = useDebounce({ value: searchTerm, delay: 500 });
   const {
@@ -29,6 +41,33 @@ export default function Inventory() {
   } = useGetAllStockQuery({
     search: debounceSearch,
   });
+
+  const [deleteSize] = useDeleteSizeMutation();
+
+  const handleDeleteStock = async () => {
+    try {
+      await deleteSize(deleteStock.id).unwrap();
+      toast.success(
+        `${deleteStock.productName} ${deleteStock.size} has been Deleted`,
+        {
+          style: {
+            fontWeight: "600",
+            color: "green",
+            textAlign: "center",
+          },
+        },
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to Delete pls try again later", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+          textAlign: "center",
+        },
+      });
+    }
+  };
 
   const cellCN = "text-xs md:text-base";
   const headerCN = "text-xs md:text-base font-semibold";
@@ -114,7 +153,12 @@ export default function Inventory() {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(params.row.id);
+                setDeleteStock({
+                  id: params.row.id,
+                  productName: params.row.productName,
+                  size: params.row.size,
+                });
+                setConfirmModal(true);
               }}
               className="bg-red-400 px-2 py-1 rounded-2xl cursor-pointer text-xs md:text-sm text-white font-semibold hover:bg-red-500 active:bg-red-600"
             >
@@ -157,6 +201,15 @@ export default function Inventory() {
             id={stockDetail.id}
             name={stockDetail.productName}
             refetch={refetch}
+          />
+        )}
+        {confirmModal && (
+          <Confirmation
+            isOpen={confirmModal}
+            onClose={() => setConfirmModal(false)}
+            onConfirm={handleDeleteStock}
+            Purpose="delete"
+            name={`${deleteStock.productName + " " + deleteStock.size}`}
           />
         )}
       </main>
