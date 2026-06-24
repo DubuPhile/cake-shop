@@ -7,7 +7,10 @@ import defaultImg from "../../../../public/default-avatar.png";
 import Image from "next/image";
 import { TimeInterval } from "@/lib/TimeInterval";
 import StarRating from "../StarRating";
-import { useToggleLikesMutation } from "@/redux/features/reviewSlice";
+import {
+  useReplyCommentMutation,
+  useToggleLikesMutation,
+} from "@/redux/features/reviewSlice";
 import { useAppSelector } from "@/redux/store";
 
 type Props = {
@@ -51,9 +54,24 @@ function CommentItem({
   comment: ProductReview;
   onLike: (id: string | undefined) => void;
 }) {
-  const [showReply, setShowReply] = useState(false);
-  const [showReplies, setShowReplies] = useState(false);
+  const [showReply, setShowReply] = useState<boolean>(false);
+  const [showReplies, setShowReplies] = useState<boolean>(false);
   const { userId } = useAppSelector((state) => state.auth);
+  const [commentReply, setCommentReply] = useState<string>("");
+  const [replyComment] = useReplyCommentMutation();
+
+  const handleReply = async () => {
+    try {
+      const Reply = await replyComment({
+        id: comment.id || "",
+        comment: commentReply,
+      }).unwrap();
+      setShowReply(false);
+      console.log(Reply);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   if (!userId) return;
 
@@ -71,16 +89,18 @@ function CommentItem({
           <div className="flex justify-between items-start">
             <div>
               <p className="font-semibold text-sm">{comment.user.name}</p>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300">
+              {/* Rating */}
+              {comment.rating && (
+                <StarRating
+                  initialRating={comment.rating}
+                  interactive={false}
+                />
+              )}
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 mt-2">
                 {comment.comment}
               </p>
             </div>
           </div>
-
-          {/* Rating */}
-          {comment.rating && (
-            <StarRating initialRating={comment.rating} interactive={false} />
-          )}
         </div>
 
         {/* Actions */}
@@ -170,9 +190,11 @@ function CommentItem({
             <input
               id="Reply-input"
               placeholder="Write a reply..."
+              value={commentReply}
+              onChange={(e) => setCommentReply(e.target.value)}
               className="flex-1 px-2 py-1 text-sm rounded-md bg-zinc-100 dark:bg-zinc-800"
             />
-            <button className="text-blue-500 text-sm">
+            <button onClick={handleReply} className="text-blue-500 text-sm">
               <Send className="w-4 h-4" />
             </button>
           </div>
