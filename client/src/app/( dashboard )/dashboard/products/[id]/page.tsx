@@ -20,6 +20,7 @@ import Spinner from "@/app/(components)/Spinner";
 import ImageSection from "@/app/(components)/ImageSection";
 import CommentSection from "@/app/(components)/CommentSection";
 import toast from "react-hot-toast";
+import { useAppSelector } from "@/redux/store";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -31,6 +32,8 @@ export default function ProductPage() {
   } = useGetProductInfoQuery(id?.toString());
   const [changeDetails] = useUpdateProductDetailsMutation();
   const [otherCategory, setOtherCategory] = useState<boolean>(false);
+
+  const { isSidebarCollapsed } = useAppSelector((state) => state.global);
 
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -235,7 +238,7 @@ export default function ProductPage() {
           />
         </div>
         <div
-          className={`relative lg:absolute md:top-0 md:right-0 w-80 sm:w-100 md:w-130 lg:w-100 mt-5 transition-all duration-300`}
+          className={`relative ${isSidebarCollapsed ? "lg:absolute" : ""} xl:absolute md:top-0 md:right-0 w-80 sm:w-100 md:w-130 lg:w-100 mt-5 transition-all duration-300`}
         >
           <ImageSection images={form.images || []} productId={form.id} />
         </div>
