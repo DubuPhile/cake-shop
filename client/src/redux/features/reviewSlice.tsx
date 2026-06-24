@@ -1,5 +1,10 @@
 import { api } from "@/redux/state/api";
 
+export type ReplyData = {
+  id: string;
+  comment: string;
+};
+
 export const reviewSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     toggleLikes: builder.mutation<void, string>({
@@ -9,7 +14,15 @@ export const reviewSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["Products"],
     }),
+    replyComment: builder.mutation<void, ReplyData>({
+      query: (data) => ({
+        url: `/review/rateReplies/${data.id}`,
+        method: "POST",
+        body: { ...data },
+      }),
+      invalidatesTags: ["Products"],
+    }),
   }),
 });
 
-export const { useToggleLikesMutation } = reviewSlice;
+export const { useToggleLikesMutation, useReplyCommentMutation } = reviewSlice;
