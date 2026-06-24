@@ -71,7 +71,7 @@ export default function Login({ setVerifyModal, setVerify }: Props) {
       const lastpath = localStorage.getItem("lastPath");
       setUser("");
       setPwd("");
-      toast.success("Login Success!", {
+      toast.success("Login Success", {
         style: {
           fontWeight: "600",
           color: "green",
