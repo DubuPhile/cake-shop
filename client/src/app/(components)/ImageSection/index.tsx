@@ -145,38 +145,26 @@ export default function ProductGallery({ images, productId }: GalleryProps) {
 
       {/* Thumbnails */}
       <div className="flex justify-center gap-3 mt-4">
-        <AnimatePresence mode="sync">
-          {images.map((img, index) => (
-            <motion.div
-              key={img.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{
-                opacity: 0,
-                scale: 0.5,
-                y: -10,
-              }}
-              transition={{ duration: 0.3 }}
-              className="hover:scale-105 active:scale-100 transition-all duration-300"
+        {images.map((img, index) => (
+          <motion.div
+            key={img.id}
+            className="hover:scale-105 active:scale-100 transition-all duration-300"
+          >
+            <button
+              onClick={() => selectImage(index)}
+              className={`border transition rounded-lg  ${
+                selectedIndex === index ? "border-blue-500" : "border-gray-300"
+              }`}
             >
-              <button
-                onClick={() => selectImage(index)}
-                className={`border transition rounded-lg  ${
-                  selectedIndex === index
-                    ? "border-blue-500"
-                    : "border-gray-300"
-                }`}
-              >
-                <img
-                  src={img.url}
-                  alt={`Thumbnail ${index}`}
-                  className="shrink-0 w-14 h-14 rounded-lg object-cover cursor-pointer"
-                />
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              <img
+                src={img.url}
+                alt={`Thumbnail ${index}`}
+                className="shrink-0 w-14 h-14 rounded-lg object-cover cursor-pointer"
+              />
+            </button>
+          </motion.div>
+        ))}
+
         {isDashboard && (
           <button
             type="button"
