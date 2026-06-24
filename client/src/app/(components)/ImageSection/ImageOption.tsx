@@ -27,7 +27,7 @@ export default function ImageOption({ setDeleteModal }: Props) {
         <EllipsisVertical className="w-4 h-4" />
       </button>
       <div
-        className={`z-1000 w-auto flex flex-col items-end rounded-[10px] bg-gray-200 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 -translate-x-5 ${
+        className={`z-1000 w-auto flex flex-col items-end rounded-[10px] bg-gray-200 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 -translate-x-8 ${
           open
             ? "visible -translate-y-2 opacity-100 pointer-events-auto"
             : "invisible -translate-y-2.5 opacity-0 pointer-events-none"
@@ -35,7 +35,7 @@ export default function ImageOption({ setDeleteModal }: Props) {
       >
         <button
           type="button"
-          className={`cursor-pointer flex text-xs w-auto bg-[hsl(359,100%,75%)] justify-end px-2 py-1 text-white rounded-[10px] md:rounded-tr-none hover:bg-[hsl(359,100%,65%)]`}
+          className={`cursor-pointer flex text-base w-auto bg-[hsl(359,100%,75%)] justify-end px-2 py-1 text-gray-700 rounded-[10px] rounded-tr-none hover:bg-[hsl(359,100%,65%)] font-semibold`}
           onClick={handleDelete}
         >
           {" "}
