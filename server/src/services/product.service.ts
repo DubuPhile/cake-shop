@@ -107,7 +107,7 @@ export const ProductService = {
     const parentReview = await reviewRepo.findParentById(parentId);
     if (!parentReview) throw new Error("PARENT_NOT_FOUND");
 
-    const parent = parentReview.parentId;
+    const parent = parentReview.id;
 
     if (!parent) throw new Error("PARENT_NOT_FOUND");
 
