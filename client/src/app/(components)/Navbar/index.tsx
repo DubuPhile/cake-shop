@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Menu,
   Moon,
+  Search,
   ShoppingBag,
   Sun,
   UserRound,
@@ -68,13 +69,17 @@ export default function Navbar() {
               className="pl-10 pr-4 py-2 w-30 sm:w-50 md:w-60 border-2 text-xs sm:text-base border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-500 rounded-2xl focus:outline-none focus:border-[hsl(359,100%,75%)] "
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Bell className="text-gray-500 dark:text-gray-400" size={20} />
+              <Search className="text-gray-500 dark:text-gray-400" size={20} />
             </div>
           </div>
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="flex justify-between items-center gap-5">
+        <div className="flex justify-between items-center gap-2 sm:gap-4">
+          <button className="flex md:hidden rounded-full border border-pink-200 p-2 transition hover:scale-110 hover:bg-pink-50 cursor-pointer">
+            <ShoppingBag className="h-5 w-5 text-pink-600" />
+          </button>
+
           <div className="hidden md:flex justify-between items-center gap-5">
             <div>
               <button onClick={toggleDarkMode}>
@@ -103,7 +108,7 @@ export default function Navbar() {
               <Link
                 href={"/login"}
                 onClick={() => localStorage.setItem("lastPath", pathname)}
-                className="flex gap-3 hover:bg-[hsl(359,100%,95%)] dark:hover:bg-[hsl(359,100%,35%)] px-3 py-2 rounded-full"
+                className="flex gap-3 hover:bg-[hsl(359,100%,95%)] dark:hover:bg-pink-50 dark:hover:text-gray-700 px-2 py-2 rounded-full"
               >
                 <UserRound />
                 <span className="hidden md:block">Login</span>
@@ -113,25 +118,27 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="sticky top-0 z-50 border-b border-pink-100 bg-[#FFF8F3]/80 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-2 sm:px-6 lg:px-10">
+      <div className="sticky top-0 border-b border-pink-100 dark:border-gray-700 z-10 backdrop-blur-md">
+        <div className="mx-auto flex h-15 sm:h-20 max-w-7xl items-center justify-between px-2 sm:px-6 lg:px-10">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pink-200 text-2xl shadow-sm">
+            <div className="flex h-8 w-8 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-pink-200 text-md sm:text-2xl shadow-sm">
               🍰
             </div>
 
             <div>
-              <h1 className="text-md md:text-lg font-bold text-pink-950">
+              <h1 className="text-md md:text-lg font-bold text-pink-950 dark:text-pink-400">
                 Sweet Bites
               </h1>
-              <p className="text-xs text-pink-500">Freshly baked happiness</p>
+              <p className="text-xs text-pink-500 dark:text-pink-400">
+                Freshly baked happiness
+              </p>
             </div>
           </Link>
 
           <div className="hidden items-center gap-8 lg:flex">
             <Link
               href="/"
-              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
+              className="font-medium text-gray-700 dark:text-gray-300 transition hover:text-pink-500 hover:scale-110"
             >
               Home
             </Link>
@@ -139,7 +146,7 @@ export default function Navbar() {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-1 font-medium text-gray-700 transition hover:scale-110 hover:text-pink-500 cursor-pointer"
+                className="flex items-center gap-1 font-medium text-gray-700 dark:text-gray-300 transition hover:scale-110 hover:text-pink-500 cursor-pointer"
               >
                 Cakes
                 <ChevronDown
@@ -177,21 +184,21 @@ export default function Navbar() {
 
             <Link
               href="/custom-cake"
-              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
+              className="font-medium text-gray-700 dark:text-gray-300 transition hover:text-pink-500 hover:scale-110"
             >
               Custom Cake
             </Link>
 
             <Link
               href="/gallery"
-              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
+              className="font-medium text-gray-700 dark:text-gray-300 transition hover:text-pink-500 hover:scale-110"
             >
               Gallery
             </Link>
 
             <Link
               href="/about"
-              className="font-medium text-gray-700 transition hover:text-pink-500 hover:scale-110"
+              className="font-medium text-gray-700 dark:text-gray-300 transition hover:text-pink-500 hover:scale-110"
             >
               About
             </Link>
@@ -223,7 +230,7 @@ export default function Navbar() {
               ref={mobileRef}
               className="overflow-hidden border-t border-pink-100 bg-[#FFF8F3] lg:hidden"
             >
-              <div className="fixed flex flex-col right-0 gap-4 p-6 z-10 border-pink-100 bg-[#FFF8F3] drop-shadow-md">
+              <div className="fixed flex flex-col right-0 gap-4 p-6 z-10 border-pink-100 bg-[#FFF8F3] dark:bg-[#00000057] drop-shadow-md text-xs sm:text-base font-semibold">
                 <Link href="/" className="hover:text-pink-500">
                   Home
                 </Link>
