@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/verifyJWT";
 import { bucket } from "../config/firebase";
-import { ProductImageService } from "../services/productImage.service";
+import { ImageService } from "../services/image.service";
 import { productRepo } from "../repositories/product.repository";
 import { UserRepo } from "../repositories/user.repository";
 import { imgProdRepo } from "../repositories/productImg.repository";
 
-export const addImage = async (
+export const addProductImage = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
@@ -17,6 +17,7 @@ export const addImage = async (
 
     if (files.length === 0) {
       res.status(400).json({ message: "No files Detected" });
+      return;
     }
 
     if (!id) {
@@ -41,7 +42,7 @@ export const addImage = async (
       return;
     }
 
-    const imageUrls = await ProductImageService.uploadImage(
+    const imageUrls = await ImageService.uploadProductImage(
       files,
       product.name,
     );
@@ -58,7 +59,7 @@ export const addImage = async (
   }
 };
 
-export const deleteImage = async (
+export const deleteProductImage = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
