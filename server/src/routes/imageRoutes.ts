@@ -1,5 +1,8 @@
 import express from "express";
-import { addImage, deleteImage } from "../controllers/imageController";
+import {
+  addProductImage,
+  deleteProductImage,
+} from "../controllers/imageController";
 import verifyJWT from "../middleware/verifyJWT";
 import { verifyRoles } from "../middleware/verifyRoles";
 import ROLE_LIST from "../config/roleLists";
@@ -15,7 +18,7 @@ router.patch(
   verifyRoles(ROLE_LIST.Admin),
   upload.array("images", 10),
   validate(idSchema, "params"),
-  addImage,
+  addProductImage,
 );
 
 router.delete(
@@ -23,7 +26,7 @@ router.delete(
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
   validate(idSchema, "params"),
-  deleteImage,
+  deleteProductImage,
 );
 
 export default router;
