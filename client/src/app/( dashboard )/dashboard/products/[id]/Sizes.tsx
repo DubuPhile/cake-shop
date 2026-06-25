@@ -134,7 +134,7 @@ export default function Sizes({ sizes, setSizes, onCancel, id }: Props) {
           <button
             type="button"
             onClick={() => removeSize(item.id || "", item.size || "")}
-            className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-2xl w-22 text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold cursor-pointer"
+            className="bg-red-300 hover:bg-red-400 active:bg-red-500 px-3 rounded-2xl w-18 sm:w-22 text-xs md:text-base text-gray-700 drop-shadow-lg font-semibold cursor-pointer"
           >
             Remove
           </button>
