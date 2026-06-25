@@ -122,3 +122,12 @@ export const ProductDetailSchema = z.object({
     .min(1, "Description is required")
     .max(500, "Description too Long"),
 });
+
+export const PromotionSchema = z.object({
+  title: z.string().min(5, "Title is required"),
+  duration: z.coerce.number().min(1),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(500, "Description too Long"),
+});
