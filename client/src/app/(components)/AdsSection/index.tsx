@@ -37,7 +37,7 @@ export default function AdSlider() {
   }, []);
 
   return (
-    <div className="relative h-70 sm:h-125 overflow-hidden rounded-3xl">
+    <div className="relative h-50 sm:h-70 md:h-100 overflow-hidden rounded-3xl">
       {/* Slides */}
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
@@ -60,17 +60,17 @@ export default function AdSlider() {
             <div className="absolute inset-0 bg-black/20" />
 
             {/* Content */}
-            <div className="relative z-10 flex h-full items-center px-5 md:px-12 transition-all duration-300">
+            <div className="relative z-10 flex h-full items-center px-1 sm:px-12 transition-all duration-300 scale-70 -translate-x-10 sm:translate-x-0 sm:scale-100">
               <div className="max-w-sm md:max-w-lg text-white bg-black/50 p-5 rounded-2xl transition-all duration-300">
                 <p className="text-xs md:text-sm uppercase tracking-widest">
                   New Product
                 </p>
 
-                <h1 className="text-lg md:text-5xl font-bold mt-2 transition-all duration-300">
+                <h1 className="text-md md:text-5xl font-bold mt-2 transition-all duration-300">
                   {ad.title}
                 </h1>
 
-                <p className="mt-4 text-sm md:text-lg text-gray-200 transition-all duration-300">
+                <p className="mt-4 text-xs md:text-lg text-gray-200 transition-all duration-300">
                   {ad.description}
                 </p>
 
