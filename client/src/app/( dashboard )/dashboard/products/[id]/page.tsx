@@ -219,7 +219,7 @@ export default function ProductPage() {
             </div>
           )}
         </div>
-        <div className="w-80 sm:w-100 md:w-130 transition-all duration-300 mt-2">
+        <div className="w-full sm:w-100 md:w-130 transition-all duration-300 mt-2">
           <Sizes
             sizes={form.sizes ?? []}
             setSizes={(newSizes) =>
@@ -238,7 +238,7 @@ export default function ProductPage() {
           />
         </div>
         <div
-          className={`relative ${isSidebarCollapsed ? "lg:absolute" : ""} xl:absolute md:top-0 md:right-0 w-80 sm:w-100 md:w-130 lg:w-100 mt-5 transition-all duration-300`}
+          className={`relative ${isSidebarCollapsed ? "lg:absolute" : ""} xl:absolute flex justify-center md:top-0 md:right-0 w-full sm:w-100 md:w-130 lg:w-100 mt-5 transition-all duration-300`}
         >
           <ImageSection images={form.images || []} productId={form.id} />
         </div>
