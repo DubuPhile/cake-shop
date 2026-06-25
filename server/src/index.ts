@@ -17,6 +17,7 @@ import pwdRoutes from "./routes/pwdRoutes";
 import productRoutes from "./routes/productRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import imageRoutes from "./routes/imageRoutes";
+import promotionRoutes from "./routes/promotionRoutes";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -40,6 +41,7 @@ app.use("/pwd", pwdRoutes);
 app.use("/product", productRoutes);
 app.use("/review", reviewRoutes);
 app.use("/image", imageRoutes);
+app.use("/promo", promotionRoutes);
 
 const port = process.env.PORT || 3001;
 
