@@ -9,7 +9,7 @@ import {
   RateProd,
   ReviewData,
 } from "../types/product.types";
-import { ProductImageService } from "./productImage.service";
+import { ImageService } from "./image.service";
 
 export const ProductService = {
   /* CREATE PRODUCT SERVICE*/
@@ -20,7 +20,7 @@ export const ProductService = {
   ): Promise<ProductData> => {
     const foundUser = await UserRepo.findbyId(userId);
     if (!foundUser) throw new Error("USER_NOT_FOUND");
-    const imageUrls = await ProductImageService.uploadImage(
+    const imageUrls = await ImageService.uploadProductImage(
       files,
       payload.name,
     );
