@@ -10,6 +10,7 @@ import {
   Menu,
   PhilippinePeso,
   SlidersHorizontal,
+  Tag,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -72,19 +73,21 @@ export default function Sidebar() {
       <div
         className={`flex gap-3 justify-between md:justify-normal items-center pt-8 ${isSideBarCollapsed ? "px-3" : "px-8"}`}
       >
-        <Image
-          src={icon}
-          alt="brand"
-          width={40}
-          height={40}
-          className=" w-10 h-10 object-cover rounded-full"
-          priority
-        />
-        <span
-          className={`${isSideBarCollapsed ? "hidden" : "block"} font-lobster text-transparent bg-linear-to-r from-[#510424] dark:from-[#fcf6f8] via-[#f6339a] to-[hsl(359,100%,75%)] text-md md:text-lg bg-clip-text whitespace-nowrap`}
-        >
-          Amiel Cake Shop
-        </span>
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src={icon}
+            alt="brand"
+            width={40}
+            height={40}
+            className=" w-10 h-10 object-cover rounded-full"
+            priority
+          />
+          <span
+            className={`${isSideBarCollapsed ? "hidden" : "block"} font-lobster text-transparent bg-linear-to-r from-[#510424] dark:from-[#fcf6f8] via-[#f6339a] to-[hsl(359,100%,75%)] text-md md:text-lg bg-clip-text whitespace-nowrap`}
+          >
+            Amiel Cake Shop
+          </span>
+        </Link>
 
         <button
           className="md:hidden px-3 py-3 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-100 hover:dark:bg-blue-800 mr-2"
@@ -106,6 +109,12 @@ export default function Sidebar() {
           href="/dashboard/inventory"
           icon={Archive}
           label="Inventory"
+          isCollapsed={isSideBarCollapsed}
+        />
+        <SidebarLink
+          href="/dashboard/promotions"
+          icon={Tag}
+          label="Promos & Banners"
           isCollapsed={isSideBarCollapsed}
         />
         <SidebarLink
