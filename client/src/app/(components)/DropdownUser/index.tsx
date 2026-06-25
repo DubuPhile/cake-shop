@@ -49,26 +49,26 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
   useOutsideClick({ ref: openRef, callback: () => setOpen(false) });
 
   return (
-    <div className="relative inline-block w-full ">
+    <div className="relative inline-block w-full drop-shadow-lg z-50">
       <button
         ref={openRef}
         onClick={() => setOpen((prev) => !prev)}
         className={`flex w-full p-2 gap-2 items-center justify-center cursor-pointer ${
-          open ? "rounded-t-[10px] bg-[hsl(359,100%,65%)] text-white" : ""
+          open ? "rounded-t-[10px] bg-pink-50 text-gray-700 " : ""
         }`}
       >
         <Image
-          className="ml-1.25 w-8.75 h-8.75 rounded-full border"
+          className="w-8.75 h-8.75 rounded-full border"
           src={avatar ?? Avatar}
           width={8.75}
           height={8.75}
           alt="User avatar"
         />
-        <span className="hidden md:block">{user}</span>
+        <span className="hidden md:block font-semibold">{user}</span>
       </button>
 
       <div
-        className={`absolute right-0 z-1000 w-full flex flex-col items-end rounded-b-[10px] bg-[hsl(359,100%,65%)] shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 w-auto${
+        className={`absolute right-0 z-1000 w-full flex flex-col items-end rounded-b-[10px] bg-pink-50 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-200 w-auto${
           open
             ? " visible translate-y-0 opacity-100 "
             : " invisible -translate-y-2.5 opacity-0"
@@ -77,7 +77,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
         <button
           type="button"
           onClick={() => router.push("#")}
-          className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,65%)] justify-end px-3.5 py-2.5 text-white rounded-tl-[10px] md:rounded-tl-none hover:bg-[hsl(359,100%,55%)] "
+          className="cursor-pointer flex text-xs md:text-base w-20 md:w-full justify-end px-3.5 py-2.5 text-gray-700 font-semibold rounded-tl-[10px] md:rounded-tl-none hover:bg-red-300 bg-pink-50"
         >
           Profile
         </button>
@@ -85,7 +85,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
           <button
             type="button"
             onClick={() => router.push("/dashboard")}
-            className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,65%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,55%)]"
+            className="cursor-pointer flex text-xs md:text-base w-20 md:w-full text-gray-700 font-semibold justify-end  px-3.5 py-2.5 hover:bg-red-300 bg-pink-50"
           >
             Dashboard
           </button>
@@ -94,14 +94,14 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
         <button
           type="button"
           onClick={() => router.push("#")}
-          className="cursor-pointer flex text-xs md:text-base w-20 md:w-full bg-[hsl(359,100%,65%)] justify-end  px-3.5 py-2.5 text-white hover:bg-[hsl(359,100%,55%)]"
+          className="cursor-pointer flex text-xs md:text-base w-20 md:w-full justify-end  px-3.5 py-2.5 text-gray-700 font-semibold hover:bg-red-300 bg-pink-50"
         >
           Settings
         </button>
 
         <button
           onClick={() => handleLogout()}
-          className="cursor-pointer flex w-20 md:w-full text-xs md:text-base bg-[hsl(359,100%,65%)] justify-end  px-3.5 py-2.5 text-white rounded-b-[10px] hover:bg-[hsl(359,100%,55%)]"
+          className="cursor-pointer flex w-20 md:w-full text-xs md:text-base justify-end  px-3.5 py-2.5 text-gray-700 font-semibold rounded-b-[10px] hover:bg-red-300 bg-pink-50"
         >
           Logout
         </button>
