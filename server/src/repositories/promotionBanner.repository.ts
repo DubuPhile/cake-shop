@@ -28,4 +28,12 @@ export const PromotionBannerRepo = {
       },
     });
   },
+
+  getBanners: async () => {
+    return prisma.promotionBanner.findMany({
+      include: {
+        image: true,
+      },
+    });
+  },
 };
