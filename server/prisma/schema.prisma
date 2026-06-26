@@ -160,7 +160,7 @@ model PromotionBanner {
   image       Image[]
 
   link        String?
-
+  offsetY     Float?
   startDate   DateTime
   endDate     DateTime
 
