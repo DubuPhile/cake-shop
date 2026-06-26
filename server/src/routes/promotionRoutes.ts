@@ -1,5 +1,5 @@
 import express from "express";
-import { createBanner } from "../controllers/promotionController";
+import { createBanner, getBanners } from "../controllers/promotionController";
 import verifyJWT from "../middleware/verifyJWT";
 import { verifyRoles } from "../middleware/verifyRoles";
 import ROLE_LIST from "../config/roleLists";
@@ -8,6 +8,8 @@ import { validate } from "../middleware/validate";
 import { PromotionSchema } from "../validator/auth.validator";
 
 const router = express.Router();
+
+router.get("/", verifyJWT, verifyRoles(ROLE_LIST.Admin), getBanners);
 
 router.post(
   "/create",
