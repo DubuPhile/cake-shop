@@ -3,6 +3,7 @@ import { AuthRequest } from "../middleware/verifyJWT";
 import { ImageService } from "../services/image.service";
 import { PromotionBannerRepo } from "../repositories/promotionBanner.repository";
 import { UserRepo } from "../repositories/user.repository";
+import { PromoBanner } from "../types/promotional.types";
 
 export const getBanners = async (
   req: AuthRequest,
@@ -38,7 +39,7 @@ export const createBanner = async (
       res.status(403).json({ success: false, message: "Invalid" });
       return;
     }
-    const { title, description, duration } = req.body;
+    const payload = req.body as PromoBanner;
     const files = (req.files as Express.Multer.File[]) || [];
     if (files.length === 0) {
       res.status(400).json({ message: "No files Detected" });
@@ -48,9 +49,7 @@ export const createBanner = async (
     const ImageUrls = await ImageService.uploadImgBanner(files);
     const createdBanner = await PromotionBannerRepo.createBanner(
       ImageUrls,
-      title,
-      description,
-      duration,
+      payload,
     );
 
     res.status(201).json({ success: true, data: createdBanner });
