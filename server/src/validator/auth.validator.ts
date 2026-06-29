@@ -130,4 +130,5 @@ export const PromotionSchema = z.object({
     .string()
     .min(1, "Description is required")
     .max(500, "Description too Long"),
+  offsetY: z.coerce.number().min(-500).max(500),
 });
