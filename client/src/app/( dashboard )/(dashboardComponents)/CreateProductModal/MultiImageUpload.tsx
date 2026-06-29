@@ -38,7 +38,7 @@ export default function MultiImageUpload({ setImages }: MultiImageUploadProps) {
       </h2>
 
       {/* Main Preview */}
-      <div className="bg-gray-200 rounded-xl overflow-hidden w-full md:h-80 flex items-center justify-center">
+      <div className="bg-gray-200 rounded-xl overflow-hidden w-full min-h-50 md:h-80 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {selectedImage ? (
             <motion.img
