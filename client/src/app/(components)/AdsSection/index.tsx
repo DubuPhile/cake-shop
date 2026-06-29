@@ -37,7 +37,7 @@ export default function AdSlider() {
   }, []);
 
   return (
-    <div className="relative h-50 sm:h-70 md:h-100 overflow-hidden rounded-3xl">
+    <div className="relative w-full aspect-2100/700 md:aspect-2100/500 overflow-hidden rounded-3xl">
       {/* Slides */}
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
@@ -60,21 +60,21 @@ export default function AdSlider() {
             <div className="absolute inset-0 bg-black/20" />
 
             {/* Content */}
-            <div className="relative z-10 flex h-full items-center px-1 sm:px-12 transition-all duration-300 scale-70 -translate-x-10 sm:translate-x-0 sm:scale-100">
+            <div className="relative z-10 flex h-full items-center px-1 md:px-12 transition-all duration-300 scale-70 -translate-x-10 md:translate-x-0 md:scale-100">
               <div className="max-w-sm md:max-w-lg text-white bg-black/50 p-5 rounded-2xl transition-all duration-300">
-                <p className="text-xs md:text-sm uppercase tracking-widest">
+                <p className="text-xs lg:text-sm uppercase tracking-widest">
                   New Product
                 </p>
 
-                <h1 className="text-md md:text-5xl font-bold mt-2 transition-all duration-300">
+                <h1 className="text-md lg:text-5xl font-bold mt-2 transition-all duration-300">
                   {ad.title}
                 </h1>
 
-                <p className="mt-4 text-xs md:text-lg text-gray-200 transition-all duration-300">
+                <p className="mt-4 text-xs lg:text-lg text-gray-200 transition-all duration-300">
                   {ad.description}
                 </p>
 
-                <button className="mt-6 text-xs md:text-base bg-white text-black px-3 py-2 md:px-6 md:py-3 rounded-xl font-semibold hover:scale-105 transition cursor-pointer">
+                <button className="mt-6 text-xs lg:text-base bg-white text-black px-3 py-2 md:px-6 md:py-3 rounded-xl font-semibold hover:scale-105 transition cursor-pointer">
                   Buy Now
                 </button>
               </div>
