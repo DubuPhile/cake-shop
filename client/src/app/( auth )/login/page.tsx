@@ -39,56 +39,60 @@ export default function NewLogin() {
   const [verifyOtp] = useVerifyOTPMutation();
 
   const handleVerify = async (otp: string) => {
-    if (!verify) return;
+    try {
+      if (!verify) return;
 
-    const success = await verifyOtp({
-      purpose: verify?.purpose,
-      otpCode: otp,
-      email: verify?.email,
-    }).unwrap();
+      const success = await verifyOtp({
+        purpose: verify?.purpose,
+        otpCode: otp,
+        email: verify?.email,
+      }).unwrap();
 
-    //modal
-    toast.success(`${success?.message || "Register Success!"}`, {
-      style: {
-        fontWeight: "600",
-        color: "green",
-      },
-    });
-    console.log(`${success?.message || "Register Success!"}`);
-    router.push("/login");
+      //modal
+      toast.success(`${success?.message || "Register Success"}`, {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
+      console.log(`${success?.message || "Register Success"}`);
+      router.push("/login");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleVerifyOtp = async (otp: string) => {
     try {
-    } catch (err) {}
-    if (!verify) return;
+      if (!verify) return;
 
-    const success = await verifyOtp({
-      purpose: verify?.purpose,
-      otpCode: otp,
-      email: verify?.email,
-    }).unwrap();
+      const success = await verifyOtp({
+        purpose: verify?.purpose,
+        otpCode: otp,
+        email: verify?.email,
+      }).unwrap();
 
-    console.log(success);
-
-    if (!success.accessToken) throw new Error("accessToken not found");
-    const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
-    await dispatch(
-      setCredentials({
-        userId: decoded.UserInfo._id,
-        accessToken: success.accessToken,
-        user: decoded?.UserInfo.user,
-        roles: decoded?.UserInfo.roles,
-      }),
-    );
-    toast.success("Verify Successfully!", {
-      style: {
-        fontWeight: "600",
-        color: "green",
-      },
-    });
-    const lastpath = localStorage.getItem("lastPath");
-    router.push(lastpath || "/");
+      if (!success.accessToken) throw new Error("accessToken not found");
+      const decoded = jwtDecode<MyTokenPayload>(success.accessToken);
+      await dispatch(
+        setCredentials({
+          userId: decoded.UserInfo._id,
+          accessToken: success.accessToken,
+          user: decoded?.UserInfo.user,
+          roles: decoded?.UserInfo.roles,
+        }),
+      );
+      toast.success("Verify Successfully", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
+      const lastpath = localStorage.getItem("lastPath");
+      router.push(lastpath || "/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -113,40 +117,33 @@ export default function NewLogin() {
             </div>
           </div>
           <div className={styles.panelsContainer}>
-            {" "}
             <div className={`${styles.panel} ${styles.leftPanel}`}>
-              {" "}
               <div className={styles.content}>
-                {" "}
-                <h3>New here?</h3>{" "}
+                <h3>New here?</h3>
                 <p>
                   Create your account in seconds and start enjoying freshly
                   baked cakes.
-                </p>{" "}
+                </p>
                 <button
                   className={`${styles.btn} ${styles.transparent}`}
                   onClick={() => setIsSignUp(true)}
                 >
-                  {" "}
-                  Sign up{" "}
-                </button>{" "}
-              </div>{" "}
-            </div>{" "}
+                  Sign up
+                </button>
+              </div>
+            </div>
             <div className={`${styles.panel} ${styles.rightPanel}`}>
-              {" "}
               <div className={styles.content}>
-                {" "}
-                <h3>Already have an Accout?</h3>{" "}
-                <p>Welcome back! Sign in to continue enjoying fresh cakes.</p>{" "}
+                <h3>Already have an Account?</h3>
+                <p>Welcome back! Sign in to continue enjoying fresh cakes.</p>
                 <button
                   className={`${styles.btn} ${styles.transparent}`}
                   onClick={() => setIsSignUp(false)}
                 >
-                  {" "}
-                  Sign in{" "}
-                </button>{" "}
-              </div>{" "}
-            </div>{" "}
+                  Sign in
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
