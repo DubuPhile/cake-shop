@@ -1,6 +1,8 @@
 export type PromoBanner = {
   title: string;
   description: string;
-  duration: number;
+  startDate: Date;
+  endDate: Date;
   offsetY: number;
+  cta: string;
 };
