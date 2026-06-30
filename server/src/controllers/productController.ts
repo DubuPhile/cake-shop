@@ -45,13 +45,13 @@ export const getProductInfo = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    if (!id) {
+    const { slug } = req.params;
+    if (!slug) {
       res.status(400).json({ message: "Invalid" });
       return;
     }
 
-    const product = await productRepo.getProduct(id.toString());
+    const product = await productRepo.getProduct(slug.toString());
 
     res.status(200).json(product);
   } catch (err) {
