@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayPicker, DateRange } from "react-day-picker";
 import { format } from "date-fns";
 import "react-day-picker/dist/style.css";
 
-export default function RangeCalendar() {
+type Props = {
+  setStartDate: (value: Date) => void;
+  setEndDate: (value: Date) => void;
+};
+
+export default function RangeCalendar({ setStartDate, setEndDate }: Props) {
   const [range, setRange] = useState<DateRange>();
 
   return (
@@ -13,7 +18,12 @@ export default function RangeCalendar() {
       <DayPicker
         mode="range"
         selected={range}
-        onSelect={setRange}
+        onSelect={(value) => {
+          setRange(value);
+          if (!value?.from || !value?.to) return;
+          setStartDate(value.from);
+          setEndDate(value.to);
+        }}
         numberOfMonths={1}
         pagedNavigation
         classNames={{
@@ -22,7 +32,7 @@ export default function RangeCalendar() {
           range_start: "bg-blue-400 text-white rounded-l-full",
           range_end: "bg-blue-400 text-white rounded-r-full",
           range_middle: "bg-blue-100 text-blue-900",
-          day: "w-4 h-4",
+          day: "w-8 h-8",
           day_button: "w-8 h-8 text-sm",
           chevron: "fill-gray-500 w-5 h-5",
         }}
