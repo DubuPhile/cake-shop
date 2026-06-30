@@ -6,6 +6,8 @@ import {
   ProductData,
 } from "../types/product.types";
 
+import slugify from "slugify";
+
 export const productRepo = {
   getCategory: async () => {
     return prisma.product.findMany({
@@ -55,10 +57,10 @@ export const productRepo = {
   },
 
   /** GET PRODUCT Details*/
-  getProduct: async (id: string) => {
+  getProduct: async (slug: string) => {
     return prisma.product.findUnique({
       where: {
-        id: id.toString(),
+        slug: slug,
       },
       include: {
         sizes: true,
@@ -105,6 +107,9 @@ export const productRepo = {
       where: {
         id: id,
       },
+      include: {
+        images: true,
+      },
     });
   },
   /** CREATE PRODUCT */
@@ -112,9 +117,28 @@ export const productRepo = {
     payload: NewProductData,
     imageUrls: ImageUrl[],
   ): Promise<ProductData> => {
+    let slug = slugify(payload.name, {
+      lower: true,
+      strict: true,
+      trim: true,
+    });
+
+    let uniqueSlug = slug;
+    let count = 1;
+
+    while (
+      await prisma.product.findUnique({
+        where: { slug: uniqueSlug },
+      })
+    ) {
+      uniqueSlug = `${slug}-${count}`;
+      count++;
+    }
+
     return prisma.product.create({
       data: {
         name: payload.name,
+        slug: uniqueSlug,
         category: payload.category,
         description: payload.description,
         sizes: {
