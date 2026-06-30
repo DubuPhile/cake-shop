@@ -93,7 +93,6 @@ export function AdjustableYImage({ setOffsetY, setImgBanner }: Props) {
               y,
             }}
             onDragEnd={() => {
-              console.log(y.get());
               setOffsetY(Math.round(y.get()));
             }}
             className="w-full cursor-grab select-none active:cursor-grabbing"

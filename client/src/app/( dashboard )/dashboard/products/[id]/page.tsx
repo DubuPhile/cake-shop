@@ -23,13 +23,13 @@ import toast from "react-hot-toast";
 import { useAppSelector } from "@/redux/store";
 
 export default function ProductPage() {
-  const { id } = useParams();
-  if (!id) return;
+  const { slug } = useParams();
+  if (!slug) return;
   const {
     data: product,
     isLoading,
     isError,
-  } = useGetProductInfoQuery(id?.toString());
+  } = useGetProductInfoQuery(slug?.toString());
   const [changeDetails] = useUpdateProductDetailsMutation();
   const [otherCategory, setOtherCategory] = useState<boolean>(false);
 
@@ -234,7 +234,7 @@ export default function ProductPage() {
                 sizes: product?.sizes,
               }))
             }
-            id={id.toString()}
+            id={product?.id.toString()}
           />
         </div>
         <div

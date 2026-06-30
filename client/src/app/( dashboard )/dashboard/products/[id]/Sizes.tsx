@@ -12,7 +12,7 @@ type Props = {
   sizes: ProductSize[];
   setSizes: (sizes: ProductSize[]) => void;
   onCancel: () => void;
-  id: string;
+  id: string | undefined;
 };
 
 export default function Sizes({ sizes, setSizes, onCancel, id }: Props) {
@@ -171,7 +171,7 @@ export default function Sizes({ sizes, setSizes, onCancel, id }: Props) {
 
       {openModal && (
         <AddSizeModal
-          id={id.toString()}
+          id={id?.toString()}
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
         />

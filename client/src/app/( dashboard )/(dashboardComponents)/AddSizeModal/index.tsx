@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 
 type Props = {
-  id: string;
+  id: string | undefined;
   onClose: () => void;
   isOpen: boolean;
 };
