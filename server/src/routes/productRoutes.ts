@@ -30,7 +30,7 @@ router.get("/category", getCategory);
 router.get("/getAll", getAllProducts);
 router.get("/getAllStock", verifyJWT, getAllStocks);
 router.get("/getStock/:id", getProductStock);
-router.get("/:id", getProductInfo);
+router.get("/:slug", getProductInfo);
 
 router.post(
   "/create",
