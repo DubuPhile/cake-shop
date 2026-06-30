@@ -31,7 +31,7 @@ export const ProductService = {
   },
   /* DELETE PRODUCT SERVICE*/
   deleteProduct: async (id: string): Promise<ProductData> => {
-    const product = await productRepo.getProduct(id);
+    const product = await productRepo.findProductbyId(id);
     if (!product) throw new Error("PRODUCT_NOT_FOUND");
 
     await Promise.all(
