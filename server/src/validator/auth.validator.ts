@@ -125,10 +125,12 @@ export const ProductDetailSchema = z.object({
 
 export const PromotionSchema = z.object({
   title: z.string().min(5, "Title is required"),
-  duration: z.coerce.number().min(1),
   description: z
     .string()
     .min(1, "Description is required")
     .max(500, "Description too Long"),
-  offsetY: z.coerce.number().min(-500).max(500),
+  offsetY: z.coerce.number().min(-1200).max(1200),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
+  cta: z.string().max(15),
 });
