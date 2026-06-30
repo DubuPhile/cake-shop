@@ -60,6 +60,7 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "category" TEXT NOT NULL,
     "description" TEXT,
+    "slug" TEXT NOT NULL,
     "averageRating" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "reviewCount" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -122,6 +123,8 @@ CREATE TABLE "PromotionBanner" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "link" TEXT,
+    "offsetY" DOUBLE PRECISION,
+    "CTA" TEXT,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -144,6 +147,9 @@ CREATE UNIQUE INDEX "TrustedDevice_deviceToken_key" ON "TrustedDevice"("deviceTo
 
 -- CreateIndex
 CREATE INDEX "TrustedDevice_userId_idx" ON "TrustedDevice"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ReviewLikes_userId_reviewId_key" ON "ReviewLikes"("userId", "reviewId");
