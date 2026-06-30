@@ -81,6 +81,7 @@ model Product {
   name        String
   category    String
   description String?
+  slug        String        @unique
   averageRating Float       @default(0)
   reviewCount Int            @default(0)
   images      Image[]
@@ -161,6 +162,7 @@ model PromotionBanner {
 
   link        String?
   offsetY     Float?
+  CTA         String?
   startDate   DateTime
   endDate     DateTime
 
