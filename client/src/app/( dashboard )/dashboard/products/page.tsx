@@ -32,14 +32,6 @@ export default function Products() {
     refetch,
   } = useGetAllProductsQuery({ search: debounceSearch, category: category });
 
-  if (isError) {
-    return (
-      <div className="text-center text-red-500 py-4 min-h-screen">
-        Failed to fetch products
-      </div>
-    );
-  }
-
   const handleCreateProduct = async (productData: FormData) => {
     try {
       await createProduct(productData).unwrap();
@@ -111,6 +103,10 @@ export default function Products() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-between">
           {isLoading ? (
             <Spinner />
+          ) : isError ? (
+            <div className="text-center text-red-500 py-4 min-h-screen">
+              Failed to fetch products
+            </div>
           ) : (
             products?.map((product) => (
               <div
@@ -118,7 +114,7 @@ export default function Products() {
                 className={`relative border border-gray-200 dark:border-gray-700 shadow rounded-md p-4 max-w-full w-full mx-auto `}
               >
                 <Link
-                  href={`/dashboard/products/${product.id}`}
+                  href={`/dashboard/products/${product.slug}`}
                   className="flex flex-col items-center transition-scale duration-300 hover:scale-105"
                 >
                   <img
