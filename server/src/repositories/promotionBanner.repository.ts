@@ -11,6 +11,7 @@ export const PromotionBannerRepo = {
         offsetY: payload.offsetY,
         startDate: payload.startDate,
         endDate: payload.endDate,
+        ...(payload.link && { link: payload.link }),
         ...(payload.cta && { CTA: payload.cta }),
         image: {
           create: files.map((imgUrl, index) => ({
