@@ -9,13 +9,13 @@ import { PromotionSchema } from "../validator/auth.validator";
 
 const router = express.Router();
 
-router.get("/", verifyJWT, verifyRoles(ROLE_LIST.Admin), getBanners);
+router.get("/", getBanners);
 
 router.post(
   "/create",
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
-  upload.single("images"),
+  upload.array("images"),
   validate(PromotionSchema),
   createBanner,
 );
