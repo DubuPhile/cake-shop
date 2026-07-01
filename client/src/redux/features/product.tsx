@@ -57,6 +57,7 @@ export interface Products {
   name: string;
   category: string;
   description: string;
+  slug?: string;
   images?: Images[];
   averageRating?: number;
   sizes?: ProductSize[];
@@ -109,8 +110,8 @@ export const ProductSlice = api.injectEndpoints({
     }),
 
     getProductInfo: builder.query<Products, string>({
-      query: (productId) => ({
-        url: `/product/${productId}`,
+      query: (slug) => ({
+        url: `/product/${slug}`,
         method: "GET",
       }),
       providesTags: ["Products"],
