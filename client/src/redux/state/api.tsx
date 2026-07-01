@@ -32,14 +32,13 @@ const baseQueryWithReAuth: BaseQueryFn<
 
   if (result.error?.status === 403) {
     const refreshResult = await baseQuery("/refresh", api, extraOptions);
-
     if (refreshResult.data) {
-      const user = (api.getState() as RootState).auth.user;
+      const auth = (api.getState() as RootState).auth;
 
       api.dispatch(
         setCredentials({
-          ...(refreshResult.data as { token: string }),
-          user,
+          ...auth,
+          accessToken: (refreshResult.data as { token: string }).token,
         }),
       );
 
@@ -55,6 +54,6 @@ const baseQueryWithReAuth: BaseQueryFn<
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReAuth,
-  tagTypes: ["Users", "Products", "STOCKS", "Categories"],
+  tagTypes: ["Users", "Products", "STOCKS", "Categories", "BANNER"],
   endpoints: () => ({}),
 });
