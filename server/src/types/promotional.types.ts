@@ -5,4 +5,5 @@ export type PromoBanner = {
   endDate: Date;
   offsetY: number;
   cta: string;
+  link?: string;
 };
