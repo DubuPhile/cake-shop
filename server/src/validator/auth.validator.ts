@@ -133,4 +133,7 @@ export const PromotionSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   cta: z.string().max(15),
+  link: z
+    .string()
+    .regex(/^\/[a-zA-Z0-9\-/_]*$/, "Must be a valid internal path"),
 });
