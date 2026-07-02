@@ -8,6 +8,7 @@ import {
   getAllStocks,
   getCategory,
   getProductInfo,
+  getProductRange,
   getProductStock,
   updateProduct,
   updateStocks,
@@ -28,6 +29,7 @@ import ROLE_LIST from "../config/roleLists";
 const router = express.Router();
 router.get("/category", getCategory);
 router.get("/getAll", getAllProducts);
+router.get("/max-price", getProductRange);
 router.get("/getAllStock", verifyJWT, getAllStocks);
 router.get("/getStock/:id", getProductStock);
 router.get("/:slug", getProductInfo);
