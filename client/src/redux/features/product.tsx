@@ -77,6 +77,10 @@ export interface CreateProduct {
   images: File[];
 }
 
+type MaxPrice = {
+  max: number;
+};
+
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query<Products[], ProductQueryParams | void>({
@@ -87,6 +91,14 @@ export const ProductSlice = api.injectEndpoints({
           search: params?.search,
           category: params?.category,
         },
+      }),
+      providesTags: ["Products"],
+    }),
+
+    getMaxPrice: builder.query<MaxPrice, void>({
+      query: () => ({
+        url: "/product/max-price",
+        method: "GET",
       }),
       providesTags: ["Products"],
     }),
@@ -184,4 +196,5 @@ export const {
   useGetProductInfoQuery,
   useUpdateProductDetailsMutation,
   useAddSizeMutation,
+  useGetMaxPriceQuery,
 } = ProductSlice;
