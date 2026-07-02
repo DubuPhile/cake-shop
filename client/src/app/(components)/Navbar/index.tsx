@@ -38,11 +38,19 @@ export default function Navbar() {
 
   const { user } = useAppSelector((state) => state.auth);
 
+  const categories = [
+    { name: "All Cakes", href: "/products" },
+    { name: "Wedding Cakes", href: "/products?category=wedding-cakes" },
+    { name: "Chocolate Cakes", href: "/products?category=chocolate-cakes" },
+    { name: "Cupcakes", href: "/products?category=cupcakes" },
+    { name: "Bento Cakes", href: "/products?category=bento-cakes" },
+  ];
+
   useOutsideClick({ ref: mobileRef, callback: () => setMobileOpen(false) });
   useOutsideClick({ ref: dropdownRef, callback: () => setDropdownOpen(false) });
 
   return (
-    <nav className="flex flex-col">
+    <nav className="flex flex-col items-center">
       <div className="flex justify-between items-center w-full mb-2">
         {/* LEFT SIDE */}
         <div className="flex justify-between items-center gap-5">
@@ -118,7 +126,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="sticky top-0 border-b border-pink-100 dark:border-gray-700 z-10 backdrop-blur-md">
+      <div className="sticky top-0 border-b border-pink-100 dark:border-gray-700 z-10 backdrop-blur-md w-full max-w-7xl">
         <div className="mx-auto flex h-15 sm:h-20 max-w-7xl items-center justify-between px-2 sm:px-6 lg:px-10">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-pink-200 text-md sm:text-2xl shadow-sm">
@@ -161,21 +169,16 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute left-0 mt-3 w-60 rounded-3xl border border-pink-100 bg-white p-3 shadow-xl"
+                    className="absolute left-0 mt-3 w-60 rounded-3xl border border-pink-100 bg-white p-3 shadow-xl flex flex-col"
                   >
-                    {[
-                      "Birthday Cakes",
-                      "Wedding Cakes",
-                      "Chocolate Cakes",
-                      "Cupcakes",
-                      "Bento Cakes",
-                    ].map((cake) => (
-                      <button
-                        key={cake}
+                    {categories.map((cake) => (
+                      <Link
+                        key={cake.name}
+                        href={cake.href}
                         className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:scale-110 hover:bg-pink-50 hover:text-pink-600 cursor-pointer"
                       >
-                        {cake}
-                      </button>
+                        {cake.name}
+                      </Link>
                     ))}
                   </motion.div>
                 )}
@@ -234,7 +237,7 @@ export default function Navbar() {
                 <Link href="/" className="hover:text-pink-500">
                   Home
                 </Link>
-                <Link href="/cakes" className="hover:text-pink-500">
+                <Link href="/products" className="hover:text-pink-500">
                   Cakes
                 </Link>
                 <Link href="/custom-cake" className="hover:text-pink-500">
