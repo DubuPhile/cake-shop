@@ -16,7 +16,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   }, [isDarkMode]);
 
   return (
-    <div className={`${isDarkMode ? "dark" : ""} w-full `}>
+    <div className={`${isDarkMode ? "dark" : ""} w-full flex justify-center`}>
       <main className="flex flex-col w-full h-full py-7 px-2 sm:px-9">
         <Navbar />
         {children}
