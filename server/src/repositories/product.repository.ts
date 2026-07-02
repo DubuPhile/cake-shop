@@ -18,7 +18,12 @@ export const productRepo = {
     });
   },
   /** PRODUCTS WITH SEARCH */
-  getAllProductWithSearch: async (search?: string, category?: string) => {
+  getAllProductWithSearch: async (
+    search?: string,
+    category?: string,
+    minPrice?: number,
+    maxPrice?: number,
+  ) => {
     return prisma.product.findMany({
       where: {
         AND: [
@@ -33,6 +38,21 @@ export const productRepo = {
           category
             ? {
                 category,
+              }
+            : {},
+          minPrice !== undefined || maxPrice !== undefined
+            ? {
+                productSizes: {
+                  some: {
+                    stock: {
+                      gt: 0,
+                    },
+                    price: {
+                      ...(minPrice !== undefined && { gte: minPrice }),
+                      ...(maxPrice !== undefined && { lte: maxPrice }),
+                    },
+                  },
+                },
               }
             : {},
         ],
@@ -195,6 +215,18 @@ export const productRepo = {
     return prisma.product.delete({
       where: {
         id,
+      },
+    });
+  },
+  productMaxRange: async () => {
+    return prisma.productSize.aggregate({
+      where: {
+        stock: {
+          gt: 0,
+        },
+      },
+      _max: {
+        price: true,
       },
     });
   },
