@@ -12,7 +12,6 @@ export const getCategory = async (
   try {
     const result = await productRepo.getCategory();
     const category = result.map((p) => p.category);
-    console.log(category);
     res.status(200).json(category);
   } catch (err) {
     console.log(err);
@@ -27,15 +26,36 @@ export const getAllProducts = async (
   try {
     const search = req.query.search?.toString();
     const category = req.query.category?.toString();
+    const minPrice =
+      req.query.minPrice !== undefined ? Number(req.query.minPrice) : undefined;
+
+    const maxPrice =
+      req.query.maxPrice !== undefined ? Number(req.query.maxPrice) : undefined;
     const products = await productRepo.getAllProductWithSearch(
       search,
       category,
+      minPrice,
+      maxPrice,
     );
 
     res.status(200).json(products);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error to Get Products" });
+  }
+};
+
+export const getProductRange = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await productRepo.productMaxRange();
+
+    res.status(200).json({ max: result._max.price });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error get Product range" });
   }
 };
 
