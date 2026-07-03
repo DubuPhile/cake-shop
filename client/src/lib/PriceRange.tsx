@@ -17,7 +17,8 @@ export default function PriceRange({
   const [isDragging, setIsDragging] = useState(false);
   if (!MAX) return;
   return (
-    <div className="w-full max-w-60 p-6 rounded-2xl gap-3 shadow bg-white ">
+    <div className="w-full max-w-60 py-4 px-6 rounded-2xl gap-2 shadow bg-[#ffffff60]">
+      <h3 className="text-xs md:text-sm mb-2 font-semibold">Price Range</h3>
       <Range
         values={values}
         step={1}
@@ -52,7 +53,7 @@ export default function PriceRange({
             <div
               key={key}
               {...rest}
-              className="relative flex items-center justify-center h-6 w-6 rounded-full bg-white border-2 border-violet-400 shadow-md focus:outline-none"
+              className="relative flex items-center justify-center h-4 w-4 rounded-full bg-white border-2 border-violet-400 shadow-md focus:outline-none"
             >
               {/* Value */}
               <span
@@ -69,14 +70,20 @@ export default function PriceRange({
         }}
       />
 
-      <div className="flex mt-5 w-[115%] justify-between -translate-x-3">
+      <div className="flex mt-2 w-[115%] justify-between -translate-x-3">
         <div className="flex flex-col">
+          <label
+            htmlFor="minRange"
+            className="text-xs text-gray-400 text-center font-bold"
+          >
+            min
+          </label>
           <input
             id="minRange"
             type="text"
             value={values[0]}
             style={{ width: `${Math.max(String(values[0]).length + 2, 5)}ch` }}
-            className="px-2 py-1 text-center border border-gray-300 rounded-2xl"
+            className="px-2 text-center border border-gray-300 rounded-2xl"
             onChange={(e) =>
               setValues((prev) => {
                 const next = [...prev];
@@ -85,20 +92,20 @@ export default function PriceRange({
               })
             }
           />
-          <label
-            htmlFor="minRange"
-            className="hidden text-xs text-gray-400 text-center font-bold"
-          >
-            min
-          </label>
         </div>
         <div className="flex flex-col">
+          <label
+            htmlFor="maxRange"
+            className="text-xs text-gray-400 text-center font-bold"
+          >
+            max
+          </label>
           <input
             id="maxRange"
             type="text"
             value={values[1]}
             style={{ width: `${Math.max(String(values[1]).length + 2, 5)}ch` }}
-            className="px-2 py-1 text-center border border-gray-300 rounded-2xl"
+            className="px-2 text-center border border-gray-300 rounded-2xl"
             onChange={(e) =>
               setValues((prev) => {
                 const next = [...prev];
@@ -107,12 +114,6 @@ export default function PriceRange({
               })
             }
           />
-          <label
-            htmlFor="maxRange"
-            className="hidden text-xs text-gray-400 text-center font-bold"
-          >
-            max
-          </label>
         </div>
       </div>
     </div>
