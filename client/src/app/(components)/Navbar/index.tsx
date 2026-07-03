@@ -175,6 +175,7 @@ export default function Navbar() {
                       <Link
                         key={cake.name}
                         href={cake.href}
+                        onClick={() => setDropdownOpen((prev) => !prev)}
                         className="w-full rounded-2xl px-4 py-3 text-left text-gray-700 transition hover:scale-110 hover:bg-pink-50 hover:text-pink-600 cursor-pointer"
                       >
                         {cake.name}
