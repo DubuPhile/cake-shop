@@ -67,6 +67,8 @@ export interface Products {
 type ProductQueryParams = {
   search?: string;
   category?: string;
+  minPrice?: number;
+  maxPrice?: number;
 };
 
 export interface CreateProduct {
@@ -90,6 +92,8 @@ export const ProductSlice = api.injectEndpoints({
         params: {
           search: params?.search,
           category: params?.category,
+          maxPrice: params?.maxPrice,
+          minPrice: params?.minPrice,
         },
       }),
       providesTags: ["Products"],
