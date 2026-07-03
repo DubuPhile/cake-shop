@@ -42,11 +42,11 @@ export const productRepo = {
             : {},
           minPrice !== undefined || maxPrice !== undefined
             ? {
-                productSizes: {
+                sizes: {
                   some: {
-                    stock: {
-                      gt: 0,
-                    },
+                    // stock: {
+                    //   gt: 0,
+                    // },
                     price: {
                       ...(minPrice !== undefined && { gte: minPrice }),
                       ...(maxPrice !== undefined && { lte: maxPrice }),
