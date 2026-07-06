@@ -30,6 +30,7 @@ export default function Products() {
   const {
     data: products,
     isLoading,
+    isFetching,
     isError,
   } = useGetAllProductsQuery({
     search: debounceSearch,
@@ -53,6 +54,7 @@ export default function Products() {
         products={products}
         isError={isError}
         isLoading={isLoading}
+        isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
       />
