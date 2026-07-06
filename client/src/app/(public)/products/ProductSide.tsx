@@ -34,6 +34,8 @@ export default function ProductSide({
           <div className="text-center text-red-500 py-4 min-h-screen">
             Failed to fetch products
           </div>
+        ) : products.length === 0 ? (
+          <h3>No Product shown</h3>
         ) : (
           products?.map((product) => (
             <div
