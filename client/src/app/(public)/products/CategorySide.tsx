@@ -31,7 +31,7 @@ export default function CategorySide({
           id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="appearance-none rounded-lg px-3 py-0 h-10 bg-red-400 font-semibold drop-shadow-sm my-3 text-gray-800 focus:bg-red-300"
+          className="appearance-none rounded-lg px-3 py-0 h-10 bg-pink-200 font-semibold drop-shadow-sm my-3 text-gray-800 focus:bg-pink-200 cursor-pointer"
         >
           <option className="font-semibold text-gray-800" value="">
             All Categories
