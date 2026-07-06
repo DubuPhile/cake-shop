@@ -60,7 +60,11 @@ export const productRepo = {
       orderBy: { name: "asc" },
       include: {
         sizes: true,
-        images: true,
+        images: {
+          orderBy: {
+            isPrimary: "desc",
+          },
+        },
         reviews: {
           include: {
             user: {
