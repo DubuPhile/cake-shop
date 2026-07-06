@@ -7,6 +7,7 @@ type Props = {
   totalStars?: number;
   onChange?: (rating: number) => void;
   interactive?: boolean;
+  style?: string;
 };
 
 export default function StarRating({
@@ -14,6 +15,7 @@ export default function StarRating({
   totalStars = 5,
   onChange,
   interactive,
+  style = "w-4 h-4",
 }: Props) {
   const [rating, setRating] = useState(initialRating);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -59,7 +61,7 @@ export default function StarRating({
               transition={{ duration: 0.3 }}
             >
               <Star
-                className={`w-4 h-4 transition-all duration-300 ${
+                className={`${style} transition-all duration-300 ${
                   isFilled
                     ? "fill-yellow-400 text-yellow-400 drop-shadow-md"
                     : "text-gray-300"
