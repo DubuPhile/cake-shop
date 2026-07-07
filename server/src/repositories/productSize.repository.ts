@@ -7,6 +7,11 @@ export const ProductSizeRepo = {
       where: { OR: [{ productId: id }, { id: id }] },
     });
   },
+  getSizeById: async (id: string) => {
+    return prisma.productSize.findFirst({
+      where: { id },
+    });
+  },
   updateProdSizes: async (sizes: Sizes[]) => {
     return prisma.$transaction(
       sizes.map((s) =>
