@@ -7,12 +7,14 @@ import {
 import verifyJWT from "../middleware/verifyJWT";
 import { validate } from "../middleware/validate";
 import { idSchema, ratingSchema } from "../validator/auth.validator";
+import { upload } from "../middleware/multer";
 
 const router = express.Router();
 
 router.post(
   "/rate/:id",
   verifyJWT,
+  upload.array("images", 5),
   validate(idSchema, "params"),
   validate(ratingSchema),
   RateProduct,
