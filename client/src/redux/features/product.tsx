@@ -43,9 +43,15 @@ export interface ProductReview {
   user: User;
   replies?: Replies[];
   likes?: Likes[];
+  images?: ReviewImage[];
   createdAt?: string | Date;
   likesCount?: number;
 }
+
+type ReviewImage = {
+  id?: string;
+  url: string;
+};
 type Likes = {
   id: string;
   userId: string;
