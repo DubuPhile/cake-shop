@@ -72,6 +72,7 @@ export const ProductService = {
     payload: RateProd,
     userId: string,
     productId: string,
+    files: Express.Multer.File[],
   ): Promise<ReviewData> => {
     const user = await UserRepo.findbyId(userId);
     if (!user) throw new Error("USER_NOT_FOUND");
@@ -84,10 +85,17 @@ export const ProductService = {
     );
     if (existingReview) throw new Error("REVIEW_EXISTS");
 
+    let imageUrls;
+
+    if (files.length > 0) {
+      imageUrls = await ImageService.uploadReviewImage(files, product.name);
+    }
+
     const reviewData = await reviewRepo.createReview(
       user.userId,
       product.id,
       payload,
+      imageUrls,
     );
 
     const UpdateAverageRating = await reviewRepo.updateAvgRating(product.id);
