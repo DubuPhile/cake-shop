@@ -1,5 +1,10 @@
 import { prisma } from "../../lib/prisma";
-import { RateProd, ReviewData, ReviewLikes } from "../types/product.types";
+import {
+  ImageUrl,
+  RateProd,
+  ReviewData,
+  ReviewLikes,
+} from "../types/product.types";
 
 export const reviewRepo = {
   checkExistLikes: async (
@@ -77,6 +82,7 @@ export const reviewRepo = {
     userId: string,
     productId: string,
     payload: RateProd,
+    imageUrls?: ImageUrl[],
   ): Promise<ReviewData> => {
     return prisma.review.create({
       data: {
@@ -84,6 +90,16 @@ export const reviewRepo = {
         comment: payload.comment,
         user: { connect: { userId } },
         product: { connect: { id: productId } },
+        ...(imageUrls?.length
+          ? {
+              images: {
+                create: imageUrls.map((imgUrl) => ({
+                  url: imgUrl.url,
+                  path: imgUrl.filepath,
+                })),
+              },
+            }
+          : {}),
       },
     });
   },
