@@ -57,6 +57,7 @@ export const RateProduct = async (
   try {
     const { id } = req.params;
     const payload = req.body as RateProd;
+    const files = (req.files as Express.Multer.File[]) || [];
     const userId = req.user?.id;
     if (!id) throw new Error("PRODUCT_NOT_FOUND");
     if (!userId) throw new Error("USER_NOT_FOUND");
@@ -65,6 +66,7 @@ export const RateProduct = async (
       payload,
       userId,
       id?.toString(),
+      files,
     );
 
     res
