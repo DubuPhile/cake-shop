@@ -42,6 +42,7 @@ model Users {
   trustedDevices TrustedDevice[]
   reviews         Review[]
   likes           ReviewLikes[]
+  carts           CartModel[]
 }
 
 model Otp {
@@ -90,6 +91,7 @@ model Product {
 
   sizes       ProductSize[]
   reviews      Review[]
+  carts       CartModel[]
 }
 
 model Image {
@@ -113,6 +115,8 @@ model ProductSize {
 
   productId   String
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  cart        CartModel[]
 }
 
 model Review {
@@ -120,13 +124,14 @@ model Review {
 
   rating      Int?
   comment     String?
+  images      ReviewImage[]
 
   userId      String
   productId   String
 
   user         Users    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
+  
   parentId    String?
   parent      Review?   @relation("ReviewReplies", fields: [parentId], references: [id])
 
@@ -138,6 +143,15 @@ model Review {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+}
+
+model ReviewImage {
+  id        String   @id @default(uuid())
+  url       String
+  path      String
+
+  reviewId  String
+  review    Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 }
 
 model ReviewLikes {
@@ -169,4 +183,16 @@ model PromotionBanner {
   isActive    Boolean  @default(true)
 
   createdAt   DateTime @default(now())
+}
+
+model CartModel {
+  id            String        @id @default(uuid())
+  productId     String
+  product       Product       @relation(fields: [productId], references: [id])
+  sizeId        String
+  size          ProductSize   @relation(fields: [sizeId], references: [id])
+  userId        String
+  user          Users         @relation(fields: [userId], references: [userId])
+  quantity      Int           @default(1)
+  message       String?
 }
