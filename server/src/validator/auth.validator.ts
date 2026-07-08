@@ -137,3 +137,14 @@ export const PromotionSchema = z.object({
     .string()
     .regex(/^\/[a-zA-Z0-9\-/_]*$/, "Must be a valid internal path"),
 });
+
+export const AddToCartSchema = z.object({
+  productId: z.uuid(),
+  sizeId: z.uuid(),
+  quantity: z.coerce.number().int(),
+  message: z
+    .string()
+    .min(1, "Description is required")
+    .max(500, "Description too Long")
+    .optional(),
+});
