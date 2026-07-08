@@ -16,4 +16,19 @@ export const CartRepo = {
       },
     });
   },
+  getCart: async (userId: string) => {
+    return await prisma.cartModel.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        product: {
+          include: {
+            images: true,
+          },
+        },
+        size: true,
+      },
+    });
+  },
 };
