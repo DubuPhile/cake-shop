@@ -8,7 +8,7 @@ import {
   Menu,
   Moon,
   Search,
-  ShoppingBag,
+  ShoppingCart,
   Sun,
   UserRound,
   X,
@@ -20,7 +20,7 @@ import icon from "@/app/icon.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import useOutsideClick from "@/hook/useOutsideClick";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,6 +29,7 @@ export default function Navbar() {
   const mobileRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
 
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
@@ -36,12 +37,16 @@ export default function Navbar() {
     dispatch(setIsDarkMode(!isDarkMode));
   };
 
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, accessToken } = useAppSelector((state) => state.auth);
+
+  const GoToCart = () => {
+    router.push("/cart");
+  };
 
   const categories = [
     { name: "All Cakes", href: "/products" },
-    { name: "Wedding Cakes", href: "/products?category=wedding-cakes" },
-    { name: "Chocolate Cakes", href: "/products?category=chocolate-cakes" },
+    { name: "Cakes", href: "/products?category=cakes" },
+    { name: "Desserts", href: "/products?category=desserts" },
     { name: "Cupcakes", href: "/products?category=cupcakes" },
     { name: "Bento Cakes", href: "/products?category=bento-cakes" },
   ];
@@ -84,8 +89,11 @@ export default function Navbar() {
 
         {/* RIGHT SIDE */}
         <div className="flex justify-between items-center gap-2 sm:gap-4">
-          <button className="flex md:hidden rounded-full border border-pink-200 p-2 transition hover:scale-110 hover:bg-pink-50 cursor-pointer">
-            <ShoppingBag className="h-5 w-5 text-pink-600" />
+          <button
+            className="flex md:hidden rounded-full border border-pink-200 p-2 transition hover:scale-110 hover:bg-pink-50 cursor-pointer"
+            onClick={GoToCart}
+          >
+            <ShoppingCart className="h-5 w-5 text-pink-600" />
           </button>
 
           <div className="hidden md:flex justify-between items-center gap-5">
@@ -209,8 +217,11 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-4 lg:flex">
-            <button className="rounded-full border border-pink-200 p-3 transition hover:scale-110 hover:bg-pink-50 cursor-pointer">
-              <ShoppingBag className="h-5 w-5 text-pink-600" />
+            <button
+              className="rounded-full border border-pink-200 p-3 transition hover:scale-110 hover:bg-pink-50 cursor-pointer"
+              onClick={GoToCart}
+            >
+              <ShoppingCart className="h-5 w-5 text-pink-600" />
             </button>
 
             <button className="rounded-full bg-pink-500 px-6 py-3 font-semibold text-white transition hover:scale-105 hover:bg-pink-600 cursor-pointer">
