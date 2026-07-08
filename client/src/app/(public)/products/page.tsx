@@ -8,11 +8,19 @@ import {
   useGetAllProductsQuery,
   useGetMaxPriceQuery,
 } from "@/redux/features/product";
+import { useSearchParams } from "next/navigation";
 
 export default function Products() {
   const { data: prodMaxPrice } = useGetMaxPriceQuery();
   const [values, setValues] = useState([0, 0]);
   const [category, setCategory] = useState<string>("");
+
+  const searchParams = useSearchParams();
+  const categoryParams = searchParams.get("category");
+
+  useEffect(() => {
+    setCategory(categoryParams ?? "");
+  }, [categoryParams]);
 
   useEffect(() => {
     if (!prodMaxPrice?.max) return;
