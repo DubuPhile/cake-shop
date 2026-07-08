@@ -2,17 +2,24 @@
 
 import StarRating from "@/app/(components)/StarRating";
 import { useGetProductInfoQuery } from "@/redux/features/product";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ProdImages from "./ProdImages";
 import { useState } from "react";
 import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
+import { useAppSelector } from "@/redux/store";
+import { useAddToCartMutation } from "@/redux/features/cartSlice";
+import toast from "react-hot-toast";
 
 export default function Product() {
   const { slug } = useParams();
+  const router = useRouter();
+  const { accessToken } = useAppSelector((state) => state.auth);
+
   const { data: product } = useGetProductInfoQuery(slug?.toString() || "");
+
+  const [createCart] = useAddToCartMutation();
   const [selectIndex, setSelectIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-
   const decreaseQ = () => {
     if (quantity === 1) return;
     setQuantity(quantity - 1);
@@ -23,6 +30,33 @@ export default function Product() {
 
   const selectedSize = product?.sizes?.[selectIndex];
 
+  const addToCart = async () => {
+    if (!accessToken) return router.push("/login");
+    try {
+      const createdCart = await createCart({
+        productId: product?.id || "",
+        sizeId: selectedSize?.id || "",
+        quantity,
+      });
+      toast.success("Add To Cart", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to Add to Cart", {
+        style: {
+          fontWeight: "600",
+          color: "red",
+        },
+      });
+    }
+  };
+  const buyNow = () => {
+    if (!accessToken) return router.push("/login");
+  };
   if (!product) return;
   const content = (
     <div className="w-full flex justify-center">
@@ -87,11 +121,17 @@ export default function Product() {
               </div>
             </div>
             <div className="flex gap-4 mt-5">
-              <button className="flex gap-2 bg-gray-100 px-4 py-2 rounded-2xl text-gray-800 font-bold hover:bg-gray-200 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-gray-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg">
+              <button
+                className="flex gap-2 bg-gray-100 px-4 py-2 rounded-2xl text-gray-800 font-bold hover:bg-gray-200 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-gray-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg"
+                onClick={addToCart}
+              >
                 <ShoppingCart className="w-5 h-5" />
                 <span>Add to Cart</span>
               </button>
-              <button className="flex gap-2 bg-red-300 px-4 py-2 rounded-2xl text-gray-800 font-bold hover:bg-red-400 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-red-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg">
+              <button
+                className="flex gap-2 bg-red-300 px-4 py-2 rounded-2xl text-gray-800 font-bold hover:bg-red-400 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-red-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg"
+                onClick={buyNow}
+              >
                 <ShoppingBag className="w-5 h-5" />
                 <span>Buy Now</span>
               </button>
