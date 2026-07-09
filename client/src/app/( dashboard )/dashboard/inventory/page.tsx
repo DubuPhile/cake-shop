@@ -108,11 +108,16 @@ export default function Inventory() {
     {
       field: "price",
       headerName: "Price",
-      width: 80,
+      width: 100,
       cellClassName: cellCN,
       headerClassName: headerCN,
       headerAlign: "center",
       align: "center",
+      valueFormatter: (value) =>
+        new Intl.NumberFormat("en-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(value),
     },
     {
       field: "stock",
