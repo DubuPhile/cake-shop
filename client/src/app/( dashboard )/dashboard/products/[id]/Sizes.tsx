@@ -58,7 +58,9 @@ export default function Sizes({ sizes, setSizes, onCancel, id }: Props) {
     <>
       <div className="grid grid-cols-4 gap-2 mb-2 font-semibold text-xs md:text-base">
         <h3 className="w-full flex justify-center items-center">Size</h3>
-        <h3 className="w-full flex justify-center items-center">Price</h3>
+        <h3 className="w-full flex justify-center items-center">
+          Price(&#8369;)
+        </h3>
         <h3 className="w-full flex justify-center items-center">Stock</h3>
         {!disable && (
           <div>
