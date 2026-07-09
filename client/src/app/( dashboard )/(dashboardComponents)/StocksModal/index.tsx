@@ -85,7 +85,7 @@ export default function StocksModal({
             <form onSubmit={UpdateStocks}>
               <div className="grid grid-cols-3 gap-2 mb-2 font-semibold text-xs md:text-base mt-5">
                 <h3 className="w-full flex justify-center">Sizes</h3>
-                <h3 className="w-full flex justify-center">Prices</h3>
+                <h3 className="w-full flex justify-center">Prices(&#8369;)</h3>
                 <h3 className="w-full flex justify-center">Stock</h3>
               </div>
 
