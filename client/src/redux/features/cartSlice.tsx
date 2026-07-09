@@ -32,7 +32,15 @@ export const CartSlice = api.injectEndpoints({
       }),
       providesTags: ["CARTS"],
     }),
+    deleteCart: builder.mutation<void, string>({
+      query: (cartId) => ({
+        url: `/cart/${cartId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["CARTS"],
+    }),
   }),
 });
 
-export const { useAddToCartMutation, useGetCartQuery } = CartSlice;
+export const { useAddToCartMutation, useGetCartQuery, useDeleteCartMutation } =
+  CartSlice;
