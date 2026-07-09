@@ -58,7 +58,10 @@ export default function ProductSide({
                     {product.name}
                   </h3>
                   <p className="text-gray-800 dark:text-gray-100">
-                    ${product.sizes?.[0]?.price.toFixed(2)}
+                    {new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(product.sizes?.[0].price || 0)}
                   </p>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     Stock: {product.sizes?.[0]?.stock}
