@@ -40,3 +40,32 @@ export const getCarts = async (
       .json({ success: false, messsage: "Server Error in GetCart" });
   }
 };
+
+export const deleteCart = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
+    }
+    const { id } = req.params;
+    const cartId = id?.toString() || "";
+    const foundCart = await CartRepo.getCartById(cartId);
+    if (!foundCart) {
+      res.status(404).json({ success: false, message: "Cart not found" });
+      return;
+    }
+
+    await CartRepo.deleteCart(foundCart.id);
+
+    res.status(204).send();
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ success: false, messsage: "Delete Cart Server Error" });
+  }
+};
