@@ -78,7 +78,10 @@ export default function Product() {
               />
             </div>
             <h4 className="text-lg md:text-2xl my-2">
-              ${selectedSize?.price.toFixed(2)}
+              {new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(selectedSize?.price || 0)}
             </h4>
             <h4 className="text-base md:text-2xl font-semibold my-2">
               Description:
