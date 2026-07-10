@@ -43,6 +43,7 @@ model Users {
   reviews         Review[]
   likes           ReviewLikes[]
   carts           CartModel[]
+  order           Order[]
 }
 
 model Otp {
@@ -92,6 +93,7 @@ model Product {
   sizes       ProductSize[]
   reviews      Review[]
   carts       CartModel[]
+  order       OrderItem[]
 }
 
 model Image {
@@ -195,4 +197,43 @@ model CartModel {
   user          Users         @relation(fields: [userId], references: [userId])
   quantity      Int           @default(1)
   message       String?
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  user        Users       @relation(fields: [userId], references: [userId])
+
+  status      OrderStatus @default(PENDING)
+
+  totalAmount Decimal     @db.Decimal(10, 2)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id          String      @id @default(uuid())
+
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id])
+
+  productId   String
+  product      Product      @relation(fields: [productId], references: [id])
+
+  size        String
+  quantity    Int
+  price       Decimal      @db.Decimal(10, 2)
+  message     String?
 }
