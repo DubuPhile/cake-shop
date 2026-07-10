@@ -1,3 +1,5 @@
+import { ProductData, Sizes } from "./product.types";
+
 export type CartItem = {
   productId: string;
   sizeId: string;
@@ -12,4 +14,6 @@ export type CreatedCart = {
   quantity: number;
   message: string | null;
   sizeId: string;
+  size?: Sizes;
+  product?: ProductData;
 };
