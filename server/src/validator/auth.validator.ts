@@ -148,3 +148,9 @@ export const AddToCartSchema = z.object({
     .max(500, "Description too Long")
     .optional(),
 });
+
+export const createOrderSchema = z.object({
+  cartItemIds: z
+    .array(z.uuid())
+    .min(1, "Please select at least one item to checkout"),
+});
