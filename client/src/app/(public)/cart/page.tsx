@@ -6,6 +6,7 @@ import {
   useDeleteCartMutation,
   useGetCartQuery,
 } from "@/redux/features/cartSlice";
+import { useCreateOrderMutation } from "@/redux/features/orderSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -13,14 +14,13 @@ export default function Carts() {
   const { data: myCart } = useGetCartQuery();
   const [checkItems, setCheckItems] = useState<MyCart[] | []>([]);
   const [deleteCart] = useDeleteCartMutation();
+  const [createOrder] = useCreateOrderMutation();
 
   const handleCheckboxChange = (checked: boolean, item: MyCart) => {
     if (checked) {
-      setCheckItems((prev) => [...prev, item]);
+      setCheckItems([item]);
     } else {
-      setCheckItems((prev) =>
-        prev.filter((cartItem) => cartItem.id !== item.id),
-      );
+      setCheckItems([]);
     }
   };
 
@@ -35,6 +35,9 @@ export default function Carts() {
 
   const currentItems = cart.slice(startIndex, startIndex + items_per_page);
 
+  const cartItemIds = checkItems.map((item) => item.id);
+  const totalPrice = calculateTotalPrice(checkItems);
+
   const handleDeleteCart = async (cartId: string) => {
     try {
       await deleteCart(cartId).unwrap();
@@ -44,6 +47,22 @@ export default function Carts() {
       }
 
       toast.success("Delete Success", {
+        style: {
+          fontWeight: "600",
+          color: "green",
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const result = await createOrder({ cartItemIds: cartItemIds }).unwrap();
+
+      setCheckItems([]);
+      toast.success("Order Created", {
         style: {
           fontWeight: "600",
           color: "green",
@@ -114,9 +133,12 @@ export default function Carts() {
           {new Intl.NumberFormat("en-PH", {
             style: "currency",
             currency: "PHP",
-          }).format(calculateTotalPrice(checkItems))}
+          }).format(totalPrice)}
         </h3>
-        <button className="flex gap-2 bg-red-300 px-4 py-2 rounded-lg text-gray-800 font-bold hover:bg-red-400 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-red-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg cursor-pointer">
+        <button
+          className="flex gap-2 bg-red-300 px-4 py-2 rounded-lg text-gray-800 font-bold hover:bg-red-400 -translate-y-0.5 drop-shadow-[2px_2px_2px_rgba(0,0,0,0.5)] active:bg-red-300 active:translate-y-0 active:drop-shadow-none text-sm md:text-lg cursor-pointer"
+          onClick={handleCreateOrder}
+        >
           Checkout
         </button>
       </div>
