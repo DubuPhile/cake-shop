@@ -37,4 +37,22 @@ export const CartRepo = {
   deleteCart: async (cartId: string) => {
     return await prisma.cartModel.delete({ where: { id: cartId } });
   },
+
+  getManyCartByIds: async (
+    cartIds: string[],
+    userId: string,
+  ): Promise<CreatedCart[]> => {
+    return await prisma.cartModel.findMany({
+      where: {
+        id: {
+          in: cartIds,
+        },
+        userId,
+      },
+      include: {
+        product: true,
+        size: true,
+      },
+    });
+  },
 };
