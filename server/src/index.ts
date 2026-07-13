@@ -20,6 +20,7 @@ import imageRoutes from "./routes/imageRoutes";
 import promotionRoutes from "./routes/promotionRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import { redis } from "./config/redis";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -47,8 +48,18 @@ app.use("/promo", promotionRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
 
-const port = process.env.PORT || 3001;
+const startServer = async () => {
+  try {
+    await redis.connect();
 
-app.listen(port, () => {
-  console.log(`Server running on PORT ${port}`);
-});
+    const port = process.env.PORT || 3001;
+
+    app.listen(port, () => {
+      console.log(`Server running on PORT ${port}`);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+startServer();
