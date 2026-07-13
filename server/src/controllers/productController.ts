@@ -4,6 +4,7 @@ import { productRepo } from "../repositories/product.repository";
 import { ProductService } from "../services/product.service";
 import { editProductData, NewProductData, Sizes } from "../types/product.types";
 import { ProductSizeRepo } from "../repositories/productSize.repository";
+import { redis } from "../config/redis";
 
 export const getCategory = async (
   req: Request,
@@ -31,12 +32,25 @@ export const getAllProducts = async (
 
     const maxPrice =
       req.query.maxPrice !== undefined ? Number(req.query.maxPrice) : undefined;
+
+    const cacheKey = `products:${search || ""}:${category || ""}:${minPrice || ""}:${maxPrice || ""}`;
+
+    const cachedProducts = await redis.get(cacheKey);
+
+    if (cachedProducts) {
+      res.status(200).json(JSON.parse(cachedProducts));
+      return;
+    }
     const products = await productRepo.getAllProductWithSearch(
       search,
       category,
       minPrice,
       maxPrice,
     );
+
+    await redis.set(cacheKey, JSON.stringify(products), {
+      EX: 300,
+    });
 
     res.status(200).json(products);
   } catch (err) {
