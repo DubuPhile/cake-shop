@@ -9,6 +9,7 @@ import {
   RateProd,
   ReviewData,
 } from "../types/product.types";
+import { clearProductBySlug, clearProductsCache } from "../utils/redisCache";
 import { ImageService } from "./image.service";
 
 export const ProductService = {
@@ -26,6 +27,7 @@ export const ProductService = {
     );
 
     const data = await productRepo.createProduct(payload, imageUrls);
+    await clearProductsCache();
 
     return data;
   },
@@ -50,6 +52,9 @@ export const ProductService = {
     );
 
     const deletedProduct = await productRepo.delete(id);
+
+    await clearProductBySlug(deletedProduct.slug);
+    await clearProductsCache();
     return deletedProduct;
   },
   /* UPDATE PRODUCT SERVICE*/
