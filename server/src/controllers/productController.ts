@@ -33,7 +33,7 @@ export const getAllProducts = async (
     const maxPrice =
       req.query.maxPrice !== undefined ? Number(req.query.maxPrice) : undefined;
 
-    const cacheKey = `products:${search || ""}:${category || ""}:${minPrice || ""}:${maxPrice || ""}`;
+    const cacheKey = `products:${minPrice || ""}:${maxPrice || ""}:${search || ""}:${category || ""}`;
 
     const cachedProducts = await redis.get(cacheKey);
 
@@ -47,10 +47,11 @@ export const getAllProducts = async (
       minPrice,
       maxPrice,
     );
-
-    await redis.set(cacheKey, JSON.stringify(products), {
-      EX: 300,
-    });
+    if (products.length > 0) {
+      await redis.set(cacheKey, JSON.stringify(products), {
+        EX: 300,
+      });
+    }
 
     res.status(200).json(products);
   } catch (err) {
@@ -84,8 +85,25 @@ export const getProductInfo = async (
       res.status(400).json({ message: "Invalid" });
       return;
     }
+    const cacheKey = `product:${slug}`;
+
+    const cachedProduct = await redis.get(cacheKey);
+
+    if (cachedProduct) {
+      res.status(200).json(JSON.parse(cachedProduct));
+      return;
+    }
 
     const product = await productRepo.getProduct(slug.toString());
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    await redis.set(cacheKey, JSON.stringify(product), {
+      EX: 60,
+    });
 
     res.status(200).json(product);
   } catch (err) {
