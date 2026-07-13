@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import TotalUser from "../(dashboardComponents)/TotalUser";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 export default function Dashboard() {
   return (
     <div>
-      <h2>Dashboard</h2>
+      <TotalUser />
     </div>
   );
 }
