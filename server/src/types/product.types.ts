@@ -36,6 +36,7 @@ export interface ProductData {
   id: string;
   name: string;
   category: string;
+  slug: string;
   description: string | null;
   averageRating: number;
   reviewCount: number;
