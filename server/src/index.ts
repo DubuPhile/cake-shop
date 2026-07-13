@@ -20,6 +20,9 @@ import imageRoutes from "./routes/imageRoutes";
 import promotionRoutes from "./routes/promotionRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
+
+/* CONNECTIONS */
 import { redis } from "./config/redis";
 
 /* CONFIGURATION */
@@ -47,6 +50,7 @@ app.use("/image", imageRoutes);
 app.use("/promo", promotionRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const startServer = async () => {
   try {
