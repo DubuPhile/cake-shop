@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { CreatedCart } from "../types/cart.types";
+import { OrderStatus } from "../types/order.Type";
 
 export const OrderRepo = {
   createdOrder: async (CartItems: CreatedCart[], userId: string) => {
@@ -20,6 +21,17 @@ export const OrderRepo = {
           })),
         },
       },
+    });
+  },
+  getOrdersByStatus: async (status?: OrderStatus) => {
+    return prisma.order.findMany({
+      where: status ? { status } : {},
+    });
+  },
+
+  getOrderCountByStatus: async (status?: OrderStatus) => {
+    return prisma.order.count({
+      where: status ? { status } : {},
     });
   },
 };
