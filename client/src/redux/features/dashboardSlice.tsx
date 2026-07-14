@@ -2,7 +2,12 @@ import { api } from "@/redux/state/api";
 
 export interface Stats {
   totalUsers: string;
-  growthPercentage: number;
+  userGrowthPercentage: number;
+  totalOrders: string;
+  ordersGrowthPercentage: number;
+  pendingOrders: number;
+  monthlySales: number;
+  salesGrowth: number;
 }
 
 export const dashboardSlice = api.injectEndpoints({
