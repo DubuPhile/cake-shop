@@ -1,24 +1,38 @@
 import { api } from "@/redux/state/api";
 
-export interface Stats {
-  totalUsers: string;
-  userGrowthPercentage: number;
-  totalOrders: string;
-  ordersGrowthPercentage: number;
-  pendingOrders: number;
-  monthlySales: number;
+export type Stats = {
+  totalUsers: number;
+  usersGrowth: number;
+  totalOrders: number;
+  ordersGrowth: number;
+  totalSales: number;
   salesGrowth: number;
+  month?: number;
+  year?: number;
+  createdAt: Date;
+};
+
+export interface Dashboard {
+  stats: Stats;
+  totalUsers: number;
 }
 
 export const dashboardSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getDashboardStats: builder.query<Stats, void>({
+    getLatestStats: builder.query<Dashboard, void>({
       query: () => ({
         url: "/api/dashboard/stats",
+      }),
+      providesTags: ["DASHBOARD"],
+    }),
+    getMonthlyStats: builder.query<Stats[], void>({
+      query: () => ({
+        url: "/api/dashboard/monthly",
       }),
       providesTags: ["DASHBOARD"],
     }),
   }),
 });
 
-export const { useGetDashboardStatsQuery } = dashboardSlice;
+export const { useGetLatestStatsQuery, useGetMonthlyStatsQuery } =
+  dashboardSlice;
