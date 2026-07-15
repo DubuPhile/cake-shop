@@ -34,4 +34,34 @@ export const OrderRepo = {
       where: status ? { status } : {},
     });
   },
+
+  monthlySales: async (startOfMonth: Date, endOfMonth: Date) => {
+    return prisma.order.aggregate({
+      where: {
+        status: "COMPLETED",
+        createdAt: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      _sum: {
+        totalAmount: true,
+      },
+    });
+  },
+
+  totalOrdersCompletedThisMonth: async (
+    startOfMonth: Date,
+    endOfMonth: Date,
+  ) => {
+    return prisma.order.count({
+      where: {
+        status: "COMPLETED",
+        createdAt: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+    });
+  },
 };
