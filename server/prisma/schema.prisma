@@ -237,3 +237,23 @@ model OrderItem {
   price       Decimal      @db.Decimal(10, 2)
   message     String?
 }
+
+model MonthlyStats {
+  id            Int       @id @default(autoincrement())
+  month         Int
+  year          Int
+  
+  totalSales    Float     @default(0)
+  salesGrowth   Float     @default(0)
+
+  totalOrders   Int       @default(0)
+  ordersGrowth  Float     @default(0)
+
+  totalUsers    Int       @default(0)
+  usersGrowth   Float     @default(0)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([month, year])
+}
