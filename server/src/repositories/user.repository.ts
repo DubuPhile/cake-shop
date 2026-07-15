@@ -142,4 +142,19 @@ export const UserRepo = {
       },
     });
   },
+
+  totalUserCreatedPerMonth: async (startOfMonth: Date, endOfMonth: Date) => {
+    return prisma.users.count({
+      where: {
+        createdAt: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+    });
+  },
+
+  totalUser: async () => {
+    return prisma.users.count();
+  },
 };
