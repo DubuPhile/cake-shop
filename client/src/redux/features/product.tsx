@@ -89,6 +89,14 @@ type MaxPrice = {
   max: number;
 };
 
+export interface BestSellingProduct {
+  productId?: string;
+  productName: string;
+  productImage: Images;
+  totalQuantity: number;
+  subTotal: number;
+}
+
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query<Products[], ProductQueryParams | void>({
@@ -191,6 +199,13 @@ export const ProductSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["STOCKS", "Products"],
     }),
+    getBestSellingProduct: builder.query<BestSellingProduct, void>({
+      query: () => ({
+        url: "/product/best-selling",
+        method: "GET",
+      }),
+      providesTags: ["Products"],
+    }),
   }),
 });
 
@@ -207,4 +222,5 @@ export const {
   useUpdateProductDetailsMutation,
   useAddSizeMutation,
   useGetMaxPriceQuery,
+  useGetBestSellingProductQuery,
 } = ProductSlice;
