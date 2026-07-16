@@ -235,6 +235,7 @@ model OrderItem {
   size        String
   quantity    Int
   price       Decimal      @db.Decimal(10, 2)
+  subtotal    Decimal      @db.Decimal(10, 2)
   message     String?
 }
 
