@@ -6,6 +6,7 @@ import {
   deleteSize,
   getAllProducts,
   getAllStocks,
+  getBestSellingProduct,
   getCategory,
   getProductInfo,
   getProductRange,
@@ -27,6 +28,12 @@ import { verifyRoles } from "../middleware/verifyRoles";
 import ROLE_LIST from "../config/roleLists";
 
 const router = express.Router();
+router.get(
+  "/best-selling",
+  verifyJWT,
+  verifyRoles(ROLE_LIST.Admin),
+  getBestSellingProduct,
+);
 router.get("/category", getCategory);
 router.get("/getAll", getAllProducts);
 router.get("/max-price", getProductRange);
