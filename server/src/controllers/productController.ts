@@ -5,6 +5,8 @@ import { ProductService } from "../services/product.service";
 import { editProductData, NewProductData, Sizes } from "../types/product.types";
 import { ProductSizeRepo } from "../repositories/productSize.repository";
 import { redis } from "../config/redis";
+import { OrderRepo } from "../repositories/order.repository";
+import { prisma } from "../../lib/prisma";
 
 export const getCategory = async (
   req: Request,
@@ -352,5 +354,40 @@ export const getAllStocks = async (
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false });
+  }
+};
+
+export const getBestSellingProduct = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await OrderRepo.getBestSellingProduct();
+    const products = await prisma.product.findMany({
+      where: {
+        id: {
+          in: result.map((item) => item.productId),
+        },
+      },
+      include: {
+        images: true,
+      },
+    });
+
+    const bestSelling = result.map((item) => {
+      const product = products.find((p) => p.id === item.productId);
+
+      return {
+        productId: item.productId,
+        productName: product?.name,
+        productImage: product?.images[0],
+        totalQuantity: item._sum.quantity ?? 0,
+        subTotal: Number(item._sum.subtotal ?? 0),
+      };
+    });
+    res.status(200).json(bestSelling);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error BestSelling" });
   }
 };
