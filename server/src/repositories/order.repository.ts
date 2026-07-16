@@ -17,6 +17,7 @@ export const OrderRepo = {
             quantity: item.quantity,
             price: item.size?.price || 0,
             size: item.size?.size || "",
+            subtotal: item.quantity * (item.size?.price || 0),
             message: item.message,
           })),
         },
@@ -60,6 +61,26 @@ export const OrderRepo = {
         createdAt: {
           gte: startOfMonth,
           lte: endOfMonth,
+        },
+      },
+    });
+  },
+
+  getBestSellingProduct: async () => {
+    return prisma.orderItem.groupBy({
+      by: ["productId"],
+      where: {
+        order: {
+          status: "COMPLETED",
+        },
+      },
+      _sum: {
+        quantity: true,
+        subtotal: true,
+      },
+      orderBy: {
+        _sum: {
+          quantity: "desc",
         },
       },
     });
