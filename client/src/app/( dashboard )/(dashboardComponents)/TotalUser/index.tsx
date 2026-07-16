@@ -6,7 +6,6 @@ import Link from "next/link";
 
 export default function TotalUser() {
   const { data } = useGetLatestStatsQuery();
-  console.log(data);
   return (
     <Link
       href={"/dashboard/users"}
