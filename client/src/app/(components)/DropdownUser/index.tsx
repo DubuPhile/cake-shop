@@ -63,6 +63,7 @@ export default function UserDropdown({ user, avatar }: UserDropdownProps) {
           width={8.75}
           height={8.75}
           alt="User avatar"
+          loading="eager"
         />
         <span className="hidden md:block font-semibold">{user}</span>
       </button>
