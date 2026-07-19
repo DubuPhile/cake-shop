@@ -362,7 +362,8 @@ export const getBestSellingProduct = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const result = await OrderRepo.getBestSellingProduct();
+    const take = req.query.take?.toString();
+    const result = await OrderRepo.getBestSellingProduct(Number(take));
     const products = await prisma.product.findMany({
       where: {
         id: {
