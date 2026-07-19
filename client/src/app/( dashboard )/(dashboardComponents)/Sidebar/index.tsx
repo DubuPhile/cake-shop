@@ -79,7 +79,7 @@ export default function Sidebar() {
             alt="brand"
             width={40}
             height={40}
-            className=" w-10 h-10 object-cover rounded-full"
+            className="w-10 h-10 object-cover rounded-full"
             priority
           />
           <span
