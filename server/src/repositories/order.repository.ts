@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { CreatedCart } from "../types/cart.types";
-import { OrderStatus } from "../types/order.Type";
+import { ORDER_STATUSES, OrderStatus } from "../types/order.Type";
 
 export const OrderRepo = {
   createdOrder: async (CartItems: CreatedCart[], userId: string) => {
@@ -66,7 +66,29 @@ export const OrderRepo = {
     });
   },
 
-  getBestSellingProduct: async () => {
+  getOrderStatusTotal: async () => {
+    const result = await prisma.order.groupBy({
+      by: ["status"],
+      _count: {
+        status: true,
+      },
+    });
+    const ORDER_STATUS_COLORS = {
+      PENDING: "#FACC15",
+      PAID: "#3B82F6",
+      PROCESSING: "#A855F7",
+      READY: "#06B6D4",
+      COMPLETED: "#22C55E",
+      CANCELLED: "#EF4444",
+    } as const;
+    return ORDER_STATUSES.map((status) => ({
+      status: status.replace("_", " "),
+      value: result.find((item) => item.status === status)?._count.status ?? 0,
+      color: ORDER_STATUS_COLORS[status],
+    }));
+  },
+
+  getBestSellingProduct: async (take?: number) => {
     return prisma.orderItem.groupBy({
       by: ["productId"],
       where: {
@@ -83,6 +105,7 @@ export const OrderRepo = {
           quantity: "desc",
         },
       },
+      ...(take && { take }),
     });
   },
 };
