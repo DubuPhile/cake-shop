@@ -30,3 +30,19 @@ export const createOrder = async (
       .json({ success: false, message: "Server Error Creating Orders" });
   }
 };
+
+export const getTotalOrderPerStatus = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const orderStatus = await OrderRepo.getOrderStatusTotal();
+
+    res.status(200).json(orderStatus);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error in Total Order Status" });
+  }
+};
