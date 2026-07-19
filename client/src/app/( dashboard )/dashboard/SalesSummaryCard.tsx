@@ -10,6 +10,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Cell,
 } from "recharts";
 
 export default function SalesSummaryCard() {
@@ -50,6 +51,8 @@ export default function SalesSummaryCard() {
     chartData?.reduce((accu, current, _, array) => {
       return accu + current.salesGrowth / array.length;
     }, 0) || 0;
+
+  const colors = ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
   return (
     <div className="col-span-3 bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 md:p-5 shadow row-span-7">
@@ -146,12 +149,11 @@ export default function SalesSummaryCard() {
                     });
                   }}
                 />
-                <Bar
-                  dataKey="sales"
-                  fill="#3182ce"
-                  barSize={10}
-                  radius={[10, 10, 0, 0]}
-                />
+                <Bar dataKey="sales" barSize={30} radius={[10, 10, 0, 0]}>
+                  {chartData.map((_, index) => (
+                    <Cell key={index} fill={colors[index % colors.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </main>
