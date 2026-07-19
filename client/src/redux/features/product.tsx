@@ -97,6 +97,10 @@ export interface BestSellingProduct {
   subTotal: number;
 }
 
+export type NumberOfItems = {
+  take?: number;
+};
+
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query<Products[], ProductQueryParams | void>({
@@ -199,10 +203,14 @@ export const ProductSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["STOCKS", "Products"],
     }),
-    getBestSellingProduct: builder.query<BestSellingProduct, void>({
-      query: () => ({
+    getBestSellingProduct: builder.query<
+      BestSellingProduct[],
+      NumberOfItems | void
+    >({
+      query: (params) => ({
         url: "/product/best-selling",
         method: "GET",
+        params: { take: params?.take },
       }),
       providesTags: ["Products"],
     }),
