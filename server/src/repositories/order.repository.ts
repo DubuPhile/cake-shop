@@ -108,4 +108,16 @@ export const OrderRepo = {
       ...(take && { take }),
     });
   },
+
+  getRecentOrders: async (take?: number) => {
+    return prisma.order.findMany({
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      ...(take && { take }),
+    });
+  },
 };
