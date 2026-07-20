@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createOrder,
+  getRecentOrders,
   getTotalOrderPerStatus,
 } from "../controllers/orderController";
 import verifyJWT from "../middleware/verifyJWT";
@@ -11,5 +12,6 @@ const router = express.Router();
 
 router.post("/create", verifyJWT, validate(createOrderSchema), createOrder);
 router.get("/count-by-status", verifyJWT, getTotalOrderPerStatus);
+router.get("/recent-orders", verifyJWT, getRecentOrders);
 
 export default router;
