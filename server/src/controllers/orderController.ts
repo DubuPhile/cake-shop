@@ -46,3 +46,31 @@ export const getTotalOrderPerStatus = async (
       .json({ message: "Internal Server Error in Total Order Status" });
   }
 };
+
+export const getRecentOrders = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const take = req.query.take?.toString();
+    const orders = await OrderRepo.getRecentOrders(Number(take));
+    const recalibOrders = orders.map((item) => {
+      return {
+        id: item.id,
+        orderId: `ORD-${item.id.slice(0, 8).toUpperCase()}`,
+        status: item.status,
+        total: item.totalAmount,
+        customer: item.user.name,
+        date: item.createdAt,
+      };
+    });
+
+    res.status(200).json(recalibOrders);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error in getRecentOrders",
+    });
+  }
+};
