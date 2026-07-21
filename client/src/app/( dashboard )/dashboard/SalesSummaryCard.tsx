@@ -1,5 +1,6 @@
 "use client";
 import Spinner from "@/app/(components)/Spinner";
+import { formatAmountPHP } from "@/lib/utilsFunction";
 import { useGetMonthlyStatsQuery } from "@/redux/features/dashboardSlice";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import {
@@ -55,7 +56,7 @@ export default function SalesSummaryCard() {
   const colors = ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
   return (
-    <div className="col-span-3 bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 md:p-5 shadow row-span-7">
+    <div className="col-span-3 bg-gray-100 dark:bg-gray-700 rounded-2xl px-2 py-1 md:px-5 md:py-1 shadow h-110">
       {isLoading ? (
         <div className="h-87.5">
           <Spinner />
@@ -64,7 +65,7 @@ export default function SalesSummaryCard() {
         <>
           <header>
             <div className="flex justify-between">
-              <h2 className="text-lg font-semibold mb-2 px-4 md:px-7 pt-5">
+              <h2 className="text-lg font-semibold mb-3 px-4 md:px-7 pt-5">
                 Sales Summary
               </h2>
               <div className="flex items-end mb-3">
@@ -83,12 +84,7 @@ export default function SalesSummaryCard() {
                 </p>
                 <div className="flex flex-row items-center">
                   <span className=" text-md md:text-2xl font-extrabold">
-                    {new Intl.NumberFormat("en-PH", {
-                      style: "currency",
-                      currency: "PHP",
-                      maximumFractionDigits: 2,
-                    }).format(totalValueSum / 1000)}
-                    k
+                    {formatAmountPHP(totalValueSum, 2)}
                   </span>
                   <span
                     className={`flex flex-row ${result >= 0 ? "text-green-500" : "text-red-500"} text-xs md:text-sm ml-2`}
@@ -106,7 +102,7 @@ export default function SalesSummaryCard() {
             {/* CHARTS */}
             <ResponsiveContainer
               width="99%"
-              height={350}
+              height={250}
               className="px-4 md:px-7"
             >
               <BarChart
