@@ -7,7 +7,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 export default function MonthlySales() {
   const { data, isLoading } = useGetLatestStatsQuery();
   return (
-    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 md:p-5 flex flex-col justify-center shadow">
+    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 flex flex-col justify-center shadow">
       {isLoading ? (
         <div className="flex items-center justify-center">
           <Spinner />
