@@ -59,4 +59,29 @@ export const ProductSizeRepo = {
       },
     });
   },
+
+  getLowStockProducts: async (take?: number) => {
+    return prisma.productSize.findMany({
+      ...(take && { take }),
+      orderBy: {
+        stock: "asc",
+      },
+      where: {
+        stock: {
+          lte: 2,
+        },
+      },
+      include: {
+        product: {
+          include: {
+            images: {
+              where: {
+                isPrimary: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  },
 };
