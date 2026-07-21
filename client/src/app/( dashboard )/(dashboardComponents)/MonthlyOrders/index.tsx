@@ -7,14 +7,14 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 export default function MonthlyOrders() {
   const { data, isLoading } = useGetLatestStatsQuery();
   return (
-    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 md:p-5 flex flex-col justify-center shadow">
+    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 flex flex-col justify-center shadow">
       {isLoading ? (
         <div className="flex items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <h2 className=" text-xs sm:text-lg">Monthly Orders</h2>
+          <h2 className=" text-xs sm:text-base">Monthly Orders</h2>
           <div className="flex items-center">
             <h4 className="pl-1 font-extrabold text-[12px] sm:text-2xl">
               {data?.stats.totalOrders}
