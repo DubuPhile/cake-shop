@@ -8,6 +8,7 @@ import {
   getAllStocks,
   getBestSellingProduct,
   getCategory,
+  getLowStockProducts,
   getProductInfo,
   getProductRange,
   getProductStock,
@@ -33,6 +34,12 @@ router.get(
   verifyJWT,
   verifyRoles(ROLE_LIST.Admin),
   getBestSellingProduct,
+);
+router.get(
+  "/low-stocks",
+  verifyJWT,
+  verifyRoles(ROLE_LIST.Admin),
+  getLowStockProducts,
 );
 router.get("/category", getCategory);
 router.get("/getAll", getAllProducts);
