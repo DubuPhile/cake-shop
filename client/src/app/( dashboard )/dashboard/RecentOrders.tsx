@@ -13,7 +13,11 @@ import { Status, useGetRecentOrdersQuery } from "@/redux/features/orderSlice";
 import { EllipsisVertical } from "lucide-react";
 
 export default function RecentOrders() {
-  const { data: orders, isLoading, isError } = useGetRecentOrdersQuery();
+  const {
+    data: orders,
+    isLoading,
+    isError,
+  } = useGetRecentOrdersQuery({ take: 8 });
   const statusColor: Record<Status, string> = {
     PENDING: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200",
     PAID: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -26,7 +30,7 @@ export default function RecentOrders() {
     CANCELLED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   };
   return (
-    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 md:p-5 shadow">
+    <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 md:p-5 shadow h-120 sm:h-140">
       {isLoading ? (
         <div className="flex items-center justify-center w-full h-full">
           <Spinner />
@@ -62,7 +66,7 @@ export default function RecentOrders() {
                 {orders?.map((order) => (
                   <tr
                     key={order.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800 text-[10px] sm:text-base"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800 text-[11px] sm:text-base"
                   >
                     <td className="py-4 font-medium">
                       <div className="truncate w-15 sm:w-33">
@@ -116,13 +120,15 @@ export default function RecentOrders() {
                             Copy Order ID
                           </DropdownMenuItem>
 
-                          <DropdownMenuSeparator />
                           {!["PAID", "READY", "COMPLETED"].includes(
                             order.status,
                           ) && (
-                            <DropdownMenuItem className="text-red-500">
-                              Cancel Order
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-red-500">
+                                Cancel Order
+                              </DropdownMenuItem>
+                            </>
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
