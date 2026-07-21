@@ -208,8 +208,14 @@ enum OrderStatus {
   CANCELLED
 }
 
+model Counter {
+  id    String @id
+  value Int    @default(0)
+}
+
 model Order {
   id          String      @id @default(uuid())
+  orderNum     String      @unique
   userId      String
   user        Users       @relation(fields: [userId], references: [userId])
 
