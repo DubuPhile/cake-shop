@@ -1,6 +1,6 @@
 "use client";
 import CartItem from "@/app/(components)/CartItem/Index";
-import { calculateTotalPrice } from "@/lib/utils";
+import { calculateTotalPrice } from "@/lib/utilsFunction";
 import {
   MyCart,
   useDeleteCartMutation,
