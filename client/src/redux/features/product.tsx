@@ -101,6 +101,14 @@ export type NumberOfItems = {
   take?: number;
 };
 
+export type LowStockProducts = {
+  id: string;
+  productName: string;
+  image: Images;
+  size: string;
+  stock: number;
+};
+
 export const ProductSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query<Products[], ProductQueryParams | void>({
@@ -214,6 +222,14 @@ export const ProductSlice = api.injectEndpoints({
       }),
       providesTags: ["Products"],
     }),
+    getLowStock: builder.query<LowStockProducts[], NumberOfItems | void>({
+      query: (params) => ({
+        url: "/product/low-stocks",
+        method: "GET",
+        params: { take: params?.take },
+      }),
+      providesTags: ["Products"],
+    }),
   }),
 });
 
@@ -231,4 +247,5 @@ export const {
   useAddSizeMutation,
   useGetMaxPriceQuery,
   useGetBestSellingProductQuery,
+  useGetLowStockQuery,
 } = ProductSlice;
