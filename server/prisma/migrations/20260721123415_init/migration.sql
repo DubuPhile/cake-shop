@@ -159,8 +159,17 @@ CREATE TABLE "CartModel" (
 );
 
 -- CreateTable
+CREATE TABLE "Counter" (
+    "id" TEXT NOT NULL,
+    "value" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "Counter_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
+    "orderNum" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "totalAmount" DECIMAL(10,2) NOT NULL,
@@ -221,6 +230,9 @@ CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ReviewLikes_userId_reviewId_key" ON "ReviewLikes"("userId", "reviewId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Order_orderNum_key" ON "Order"("orderNum");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MonthlyStats_month_year_key" ON "MonthlyStats"("month", "year");
