@@ -57,7 +57,7 @@ export const getRecentOrders = async (
     const recalibOrders = orders.map((item) => {
       return {
         id: item.id,
-        orderId: `ORD-${item.id.slice(0, 8).toUpperCase()}`,
+        orderId: item.orderNum,
         status: item.status,
         total: item.totalAmount,
         customer: item.user.name,
