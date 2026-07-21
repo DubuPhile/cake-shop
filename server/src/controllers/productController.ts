@@ -392,3 +392,31 @@ export const getBestSellingProduct = async (
     res.status(500).json({ message: "Internal Server Error BestSelling" });
   }
 };
+
+export const getLowStockProducts = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const take = req.query.take?.toString();
+
+    const lowStockProd = await ProductSizeRepo.getLowStockProducts(
+      Number(take),
+    );
+    const lowStockSorted = lowStockProd.map((item) => {
+      return {
+        id: item.id,
+        productName: item.product.name,
+        image: item.product.images[0],
+        size: item.size,
+        stock: item.stock,
+      };
+    });
+    res.status(200).json(lowStockSorted);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error at getLowStockProducts" });
+  }
+};
