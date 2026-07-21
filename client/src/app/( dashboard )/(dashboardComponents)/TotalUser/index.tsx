@@ -10,7 +10,7 @@ export default function TotalUser() {
   return (
     <Link
       href={"/dashboard/users"}
-      className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 md:p-5 flex flex-col justify-center shadow"
+      className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-3 flex flex-col justify-center shadow"
     >
       {isLoading ? (
         <div className="flex items-center justify-center">
