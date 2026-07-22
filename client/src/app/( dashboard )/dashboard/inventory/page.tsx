@@ -13,6 +13,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import StocksModal from "../../(dashboardComponents)/StocksModal";
 import toast from "react-hot-toast";
 import Confirmation from "@/app/(components)/Confirmation";
+import { getStockStatus } from "@/lib/utilsFunction";
 
 type Stock = {
   id: string;
@@ -86,6 +87,7 @@ export default function Inventory() {
       field: "productName",
       headerName: "Product",
       flex: 1,
+      minWidth: 150,
       cellClassName: cellCN,
       headerClassName: headerCN,
     },
@@ -93,6 +95,7 @@ export default function Inventory() {
       field: "category",
       headerName: "Category",
       flex: 1,
+      minWidth: 100,
       cellClassName: cellCN,
       headerClassName: headerCN,
     },
@@ -127,6 +130,27 @@ export default function Inventory() {
       headerClassName: headerCN,
       headerAlign: "center",
       align: "center",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 140,
+      sortable: false,
+      headerAlign: "center",
+      align: "center",
+      cellClassName: cellCN,
+      headerClassName: headerCN,
+      renderCell: (params) => {
+        const status = getStockStatus(params.row.stock);
+
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-semibold ${status.className}`}
+          >
+            {status.label}
+          </span>
+        );
+      },
     },
     {
       field: "id",
