@@ -1,11 +1,10 @@
 "use client";
 import Spinner from "@/app/(components)/Spinner";
+import { formatAmountPHP } from "@/lib/utilsFunction";
 import { useGetBestSellingProductQuery } from "@/redux/features/product";
 
 export default function BestSellingCard() {
   const { data: cakes, isLoading } = useGetBestSellingProductQuery({ take: 4 });
-
-  console.log(cakes);
 
   const maxSold = Math.max(
     ...(cakes?.map((item) => item.totalQuantity) ?? [0]),
@@ -19,25 +18,25 @@ export default function BestSellingCard() {
         </div>
       ) : (
         <>
-          <header className="flex justify-between items-center mb-5">
+          <header className="flex items-center justify-between mb-2 border-b border-gray-200 dark:border-gray-800 py-1 px-2">
             <h2 className="text-lg font-semibold">Best Selling Cakes</h2>
 
-            <button className="text-sm text-gray-500 hover:text-orange-500 transition">
+            <button className="text-xs md:text-sm text-gray-500 hover:text-orange-500 transition">
               View all →
             </button>
           </header>
           <div className="h-61 w-full overflow-y-auto">
-            <div className="space-y-5">
+            <div className="space-y-4">
               {cakes?.map((cake) => (
                 <div key={cake.productId} className="flex items-center gap-4">
                   {/* Image */}
-                  <img
-                    src={cake.productImage.url}
-                    alt={cake.productName}
-                    width={50}
-                    height={50}
-                    className="rounded-lg object-cover"
-                  />
+                  <div className="w-12 h-12 overflow-hidden rounded-lg">
+                    <img
+                      src={cake.productImage.url}
+                      alt={cake.productName}
+                      className=" object-cover w-full rounded-lg"
+                    />
+                  </div>
 
                   {/* Details */}
                   <div className="flex-1">
@@ -60,19 +59,9 @@ export default function BestSellingCard() {
                     </div>
                   </div>
 
-                  {/* Revenue */}
+                  {/* SubTotal */}
                   <div className="font-semibold whitespace-nowrap w-13 flex justify-end">
-                    {cake.subTotal > 9999
-                      ? `${new Intl.NumberFormat("en-PH", {
-                          style: "currency",
-                          currency: "PHP",
-                          maximumFractionDigits: 0,
-                        }).format(cake.subTotal / 1000)}k`
-                      : `${new Intl.NumberFormat("en-PH", {
-                          style: "currency",
-                          currency: "PHP",
-                          maximumFractionDigits: 0,
-                        }).format(cake.subTotal)}`}
+                    {formatAmountPHP(cake.subTotal)}
                   </div>
                 </div>
               ))}
