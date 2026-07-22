@@ -4,9 +4,30 @@ import { ORDER_STATUSES, OrderStatus } from "../types/order.Type";
 
 export const OrderRepo = {
   createdOrder: async (CartItems: CreatedCart[], userId: string) => {
+    const year = new Date().getFullYear();
+    const counterId = `order-${year}`;
+
+    const counter = await prisma.counter.upsert({
+      where: {
+        id: counterId,
+      },
+      update: {
+        value: {
+          increment: 1,
+        },
+      },
+      create: {
+        id: counterId,
+        value: 1,
+      },
+    });
+
+    const orderNumber = `ORD-${year}-${String(counter.value).padStart(4, "0")}`;
+
     return prisma.order.create({
       data: {
         userId,
+        orderNum: orderNumber,
         totalAmount: CartItems.reduce(
           (total, item) => total + (item.size?.price || 0) * item.quantity,
           0,
@@ -102,7 +123,7 @@ export const OrderRepo = {
       },
       orderBy: {
         _sum: {
-          quantity: "desc",
+          subtotal: "desc",
         },
       },
       ...(take && { take }),
@@ -119,5 +140,34 @@ export const OrderRepo = {
       },
       ...(take && { take }),
     });
+  },
+
+  getOrders: async (page: number, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      }),
+      prisma.order.count(),
+    ]);
+    return {
+      orders,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      limit,
+    };
   },
 };
