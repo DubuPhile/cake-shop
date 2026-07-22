@@ -6,7 +6,6 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 export default function OrderStatusCard() {
   const { data } = useGetCountByStatusQuery();
   const total = data?.reduce((sum, item) => sum + item.value, 0);
-  console.log(data);
   return (
     <div className="h-80 bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 md:p-5 shadow">
       <h2 className="font-semibold text-lg mb-4">Order Status</h2>
@@ -35,7 +34,7 @@ export default function OrderStatusCard() {
                 y="48%"
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="fill-gray-900 text-3xl font-bold"
+                className="fill-gray-900 dark:fill-gray-50 text-3xl font-bold"
               >
                 {total}
               </text>
