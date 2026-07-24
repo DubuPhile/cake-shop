@@ -9,6 +9,7 @@ import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { useAppSelector } from "@/redux/store";
 import { useAddToCartMutation } from "@/redux/features/cartSlice";
 import toast from "react-hot-toast";
+import CommentSection from "@/app/(components)/CommentSection";
 
 export default function Product() {
   const { slug } = useParams();
@@ -140,6 +141,9 @@ export default function Product() {
               </button>
             </div>
           </div>
+        </div>
+        <div className="mt-2">
+          <CommentSection reviews={product.reviews} />
         </div>
       </div>
     </div>
