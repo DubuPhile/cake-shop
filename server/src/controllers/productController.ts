@@ -87,14 +87,14 @@ export const getProductInfo = async (
       res.status(400).json({ message: "Invalid" });
       return;
     }
-    const cacheKey = `product:${slug}`;
+    // const cacheKey = `product:${slug}`;
 
-    const cachedProduct = await redis.get(cacheKey);
+    // const cachedProduct = await redis.get(cacheKey);
 
-    if (cachedProduct) {
-      res.status(200).json(JSON.parse(cachedProduct));
-      return;
-    }
+    // if (cachedProduct) {
+    //   res.status(200).json(JSON.parse(cachedProduct));
+    //   return;
+    // }
 
     const product = await productRepo.getProduct(slug.toString());
 
@@ -103,9 +103,9 @@ export const getProductInfo = async (
       return;
     }
 
-    await redis.set(cacheKey, JSON.stringify(product), {
-      EX: 60,
-    });
+    // await redis.set(cacheKey, JSON.stringify(product), {
+    //   EX: 60,
+    // });
 
     res.status(200).json(product);
   } catch (err) {
