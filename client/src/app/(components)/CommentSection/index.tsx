@@ -12,6 +12,7 @@ import {
   useToggleLikesMutation,
 } from "@/redux/features/reviewSlice";
 import { useAppSelector } from "@/redux/store";
+import { useRouter } from "next/navigation";
 
 type Props = {
   reviews?: ProductReview[];
@@ -36,7 +37,7 @@ export default function CommentSection({ reviews }: Props) {
   };
 
   return (
-    <div className="max-w-2xl w-full bg-white dark:bg-zinc-900 rounded-xl p-4 shadow space-y-4">
+    <div className="max-w-6xl w-full bg-white dark:bg-zinc-800 rounded-xl p-4 shadow space-y-4">
       {/* Comments */}
       <div className="space-y-4">
         {comments?.map((comment) => (
@@ -56,9 +57,10 @@ function CommentItem({
 }) {
   const [showReply, setShowReply] = useState<boolean>(false);
   const [showReplies, setShowReplies] = useState<boolean>(false);
-  const { userId } = useAppSelector((state) => state.auth);
+  const { userId, roles } = useAppSelector((state) => state.auth);
   const [commentReply, setCommentReply] = useState<string>("");
   const [replyComment] = useReplyCommentMutation();
+  const router = useRouter();
 
   const handleReply = async () => {
     try {
@@ -73,8 +75,6 @@ function CommentItem({
     }
   };
 
-  if (!userId) return;
-
   return (
     <div className="flex gap-3">
       <Image
@@ -85,7 +85,7 @@ function CommentItem({
 
       <div className="flex-1">
         {/* Bubble */}
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-xl p-3">
+        <div className="bg-zinc-100 dark:bg-zinc-700 rounded-xl p-3">
           <div className="flex justify-between items-start">
             <div>
               <p className="font-semibold text-sm">{comment.user.name}</p>
@@ -96,7 +96,7 @@ function CommentItem({
                   interactive={false}
                 />
               )}
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 mt-2">
+              <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">
                 {comment.comment}
               </p>
             </div>
@@ -106,7 +106,14 @@ function CommentItem({
         {/* Actions */}
         <div className="flex items-center gap-4 mt-1 text-xs text-zinc-500 ml-2">
           <button
-            onClick={() => onLike(comment.id)}
+            onClick={
+              userId
+                ? (e) => {
+                    e.stopPropagation();
+                    onLike(comment.id);
+                  }
+                : () => router.push("/login")
+            }
             className={`flex items-center gap-1 hover:text-blue-500 transition-all duration-300 cursor-pointer ${comment.likes?.some((like) => like.userId === userId) ? "text-blue-500" : ""}`}
           >
             <ThumbsUp
@@ -115,14 +122,16 @@ function CommentItem({
             />
             {comment.likesCount}
           </button>
+          {roles.includes("ADMIN") && (
+            <button
+              onClick={() => setShowReply(!showReply)}
+              className="flex items-center gap-1 hover:text-blue-500 cursor-pointer"
+            >
+              <MessageCircle size={14} />
+              Reply
+            </button>
+          )}
 
-          <button
-            onClick={() => setShowReply(!showReply)}
-            className="flex items-center gap-1 hover:text-blue-500 cursor-pointer"
-          >
-            <MessageCircle size={14} />
-            Reply
-          </button>
           <span>{TimeInterval(comment.createdAt || "")}</span>
         </div>
 
@@ -159,7 +168,14 @@ function CommentItem({
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-xs text-zinc-500 ml-2">
                       <button
-                        onClick={() => onLike(reply.id)}
+                        onClick={
+                          userId
+                            ? (e) => {
+                                e.stopPropagation();
+                                onLike(reply.id);
+                              }
+                            : () => router.push("/login")
+                        }
                         className={`flex items-center gap-1 hover:text-blue-500 transition-all duration-300 ${reply.likes?.some((like) => like.userId === userId) ? "text-blue-500" : ""} cursor-pointer`}
                       >
                         <ThumbsUp
@@ -168,14 +184,16 @@ function CommentItem({
                         />
                         {reply.likesCount}
                       </button>
+                      {roles.includes("ADMIN") && (
+                        <button
+                          onClick={() => setShowReply(!showReply)}
+                          className="flex items-center gap-1 hover:text-blue-500 cursor-pointer"
+                        >
+                          <MessageCircle size={14} />
+                          Reply
+                        </button>
+                      )}
 
-                      <button
-                        onClick={() => setShowReply(!showReply)}
-                        className="flex items-center gap-1 hover:text-blue-500 cursor-pointer"
-                      >
-                        <MessageCircle size={14} />
-                        Reply
-                      </button>
                       <span>{TimeInterval(reply.createdAt || "")}</span>
                     </div>
                   </div>
